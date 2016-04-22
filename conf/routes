@@ -1,0 +1,50 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET         /                          @controllers.Application.index
+GET         /about/                    @controllers.Application.about
+GET         /staff/                    @controllers.Staff.list(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /contacts/                 @controllers.Application.contacts
+GET         /news/                     @controllers.News.list2(p:Int ?= 0, s:Int ?= 2, f ?= "")
+
+#GET         /computers           @controllers.Staff.list(p:Int ?= 0, s:Int ?= 2, f ?= "")
+
+GET         /staff/new                 @controllers.Staff.create
+GET         /news/new                  @controllers.News.create
+
+POST        /staffer                   @controllers.Staff.addStaff
+POST        /news                      @controllers.News.addNews
+
+GET         /news/:id                  @controllers.News.edit(id:Long)
+POST        /news/:id                  @controllers.News.update(id:Long)
+
+GET         /staffer/:id               @controllers.Staff.edit(id:Long)
+POST        /staffer/:id               @controllers.Staff.update(id:Long)
+
+POST        /staffer/:id/delete        @controllers.Staff.delete(id:Long)
+POST        /news/:id/delete           @controllers.News.delete(id:Long)
+
+# Api (json)
+GET         /api/getStaffByCode        @controllers.Staff.getStaffByQrCode(code: String)
+
+GET         /api/persons               @controllers.Staff.getStaff
+GET         /api/news                  @controllers.News.getNews
+
+#GET         /api/addNews               @controllers.News.addOneNews(title: String, description: String)
+GET         /api/addHistory            @controllers.Staff.history(userId: Long, income: Long, outcome: Long)
+
+GET         /api/getStaffById          @controllers.Staff.getOneStaff(id:Long)
+
+GET         /api/deleteStaff           @controllers.News.deleteOneStaff(id:Long)
+
+GET         /api/*file                 @controllers.Assets.at(path="/public", file)
+
+
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET         /assets/*file              @controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file              @controllers.Assets.at(path="/public", file)
+
