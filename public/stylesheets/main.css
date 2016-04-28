@@ -9,6 +9,12 @@ html {
     padding: 0px;
 }
 
+/*menu*/
+
+#menu {
+
+}
+
 *:focus, *:active {
     outline: none;
 }
@@ -252,7 +258,6 @@ input, textarea {
 }
 
 #main_menu {
-    margin-right: -21px;
     padding-top: 27px;
     float: right;
 }
@@ -266,7 +271,6 @@ input, textarea {
     display: block;
     float: left;
     position: relative;
-    background: url(images/line_main_menu.png) no-repeat;
     z-index: 10;
 }
 

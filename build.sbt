@@ -5,6 +5,8 @@ version := "1.0-SNAPSHOT"
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.11.6"
+herokuJdkVersion in Compile := "1.8"
+herokuAppName in Compile := "time-spot"
 
 libraryDependencies ++= Seq(
   jdbc,
@@ -19,11 +21,25 @@ libraryDependencies ++= Seq(
   specs2 % Test
 )
 
-dependencyOverrides += "org.scala-lang" % "scala-compiler" % scalaVersion.value
+herokuConfigVars in Compile := Map(
+  "MY_VAR" -> "some value",
+  "JAVA_OPTS" -> "-XX:+UseCompressedOops"
+)
 
+herokuIncludePaths in Compile := Seq(
+  "app", "conf/routes", "public/javascripts"
+)
+
+herokuProcessTypes in Compile := Map(
+  "web" -> "target/universal/stage/bin/my-app -Dhttp.port=$PORT",
+  "worker" -> "java -jar target/universal/stage/lib/my-worker.jar"
+)
+
+dependencyOverrides += "org.scala-lang" % "scala-compiler" % scalaVersion.value
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
+
 routesGenerator := InjectedRoutesGenerator

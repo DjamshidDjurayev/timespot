@@ -9,16 +9,7 @@ import play.api.mvc.Flash
 class Application extends Controller {
 
   def index = Action {
-    Ok(views.html.index("home"))
+    Ok(views.html.main2("as"))
   }
-
-  def about = Action {
-    Ok(views.html.about("about"))
-  }
-
-  def contacts = Action {
-    Ok(views.html.contacts("contacts"))
-  }
-
 
 }

@@ -1,38 +1,30 @@
 package controllers
 
-import java.text.DateFormat
-import javax.swing.text.DateFormatter
 
-import com.sun.jmx.snmp.Timestamp
+
 import models.{History, DBase, Staffer}
 import org.joda.time.DateTime
-import org.joda.time.format.{ISODateTimeFormat, DateTimeFormat, DateTimeFormatter}
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
-import java.util.Date
-import play.api.data.format.Formats._
-import sun.security.timestamp.Timestamper
-
-import views.html
 
 class Staff extends Controller {
 
-  val Home = Redirect(routes.Staff.list(0, 2, ""))
 
+  val Home = Redirect(routes.Staff.list(0, 2, ""))
 
   val stafferForm: Form[Staffer] = Form(
     mapping(
       "name" -> text,
-      "surname" -> text,
-      "middle_name" -> text,
-      "position" -> text,
       "image" -> text,
       "birth" -> jodaDate("yyyy-MM-dd"),
-      "code" -> nonEmptyText
+      "surname" -> text,
+      "middle_name" -> text,
+      "code" -> nonEmptyText,
+      "position" -> text
     )(Staffer.apply)(Staffer.unapply))
 
   def addStaff = Action { implicit request =>
@@ -47,6 +39,7 @@ class Staff extends Controller {
 
   def getStaff = Action {
     val staffs = DBase.query[Staffer].fetch()
+//    staffs.
     Ok(Json.toJson(staffs))
   }
 
@@ -90,20 +83,69 @@ class Staff extends Controller {
     Home.flashing("success" -> "User has been deleted")
   }
 
+  def addHistory(code: String, action: Int) = Action {
 
+    val actionDateTime = DateTime.now() // TODO check
 
-  def history(userId: Long, income: Long, outcome: Long) = Action {
-    val ii: DateTime = DateTime.now()
-    ii.withMillis(income).toDateTime
-    val jj: DateTime = DateTime.now()
-    jj.withMillis(outcome).toDateTime
-
-    val user = Staffer.findById(userId)
-    val history = History(ii, jj, user.get)
-
-    DBase.save[History](history)
-    Ok("good")
+    Staffer.findByQrCode(code).map {
+      staff => {
+        val history  = History(staff, action, actionDateTime, actionDateTime.toLocalDate)
+        DBase.save[History](history)
+        Ok(Json.obj("status" -> "success", "message" -> "success"))
+      }
+    }.getOrElse {
+      BadRequest(Json.obj("status" -> "fail", "message" -> "not found"))
+    }
 
   }
+
+
+  def getHistory(code: String) = Action {
+    Staffer.findByQrCode(code).map {
+      history => {
+        Ok(Json.toJson(History.findById(history)))
+      }
+    }.getOrElse {
+      BadRequest(Json.obj("status" -> "fail", "message" -> "not found"))
+    }
+  }
+
+  def getActionsByDate(userId: String, date: Long) = Action {
+
+    Staffer.findByQrCode(userId).map {
+      staff => {
+        Ok(Json.toJson(History.getStaffActionsByDate(staff, date)))
+      }
+    }.getOrElse {
+      BadRequest(Json.obj("status" -> "fail", "message" -> "not found"))
+    }
+
+  }
+
+  // handling POST request  from client side
+  def staffRegistration() = Action { implicit request =>
+
+    val body: AnyContent = request.body
+    val jsonBody: Option[JsValue] = body.asJson
+
+    // Expecting json body
+    jsonBody.map { json => {
+      val name = (json \ "name").as[String]
+      val image = (json \ "image").as[String]
+      val birth = (json \ "birth").as[Long]
+      val surname = (json \ "surname").as[String]
+      val middle_name = (json \ "middle_name").as[String]
+      val code = (json \ "code").as[String]
+      val position = (json \ "position").as[String]
+//      Ok(Json.obj())
+      val staff = new Staffer(name, image, new DateTime(birth), surname, middle_name, code, position)
+      Ok(Json.toJson(staff))
+    }
+    }.getOrElse {
+      BadRequest("Expecting application/json request body")
+    }
+    }
+
+
 
 }
