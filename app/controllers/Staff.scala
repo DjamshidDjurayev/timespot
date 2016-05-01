@@ -146,12 +146,10 @@ class Staff extends Controller {
 
 
   // handling POST request  from client side
-  def staffRegistration() = Action { implicit request =>
-
+  def addNewStaff() = Action { implicit request =>
     val body: AnyContent = request.body
     val jsonBody: Option[JsValue] = body.asJson
 
-    // Expecting json body
     jsonBody.map { json => {
       val name = (json \ "name").as[String]
       val image = (json \ "image").as[String]
@@ -160,8 +158,7 @@ class Staff extends Controller {
       val middle_name = (json \ "middle_name").as[String]
       val code = (json \ "code").as[String]
       val position = (json \ "position").as[String]
-      val email = (json \ "position").as[String]
-//      Ok(Json.obj())
+      val email = (json \ "email").as[String]
       val staff = new Staffer(name, image, new DateTime(birth), surname, middle_name, code, position, email)
       Ok(Json.toJson(staff))
     }

@@ -26,6 +26,7 @@ POST        /news/:id/delete                  @controllers.News.delete(id:Long)
 
 # Api (json)
 POST        /api/sendPicture                  @controllers.Administrator.sendPicture
+POST        /api/addStaff                     @controllers.Staff.addNewStaff
 
 GET         /api/getStaffByCode               @controllers.Staff.getStaffByQrCode(code: String)
 GET         /api/persons                      @controllers.Staff.getStaff
@@ -34,7 +35,6 @@ GET         /api/positions                    @controllers.Administrator.getPosi
 
 GET         /api/addPosition                  @controllers.Administrator.addPosition(title: String)
 #GET         /api/addNews               @controllers.News.addOneNews(title: String, description: String)
-POST        /api/staffRegisration             @controllers.Staff.staffRegistration
 GET         /api/adminAuth                    @controllers.Administrator.adminAuth(login: String, password: String)
 GET         /api/checkCode                    @controllers.Staff.checkCode
 
