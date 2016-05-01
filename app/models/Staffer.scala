@@ -31,27 +31,27 @@ object Staffer {
 //      (JsPath \ 'position).read[String]
 //    )(Staffer.apply _)
 
-  implicit val read: Reads[Staffer] = (
-    (JsPath \ "name").read[String] and
-      (JsPath \ "image").read[String] and
-      (JsPath \ "birth").read[DateTime] and
-      (JsPath \ "surname").read[String] and
-      (JsPath \ "middle_name").read[String] and
-      (JsPath \ "code").read[String] and
-      (JsPath \ "position").read[String] and
-      (JsPath \ "email").read[String]
-    )(Staffer.apply _)
-//
-  implicit val write: Writes[Staffer] = (
-    (JsPath \ "name").write[String] and
-      (JsPath \ "image").write[String] and
-      (JsPath \ "birth").write[DateTime] and
-      (JsPath \ "surname").write[String] and
-      (JsPath \ "middle_name").write[String] and
-      (JsPath \ "code").write[String] and
-      (JsPath \ "position").write[String] and
-      (JsPath \ "email").write[String]
-    )(unlift(Staffer.unapply))
+//  implicit val read: Reads[Staffer] = (
+//    (JsPath \ "name").read[String] and
+//      (JsPath \ "image").read[String] and
+//      (JsPath \ "birth").read[DateTime] and
+//      (JsPath \ "surname").read[String] and
+//      (JsPath \ "middle_name").read[String] and
+//      (JsPath \ "code").read[String] and
+//      (JsPath \ "position").read[String] and
+//      (JsPath \ "email").read[String]
+//    )(Staffer.apply _)
+////
+//  implicit val write: Writes[Staffer] = (
+//    (JsPath \ "name").write[String] and
+//      (JsPath \ "image").write[String] and
+//      (JsPath \ "birth").write[DateTime] and
+//      (JsPath \ "surname").write[String] and
+//      (JsPath \ "middle_name").write[String] and
+//      (JsPath \ "code").write[String] and
+//      (JsPath \ "position").write[String] and
+//      (JsPath \ "email").write[String]
+//    )(unlift(Staffer.unapply))
 
 
 

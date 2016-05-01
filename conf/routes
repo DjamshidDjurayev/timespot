@@ -25,8 +25,8 @@ POST        /staffer/:id/delete               @controllers.Staff.delete(id:Long)
 POST        /news/:id/delete                  @controllers.News.delete(id:Long)
 
 # Api (json)
-POST        /api/sendPicture                  @controllers.Administrator.sendPicture
 POST        /api/addStaff                     @controllers.Staff.addNewStaff
+POST        /api/sendPicture                  @controllers.Administrator.sendPicture
 
 GET         /api/getStaffByCode               @controllers.Staff.getStaffByQrCode(code: String)
 GET         /api/persons                      @controllers.Staff.getStaff
