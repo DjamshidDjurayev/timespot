@@ -13,10 +13,10 @@ object Db extends Instance(
     Entity[Positions](),
     Entity[History](),
     Entity[Admin]()),
-    url = "jdbc:postgresql://ec2-174-129-18-170.compute-1.amazonaws.com:5432/dapr1bg4t9b4l9",
+    url = "jdbc:postgresql://ec2-174-129-18-170.compute-1.amazonaws.com:5432/dd83d204polrve",
 //    url = "jdbc:postgresql://localhost/timespot_db",
-    user = "slfsepqvvvepcc",
-    password = "bIiQwGhngRHc4dTXpPKUaKySAK",
+    user = "ntlmnyvtuvpwpv",
+    password = "_AwM27MHmyBzkIXPPDOVu1I32L",
 //    user = "postgres",
 //    password = "postgres",
     initMode = InitMode.Create
