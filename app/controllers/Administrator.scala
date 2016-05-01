@@ -36,7 +36,7 @@ class Administrator extends Controller {
       import java.io.File
       val filename = picture.filename
       val contentType = picture.contentType
-      picture.ref.moveTo(new File(s"public/images/$filename"))
+      picture.ref.moveTo(new File(s"/public/images/$filename"))
       Ok("File uploaded")
     }.getOrElse {
       BadRequest("error")

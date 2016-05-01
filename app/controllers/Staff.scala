@@ -160,6 +160,8 @@ class Staff extends Controller {
       val position = (json \ "position").as[String]
       val email = (json \ "email").as[String]
       val staff = new Staffer(name, image, new DateTime(birth), surname, middle_name, code, position, email)
+      Db.save[Staffer](staff)
+
       Ok(Json.toJson(staff))
     }
     }.getOrElse {
