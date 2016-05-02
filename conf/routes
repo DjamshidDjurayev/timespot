@@ -35,7 +35,7 @@ GET         /api/positions                    @controllers.Administrator.getPosi
 
 GET         /api/addPosition                  @controllers.Administrator.addPosition(title: String)
 GET         /api/deletePosition               @controllers.Administrator.deletePosition(title: String)
-GET         /api/editPosition                 @controllers.Administrator.editPosition(title: String)
+GET         /api/editPosition                 @controllers.Administrator.editPosition(oldTitle: String, newTitle: String)
 #GET         /api/addNews               @controllers.News.addOneNews(title: String, description: String)
 GET         /api/adminAuth                    @controllers.Administrator.adminAuth(login: String, password: String)
 GET         /api/checkCode                    @controllers.Staff.checkCode
