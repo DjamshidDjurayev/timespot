@@ -48,7 +48,7 @@ class Administrator extends Controller {
     }
   }
 
-  def editPosition(oldTitle: String, newTitle: String) = {
+  def editPosition(oldTitle: String, newTitle: String) = Action {
     Positions.findByTitle(oldTitle).map {
       position => {
         Positions.update(position, newTitle)
