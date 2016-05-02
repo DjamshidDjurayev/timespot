@@ -75,7 +75,6 @@ object Staffer {
     Db.query[Staffer].whereEqual("id", id).fetchOne()
   }
 
-
   def findByQrCode(code: String) = {
     Db.query[Staffer].whereEqual("code", code).fetchOne()
   }

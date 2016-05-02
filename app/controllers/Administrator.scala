@@ -26,9 +26,37 @@ class Administrator extends Controller {
   }
 
   def addPosition(title: String) = Action {
-    val position = new Positions(title)
-    val result = Db.save[Positions](position)
-    Ok("success")
+    Positions.findByTitle(title).map {
+      position => {
+        BadRequest(Json.obj("status" -> "fail", "message" -> "already exist"))
+      }
+    }.getOrElse {
+      val position = new Positions(title)
+      Db.save[Positions](position)
+      Ok(Json.obj("result" -> "success", "message" -> "position added"))
+    }
+  }
+
+  def deletePosition(title: String) = Action {
+    Positions.findByTitle(title).map {
+      position => {
+        Positions.delete(position)
+        Ok(Json.obj("result" -> "success", "message" -> "position deleted"))
+      }
+    }.getOrElse {
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Position not found"))
+    }
+  }
+
+  def editPosition(oldTitle: String, newTitle: String) = {
+    Positions.findByTitle(oldTitle).map {
+      position => {
+        Positions.update(position, newTitle)
+        Ok(Json.obj("result" -> "success", "message" -> "position edited"))
+      }
+    }.getOrElse {
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Position not found"))
+    }
   }
 
   def sendPicture = Action(parse.multipartFormData) { request =>

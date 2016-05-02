@@ -85,15 +85,6 @@ class News extends Controller {
 //      }
 //    )
 //  }
-  def deleteOneStaff(id: String) = Action {
-  Staffer.findByQrCode(id).map {
-    staff => {
-      Staffer.deleteByCode(staff)
-      Ok(Json.obj("result" -> "success", "message" -> "success"))
-    }
-  }.getOrElse {
-    BadRequest(Json.obj("status" -> "fail", "message" -> "Staff not found"))
-  }
-  }
+
 
 }
