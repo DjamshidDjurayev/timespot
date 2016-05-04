@@ -16,7 +16,7 @@ class Administrator extends Controller {
         Ok(Json.obj("status" -> "success", "id" -> admin.id))
       }
     }.getOrElse {
-      BadRequest(Json.obj("status" -> "fail", "message" -> "Administrator not found"))
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Администратор не найден"))
     }
   }
 
@@ -28,12 +28,12 @@ class Administrator extends Controller {
   def addPosition(title: String) = Action {
     Positions.findByTitle(title).map {
       position => {
-        BadRequest(Json.obj("status" -> "fail", "message" -> "already exist"))
+        Ok(Json.obj("status" -> "fail", "message" -> "Уже существует"))
       }
     }.getOrElse {
       val position = new Positions(title)
       Db.save[Positions](position)
-      Ok(Json.obj("result" -> "success", "message" -> "position added"))
+      Ok(Json.obj("status" -> "success", "message" -> "Должность добавлена"))
     }
   }
 
@@ -41,21 +41,22 @@ class Administrator extends Controller {
     Positions.findByTitle(title).map {
       position => {
         Positions.delete(position)
-        Ok(Json.obj("result" -> "success", "message" -> "position deleted"))
+        Ok(Json.obj("status" -> "success", "message" -> "Должность удалена"))
       }
     }.getOrElse {
-      BadRequest(Json.obj("status" -> "fail", "message" -> "Position not found"))
+      Ok(Json.obj("status" -> "fail", "message" -> "Должность не найдена"))
     }
   }
 
   def editPosition(oldTitle: String, newTitle: String) = Action {
-    Positions.findByTitle(oldTitle).map {
+    Positions.findByTitle(newTitle).map {
       position => {
-        Positions.update(position, newTitle)
-        Ok(Json.obj("result" -> "success", "message" -> "position edited"))
+        Ok(Json.obj("status" -> "fail", "message" -> "Уже существует"))
       }
     }.getOrElse {
-      BadRequest(Json.obj("status" -> "fail", "message" -> "Position not found"))
+      val position = Positions.findByTitle(oldTitle)
+      Positions.update(position.get, newTitle)
+      Ok(Json.obj("status" -> "success", "message" -> "Должность изменена"))
     }
   }
 
