@@ -52,7 +52,7 @@ class Administrator extends Controller {
 
     Positions.findByTitle(newTitle).map {
       position => {
-        BadRequest(Json.obj("status" -> "fail", "message" -> "Уже существует"))
+        Ok(Json.obj("status" -> "fail", "message" -> "Уже существует"))
       }
     }.getOrElse {
       val position = Positions.findByTitle(oldTitle)
