@@ -49,6 +49,11 @@ class Administrator extends Controller {
   }
 
   def editPosition(oldTitle: String, newTitle: String) = Action {
+
+    if(oldTitle == newTitle) {
+      Ok(Json.obj("status" -> "fail", "message" -> "Уже существует"))
+    }
+
     Positions.findByTitle(newTitle).map {
       position => {
         Ok(Json.obj("status" -> "fail", "message" -> "Уже существует"))
