@@ -39,7 +39,7 @@ class Staff extends Controller {
   }
 
   def getStaff = Action {
-    val staffs = Db.query[Staffer].fetch()
+    val staffs = Db.query[Staffer].order("id", true).fetch()
 //    staffs.
     Ok(Json.toJson(staffs))
   }
@@ -148,10 +148,10 @@ class Staff extends Controller {
     Staffer.findByQrCode(id).map {
       staff => {
         Staffer.deleteByCode(staff)
-        Ok(Json.obj("result" -> "success", "message" -> "success"))
+        Ok(Json.obj("status" -> "success", "message" -> "Сотрудник удален"))
       }
     }.getOrElse {
-      BadRequest(Json.obj("status" -> "fail", "message" -> "Staff not found"))
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Сотрудник не найден"))
     }
   }
 
@@ -174,12 +174,40 @@ class Staff extends Controller {
       val staff = new Staffer(name, image, new DateTime(birth), surname, middle_name, code, position, email)
       Db.save[Staffer](staff)
 
-      Ok(Json.toJson(staff))
+      Ok(Json.obj("status" -> "success", "message" -> "Сотрудник добавлен"))
     }
     }.getOrElse {
       BadRequest("Expecting application/json request body")
     }
     }
+
+  def editStaff() = Action { implicit request =>
+    val body: AnyContent = request.body
+    val jsonBody: Option[JsValue] = body.asJson
+
+    jsonBody.map { json => {
+      val name = (json \ "name").as[String]
+      val image = (json \ "image").as[String]
+      val birth = (json \ "birth").as[Long]
+      val surname = (json \ "surname").as[String]
+      val middle_name = (json \ "middle_name").as[String]
+      val code = (json \ "code").as[String]
+      val position = (json \ "position").as[String]
+      val email = (json \ "email").as[String]
+
+      Staffer.findByQrCode(code).map {
+        staffer => {
+          Staffer.updateStaffer(staffer, name, image, new DateTime(birth), surname, middle_name, position, email)
+          Ok(Json.obj("status" -> "success", "message" -> "Сотрудник изменен"))
+        }
+      }.getOrElse{
+        Ok(Json.obj("status" -> "fail", "message" -> "Сотрудник не найден"))
+      }
+    }
+    }.getOrElse {
+      BadRequest("Expecting application/json request body")
+    }
+  }
 
 
 

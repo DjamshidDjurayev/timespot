@@ -26,6 +26,9 @@ POST        /news/:id/delete                  @controllers.News.delete(id:Long)
 
 # Api (json)
 POST        /api/addStaff                     @controllers.Staff.addNewStaff
+POST        /api/editStaff                    @controllers.Staff.editStaff
+GET         /api/deleteStaff                  @controllers.Staff.deleteOneStaff(id:String)
+
 POST        /api/sendPicture                  @controllers.Administrator.sendPicture
 
 GET         /api/getStaffByCode               @controllers.Staff.getStaffByQrCode(code: String)
@@ -45,7 +48,6 @@ GET         /api/getHistoryByStaff            @controllers.Staff.getHistory(user
 GET         /api/getStaffActionsByDate        @controllers.Staff.getActionsByDate(userId: String, date: Long)
 
 GET         /api/getStaffById                 @controllers.Staff.getOneStaff(id:Long)
-GET         /api/deleteStaff                  @controllers.Staff.deleteOneStaff(id:String)
 GET         /api/*file                        @controllers.Assets.at(path="/public", file)
 
 

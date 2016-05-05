@@ -21,7 +21,7 @@ class Administrator extends Controller {
   }
 
   def getPositions = Action {
-    val positions = Db.query[Positions].fetch()
+    val positions = Db.query[Positions].order("id", true).fetch()
     Ok(Json.toJson(positions))
   }
 

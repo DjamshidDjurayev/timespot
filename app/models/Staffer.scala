@@ -87,5 +87,12 @@ object Staffer {
     Db.delete[Staffer](staffer)
   }
 
+  def updateStaffer(staffer: Staffer, name: String, image: String,
+                    birth: DateTime, surname: String, middle_name: String,
+                    position: String, email: String) = {
+    Db.save(staffer.copy(name = name, image = image, birth = birth,
+      surname = surname, middle_name = middle_name, position = position, email = email))
+  }
+
 }
 

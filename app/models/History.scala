@@ -19,12 +19,12 @@ object History {
 
 
   def findById(staffer: Staffer with Persisted) = {
-    Db.query[History].whereEqual("staffer.id", staffer.id).fetch()
+    Db.query[History].whereEqual("staffer.id", staffer.id).order("id", true).fetch()
   }
 
   def getStaffActionsByDate(staffer: Staffer with Persisted, dataTime: Long) = {
     val bal = new LocalDate(dataTime)
-    Db.query[History].whereEqual("staffer.id", staffer.id).whereEqual("action_value", bal).fetch()
+    Db.query[History].whereEqual("staffer.id", staffer.id).whereEqual("action_value", bal).order("id", true).fetch()
   }
 
 }

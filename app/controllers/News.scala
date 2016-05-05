@@ -66,7 +66,7 @@ class News extends Controller {
   }
 
   def getNews = Action {
-    val news = Db.query[PaperNew].fetch()
+    val news = Db.query[PaperNew].order("id", true).fetch()
     Ok(Json.toJson(news))
   }
 
