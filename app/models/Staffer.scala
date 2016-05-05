@@ -89,8 +89,8 @@ object Staffer {
 
   def updateStaffer(staffer: Staffer, name: String, image: String,
                     birth: DateTime, surname: String, middle_name: String,
-                    position: String, email: String) = {
-    Db.save(staffer.copy(name = name, image = image, birth = birth,
+                    code: String, position: String, email: String) = {
+    Db.save(staffer.copy(name = name, image = image, birth = birth, code = code,
       surname = surname, middle_name = middle_name, position = position, email = email))
   }
 

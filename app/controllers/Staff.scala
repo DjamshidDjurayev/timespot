@@ -197,7 +197,7 @@ class Staff extends Controller {
 
       Staffer.findByQrCode(code).map {
         staffer => {
-          Staffer.updateStaffer(staffer, name, image, new DateTime(birth), surname, middle_name, position, email)
+          Staffer.updateStaffer(staffer, name, image, new DateTime(birth), surname, middle_name, code, position, email)
           Ok(Json.obj("status" -> "success", "message" -> "Сотрудник изменен"))
         }
       }.getOrElse{
