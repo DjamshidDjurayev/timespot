@@ -84,19 +84,28 @@ class Staff extends Controller {
     Home.flashing("success" -> "User has been deleted")
   }
 
-  def addHistory(code: String, action: Int) = Action {
+  def addHistory(code: String) = Action {
 
     val actionDateTime = DateTime.now() // TODO check
+    val staffer = Staffer.findByQrCode(code)
 
-    Staffer.findByQrCode(code).map {
-      staff => {
-        val history  = History(staff, action, actionDateTime, actionDateTime.toLocalDate)
+    val counter: Int = History.historyCount(staffer.get, actionDateTime.getMillis)
+
+    counter match {
+      case 0 => {
+        val history = History(staffer.get, 0, actionDateTime, actionDateTime.toLocalDate)
         Db.save[History](history)
-        Ok(Json.obj("status" -> "success", "message" -> "success"))
+        Ok(Json.obj("status" -> "success", "count" -> counter ))
       }
-    }.getOrElse {
-      BadRequest(Json.obj("status" -> "fail", "message" -> "not found"))
-    }
+      case 1 => {
+        val history = History(staffer.get, 1, actionDateTime, actionDateTime.toLocalDate)
+        Db.save[History](history)
+        Ok(Json.obj("status" -> "success", "count" -> counter))
+      }
+      case 2 => {
+        Ok(Json.obj("status" -> "fail", "count" -> counter))
+      }
+      }
 
   }
 

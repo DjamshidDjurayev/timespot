@@ -27,4 +27,9 @@ object History {
     Db.query[History].whereEqual("staffer.id", staffer.id).whereEqual("action_value", bal).order("id", true).fetch()
   }
 
+  def historyCount(staffer: Staffer with Persisted, date: Long) = {
+    val bal = new LocalDate(date)
+    Db.query[History].whereEqual("staffer.id", staffer.id).whereEqual("action_value", bal).count()
+  }
+
 }
