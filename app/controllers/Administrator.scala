@@ -73,6 +73,18 @@ class Administrator extends Controller {
     }
   }
 
+  def addAdmin(name: String, surname: String, login: String, password: String) = Action {
+    val admin = new Admin(name,surname,login,password)
+    Admin.save(admin)
+    Ok(Json.obj("status" -> "success", "message" -> "Администратор добавлен"))
+  }
+
+  def deleteAdmin(login: String, password: String) = Action {
+    val admin = Admin.findAdmin(login, password)
+    Admin.delete(admin.get)
+    Ok(Json.obj("status" -> "success", "message" -> "Администратор удален"))
+  }
+
 //  def sendPicture = Action(parse.temporaryFile) { request =>
 //    request.body.moveTo(new File("public/images"))
 //    Ok("File uploaded")

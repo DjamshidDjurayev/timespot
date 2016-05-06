@@ -40,8 +40,16 @@ object Admin {
     Db.query[Admin with Persisted].whereEqual("login", login).whereEqual("password", password).fetchOne()
   }
 
-  def getAdminId(login: String, password: String): Unit = {
+  def getAdminId(login: String, password: String) = {
     Db.query[Admin].whereEqual("login", login).whereEqual("password", password).fetchOneId()
+  }
+
+  def save(admin: Admin) = {
+    Db.save[Admin](admin)
+  }
+
+  def delete(admin: Admin) = {
+    Db.delete[Admin](admin)
   }
 
 //  def isExist(login: String, password: String) = {

@@ -41,6 +41,9 @@ GET         /api/deletePosition               @controllers.Administrator.deleteP
 GET         /api/editPosition                 @controllers.Administrator.editPosition(oldTitle: String, newTitle: String)
 #GET         /api/addNews               @controllers.News.addOneNews(title: String, description: String)
 GET         /api/adminAuth                    @controllers.Administrator.adminAuth(login: String, password: String)
+GET         /api/addAdmin                     @controllers.Administrator.addAdmin(name: String, surname: String, login: String, password: String)
+GET         /api/deleteAdmin                  @controllers.Administrator.deleteAdmin(login: String, password: String)
+
 GET         /api/checkCode                    @controllers.Staff.checkCode
 
 GET         /api/addHistory                   @controllers.Staff.addHistory(userId: String)
