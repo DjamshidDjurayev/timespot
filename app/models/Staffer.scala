@@ -1,7 +1,7 @@
 package models
 
 
-import org.joda.time.DateTime
+import org.joda.time.{LocalDate, DateTime}
 import play.api.libs.json.{Writes, Reads, JsPath, Json}
 import sorm._
 import play.api.libs.functional.syntax._
@@ -93,6 +93,11 @@ object Staffer {
     Db.save(staffer.copy(name = name, image = image, birth = birth,
       surname = surname, middle_name = middle_name, position = position, email = email))
   }
+
+  def staffCount() = {
+    Db.query[Staffer].count()
+  }
+
 
 }
 

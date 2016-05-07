@@ -52,6 +52,10 @@ object Admin {
     Db.delete[Admin](admin)
   }
 
+  def adminCount() = {
+    Db.query[Admin].count()
+  }
+
 //  def isExist(login: String, password: String) = {
 //    DBase.query[Admin].exists()
 //  }

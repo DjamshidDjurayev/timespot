@@ -27,4 +27,8 @@ object Positions {
     Db.save(positions.copy(title = title))
   }
 
+  def positionCount() = {
+    Db.query[Positions].count()
+  }
+
 }

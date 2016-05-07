@@ -46,4 +46,8 @@ object PaperNew {
     Db.delete[PaperNew](Db.fetchById[PaperNew](id))
   }
 
+  def newsCount() = {
+    Db.query[PaperNew].count()
+  }
+
 }

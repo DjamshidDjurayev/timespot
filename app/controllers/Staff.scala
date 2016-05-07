@@ -2,7 +2,7 @@ package controllers
 
 
 
-import models.{BearerTokenGenerator, History, Db, Staffer}
+import models._
 import org.joda.time.DateTime
 import play.api.data.Form
 import play.api.data.Forms._
@@ -218,6 +218,17 @@ class Staff extends Controller {
     }
   }
 
+  def getAllHistory(login: String, password: String) = Action {
+
+    Admin.findAdmin(login, password).map {
+      admin => {
+        val histories = Db.query[History].order("id", true).fetch()
+        Ok(Json.toJson(histories))
+      }
+    }.getOrElse {
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Администратор не найден"))
+    }
 
 
+  }
 }

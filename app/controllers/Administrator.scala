@@ -113,4 +113,23 @@ class Administrator extends Controller {
 //    }
 //  }
 
+  def getStatistics(login: String, password: String) = Action {
+    Admin.findAdmin(login, password).map {
+      admin => {
+        val staffCounter = Staffer.staffCount()
+        val historyCounter = History.historyGeneralCount()
+        val newsCounter = PaperNew.newsCount()
+        val adminCounter = Admin.adminCount()
+        val positionCounter = Positions.positionCount()
+        Ok(Json.obj("staff_count" -> staffCounter,
+          "history_count" -> historyCounter,
+        "news_count" -> newsCounter,
+        "admin_count" -> adminCounter,
+        "position_count" -> positionCounter))
+      }
+    }.getOrElse {
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Администратор не найден"))
+    }
+  }
+
 }

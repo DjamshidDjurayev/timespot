@@ -46,6 +46,8 @@ GET         /api/deleteAdmin                  @controllers.Administrator.deleteA
 
 GET         /api/checkCode                    @controllers.Staff.checkCode
 
+GET         /api/getStatistics                @controllers.Administrator.getStatistics(login: String, password: String)
+GET         /api/getAllHistory                @controllers.Staff.getAllHistory(login: String, password: String)
 GET         /api/addHistory                   @controllers.Staff.addHistory(userId: String)
 GET         /api/getHistoryByStaff            @controllers.Staff.getHistory(userId: String)
 GET         /api/getStaffActionsByDate        @controllers.Staff.getActionsByDate(userId: String, date: Long)

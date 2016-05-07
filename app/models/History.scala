@@ -32,4 +32,9 @@ object History {
     Db.query[History].whereEqual("staffer.id", staffer.id).whereEqual("action_value", bal).count()
   }
 
+  def historyGeneralCount() = {
+    Db.query[History].count()
+  }
+
+
 }
