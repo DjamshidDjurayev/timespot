@@ -17,8 +17,7 @@ class News extends Controller {
     mapping(
       "title" -> nonEmptyText,
       "description" -> nonEmptyText,
-      "creation_date" -> jodaDate,
-      "image" -> text
+      "creation_date" -> jodaDate
     )(PaperNew.apply)(PaperNew.unapply)
   )
 

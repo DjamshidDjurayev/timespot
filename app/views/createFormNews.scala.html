@@ -14,14 +14,12 @@
         <fieldset>
             @inputText(newsForm("title"), '_label -> "Название", '_help -> "")
             @textarea(newsForm("description"), '_label -> "Описание", '_help -> "")
-            @inputDate(newsForm("creation_date"), '_label -> "Дата рождения", '_help -> "")
-            @inputFile(newsForm("image"), '_label -> "Фото", '_help -> "")
-
+            @inputDate(newsForm("creation_date"), '_label -> "Дата добавления", '_help -> "")
 
         </fieldset>
         
         <div class="actions">
-            <input type="submit" value="Созать новость" class="btn success"> или
+            <input type="submit" value="Добавить новость" class="btn success"> или
             <a href="@routes.News.list2()" class="btn">Отмена</a>
         </div>
         
