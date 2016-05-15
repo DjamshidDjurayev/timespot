@@ -91,38 +91,41 @@ class Staff extends Controller {
     val firstNames = Device.getAllDevices().map(_.token).toList
 
     val actionDateTime = DateTime.now() // TODO check
-    val staffer = Staffer.findByQrCode(code)
 
-    val counter: Int = History.historyCount(staffer.get, actionDateTime.getMillis)
+    Staffer.findByQrCode(code).map {
+      staffer => {
+        val counter: Int = History.historyCount(staffer, actionDateTime.getMillis)
+        counter match {
+          case 0 => {
+            val history = History(staffer, 0, actionDateTime, actionDateTime.toLocalDate)
+            Db.save[History](history)
 
-    counter match {
-      case 0 => {
-        val history = History(staffer.get, 0, actionDateTime, actionDateTime.toLocalDate)
-        Db.save[History](history)
+            server.send(firstNames, Map(
+              "message" -> "Сотрудник пришел",
+              "title" -> "Сотрудник пришел"
+            ))
 
-        server.send(firstNames, Map(
-          "message" -> "Сотрудник пришел",
-          "title" -> "Сотрудник пришел"
-        ))
+            Ok(Json.obj("status" -> "success", "count" -> counter, "staff" -> Json.toJson(staffer)))
+          }
+          case 1 => {
+            val history = History(staffer, 1, actionDateTime, actionDateTime.toLocalDate)
+            Db.save[History](history)
 
-        Ok(Json.obj("status" -> "success", "count" -> counter ))
+            server.send(firstNames, Map(
+              "message" -> "Сотрудник ушел",
+              "title" -> "Сотрудник ушел"
+            ))
+
+            Ok(Json.obj("status" -> "success", "count" -> counter, "staff" -> Json.toJson(staffer)))
+          }
+          case 2 => {
+            Ok(Json.obj("status" -> "fail", "count" -> counter,"staff" -> Json.toJson(staffer)))
+          }
+        }
       }
-      case 1 => {
-        val history = History(staffer.get, 1, actionDateTime, actionDateTime.toLocalDate)
-        Db.save[History](history)
-
-        server.send(firstNames, Map(
-          "message" -> "Сотрудник ушел",
-          "title" -> "Сотрудник ушел"
-        ))
-
-        Ok(Json.obj("status" -> "success", "count" -> counter))
-      }
-      case 2 => {
-        Ok(Json.obj("status" -> "fail", "count" -> counter))
-      }
-      }
-
+    }.getOrElse {
+      Ok(Json.obj("status" -> "fail", "count" -> -1))
+    }
   }
 
 
