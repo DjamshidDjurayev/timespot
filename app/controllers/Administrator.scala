@@ -23,6 +23,10 @@ class Administrator extends Controller {
     Ok(Json.toJson(positions))
   }
 
+  def getAdmins() = Action {
+    Ok(Json.toJson(Db.query[Admin].fetch()))
+  }
+
   def addPosition(title: String) = Action {
     Positions.findByTitle(title).map {
       position => {
@@ -72,15 +76,28 @@ class Administrator extends Controller {
   }
 
   def addAdmin(name: String, surname: String, login: String, password: String) = Action {
-    val admin = new Admin(name,surname,login,password)
-    Admin.save(admin)
-    Ok(Json.obj("status" -> "success", "message" -> "Администратор добавлен"))
+
+    Admin.findAdmin(login: String, password: String).map {
+      admin => {
+        Ok(Json.obj("status" -> "fail", "message" -> "Уже существует"))
+      }
+    }.getOrElse {
+      val admin = new Admin(name,surname,login,password)
+      Admin.save(admin)
+      Ok(Json.obj("status" -> "success", "message" -> "Администратор добавлен"))
+    }
   }
 
+
   def deleteAdmin(login: String, password: String) = Action {
-    val admin = Admin.findAdmin(login, password)
-    Admin.delete(admin.get)
-    Ok(Json.obj("status" -> "success", "message" -> "Администратор удален"))
+    Admin.findAdmin(login, password).map {
+      admin => {
+        Admin.delete(admin)
+        Ok(Json.obj("status" -> "success", "message" -> "Администратор удален"))
+      }
+    }.getOrElse {
+      Ok(Json.obj("status" -> "success", "message" -> "Не существует"))
+    }
   }
 
 //  def sendPicture = Action(parse.temporaryFile) { request =>

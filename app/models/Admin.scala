@@ -40,6 +40,10 @@ object Admin {
     Db.query[Admin with Persisted].whereEqual("login", login).whereEqual("password", password).fetchOne()
   }
 
+  def findAdminByLogin(login: String) = {
+    Db.query[Admin with Persisted].whereEqual("login", login).fetchOne()
+  }
+
   def getAdminId(login: String, password: String) = {
     Db.query[Admin].whereEqual("login", login).whereEqual("password", password).fetchOneId()
   }

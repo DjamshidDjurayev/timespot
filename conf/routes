@@ -43,7 +43,7 @@ GET         /api/editPosition                 @controllers.Administrator.editPos
 GET         /api/adminAuth                    @controllers.Administrator.adminAuth(login: String, password: String)
 GET         /api/addAdmin                     @controllers.Administrator.addAdmin(name: String, surname: String, login: String, password: String)
 GET         /api/deleteAdmin                  @controllers.Administrator.deleteAdmin(login: String, password: String)
-
+GET         /api/allAdmins                    @controllers.Administrator.getAdmins
 GET         /api/checkCode                    @controllers.Staff.checkCode
 
 GET         /api/device/registerDevice        @controllers.DeviceController.registerDevice(tokenId: String)
