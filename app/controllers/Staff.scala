@@ -101,8 +101,9 @@ class Staff extends Controller {
             Db.save[History](history)
 
             server.send(firstNames, Map(
-              "message" -> "Сотрудник пришел",
-              "title" -> "Сотрудник пришел"
+              "message" ->" пришел",
+              "name" -> staffer.name,
+              "surname" -> staffer.surname
             ))
 
             Ok(Json.obj("status" -> "success", "count" -> counter, "staff" -> Json.toJson(staffer)))
@@ -112,8 +113,9 @@ class Staff extends Controller {
             Db.save[History](history)
 
             server.send(firstNames, Map(
-              "message" -> "Сотрудник ушел",
-              "title" -> "Сотрудник ушел"
+              "message" ->" ушел",
+              "name" -> staffer.name,
+              "surname" -> staffer.surname
             ))
 
             Ok(Json.obj("status" -> "success", "count" -> counter, "staff" -> Json.toJson(staffer)))
