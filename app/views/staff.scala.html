@@ -58,7 +58,7 @@
             </section>
 
             <div id="actions">
-                <a class="btn success" id="add" href="@routes.Staff.create()">Добавить сотрудника</a>
+                <a class="btn success" id="add" href="#">Добавить сотрудника</a>
             </div>
 
 
@@ -91,7 +91,7 @@
                 @users.map {
                     case (staffer) => {
                         <tr>
-                            <td><h5><a href="@routes.Staff.edit(staffer.id)">@staffer.name @staffer.surname @staffer.middle_name</a></h5></td>
+                            <td><h5><a href="#">@staffer.name @staffer.surname @staffer.middle_name</a></h5></td>
                         </tr>
                     }
                 }

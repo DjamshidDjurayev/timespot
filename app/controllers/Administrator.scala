@@ -1,14 +1,12 @@
 package controllers
 
-import java.io.File
+import java.util.concurrent.Future
 
 import models._
-import org.joda.time.DateTime
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 
 class Administrator extends Controller {
-
   def adminAuth(login: String, password: String) = Action {
 
     Admin.findAdmin(login, password).map {

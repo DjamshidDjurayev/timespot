@@ -1,9 +1,11 @@
 package controllers
 
 
+import java.util.SimpleTimeZone
 
 import models._
-import org.joda.time.DateTime
+import org.joda.time.{DateTimeZone, DateTime}
+import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.{JsValue, Json}
@@ -16,27 +18,27 @@ class Staff extends Controller {
 
   val Home = Redirect(routes.Staff.list(0, 2, ""))
 
-  val stafferForm: Form[Staffer] = Form(
-    mapping(
-      "name" -> text,
-      "image" -> text,
-      "birth" -> jodaDate("yyyy-MM-dd"),
-      "surname" -> text,
-      "middle_name" -> text,
-      "code" -> nonEmptyText,
-      "position" -> text,
-      "email" -> email
-    )(Staffer.apply)(Staffer.unapply))
+//  val stafferForm: Form[Staffer] = Form(
+//    mapping(
+//      "name" -> text,
+//      "image" -> text,
+//      "birth" -> jodaDate("yyyy-MM-dd"),
+//      "surname" -> text,
+//      "middle_name" -> text,
+//      "code" -> nonEmptyText,
+//      "position" -> text,
+//      "email" -> email
+//    )(Staffer.apply)(Staffer.unapply))
 
-  def addStaff = Action { implicit request =>
-    stafferForm.bindFromRequest().fold(
-      formWithErrors => BadRequest(views.html.createForm(formWithErrors)),
-      staff => {
-        Db.save[Staffer](staff)
-        Home.flashing("success" -> "User %s has been created".format(staff.name))
-      }
-    )
-  }
+//  def addStaff = Action { implicit request =>
+//    stafferForm.bindFromRequest().fold(
+//      formWithErrors => BadRequest(views.html.createForm(formWithErrors)),
+//      staff => {
+//        Db.save[Staffer](staff)
+//        Home.flashing("success" -> "User %s has been created".format(staff.name))
+//      }
+//    )
+//  }
 
   def getStaff = Action {
     val staffs = Db.query[Staffer].order("id", true).fetch()
@@ -52,9 +54,9 @@ class Staff extends Controller {
     Ok(Json.toJson(Staffer.findByQrCode(code)))
   }
 
-  def create = Action {
-    Ok(views.html.createForm(stafferForm))
-  }
+//  def create = Action {
+//    Ok(views.html.createForm(stafferForm))
+//  }
 
   def list(page: Int, orderBy: Int, filter: String) = Action { implicit request =>
     Ok(views.html.staff(
@@ -63,21 +65,21 @@ class Staff extends Controller {
     ))
   }
 
-  def update(id: Long) = Action { implicit request =>
-    stafferForm.bindFromRequest.fold(
-    formWithErrors => BadRequest(views.html.editForm(id, formWithErrors)),
-    staff => {
-      Staffer.update(id, staff)
-      Home.flashing("success" -> "User %s has been updated".format(staff.name))
-    }
-    )
-  }
+//  def update(id: Long) = Action { implicit request =>
+//    stafferForm.bindFromRequest.fold(
+//    formWithErrors => BadRequest(views.html.editForm(id, formWithErrors)),
+//    staff => {
+//      Staffer.update(id, staff)
+//      Home.flashing("success" -> "User %s has been updated".format(staff.name))
+//    }
+//    )
+//  }
 
-  def edit(id: Long) = Action { implicit request =>
-    Staffer.findById(id).map { staff =>
-      Ok(views.html.editForm(id, stafferForm.fill(staff)))
-    }.getOrElse(NotFound)
-  }
+//  def edit(id: Long) = Action { implicit request =>
+//    Staffer.findById(id).map { staff =>
+//      Ok(views.html.editForm(id, stafferForm.fill(staff)))
+//    }.getOrElse(NotFound)
+//  }
 
   def delete(id: Long) = Action {
     Staffer.delete(id)
@@ -85,6 +87,8 @@ class Staff extends Controller {
   }
 
   def addHistory(code: String) = Action {
+    val server = new GcmRestServer("AIzaSyBZC_-8MCJu6tM7H1P_RI7dfvXD7pMaGaY")
+    val firstNames = Device.getAllDevices().map(_.token).toList
 
     val actionDateTime = DateTime.now() // TODO check
     val staffer = Staffer.findByQrCode(code)
@@ -95,11 +99,23 @@ class Staff extends Controller {
       case 0 => {
         val history = History(staffer.get, 0, actionDateTime, actionDateTime.toLocalDate)
         Db.save[History](history)
+
+        server.send(firstNames, Map(
+          "message" -> "Сотрудник пришел",
+          "title" -> "Сотрудник пришел"
+        ))
+
         Ok(Json.obj("status" -> "success", "count" -> counter ))
       }
       case 1 => {
         val history = History(staffer.get, 1, actionDateTime, actionDateTime.toLocalDate)
         Db.save[History](history)
+
+        server.send(firstNames, Map(
+          "message" -> "Сотрудник ушел",
+          "title" -> "Сотрудник ушел"
+        ))
+
         Ok(Json.obj("status" -> "success", "count" -> counter))
       }
       case 2 => {
@@ -164,8 +180,6 @@ class Staff extends Controller {
     }
   }
 
-
-
   // handling POST request  from client side
   def addNewStaff() = Action { implicit request =>
     val body: AnyContent = request.body
@@ -178,9 +192,11 @@ class Staff extends Controller {
       val surname = (json \ "surname").as[String]
       val middle_name = (json \ "middle_name").as[String]
       val code = (json \ "code").as[String]
-      val position = (json \ "position").as[String]
+      val position = (json \ "positions" \ "title").as[String]
       val email = (json \ "email").as[String]
-      val staff = new Staffer(name, image, new DateTime(birth), surname, middle_name, code, position, email)
+
+      val staff = new Staffer(name, image, new DateTime(birth), surname, middle_name, code,
+        Positions.findByTitle(position).get, email)
       Db.save[Staffer](staff)
 
       Ok(Json.obj("status" -> "success", "message" -> "Сотрудник добавлен"))
@@ -201,12 +217,16 @@ class Staff extends Controller {
       val surname = (json \ "surname").as[String]
       val middle_name = (json \ "middle_name").as[String]
       val code = (json \ "code").as[String]
-      val position = (json \ "position").as[String]
+      val position = (json \ "positions" \ "title").as[String]
       val email = (json \ "email").as[String]
+
+      Logger.debug("positions: " + position)
+
 
       Staffer.findByQrCode(code).map {
         staffer => {
-          Staffer.updateStaffer(staffer, name, image, new DateTime(birth), surname, middle_name, position, email)
+          Staffer.updateStaffer(staffer, name, image, new DateTime(birth), surname, middle_name,
+            Positions.findByTitle(position).get, email)
           Ok(Json.obj("status" -> "success", "message" -> "Сотрудник изменен"))
         }
       }.getOrElse{
@@ -228,7 +248,6 @@ class Staff extends Controller {
     }.getOrElse {
       BadRequest(Json.obj("status" -> "fail", "message" -> "Администратор не найден"))
     }
-
 
   }
 }

@@ -36,5 +36,4 @@ object History {
     Db.query[History].count()
   }
 
-
 }

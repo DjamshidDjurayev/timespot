@@ -9,17 +9,17 @@ GET         /news/                            @controllers.News.list2(p:Int ?= 0
 
 #GET         /computers           @controllers.Staff.list(p:Int ?= 0, s:Int ?= 2, f ?= "")
 
-GET         /staff/new                        @controllers.Staff.create
+#GET         /staff/new                        @controllers.Staff.create
 GET         /news/new                         @controllers.News.create
 
-POST        /staffer                          @controllers.Staff.addStaff
+#POST        /staffer                          @controllers.Staff.addStaff
 POST        /news                             @controllers.News.addNews
 
 GET         /news/:id                         @controllers.News.edit(id:Long)
 POST        /news/:id                         @controllers.News.update(id:Long)
 
-GET         /staffer/:id                      @controllers.Staff.edit(id:Long)
-POST        /staffer/:id                      @controllers.Staff.update(id:Long)
+#GET         /staffer/:id                      @controllers.Staff.edit(id:Long)
+#POST        /staffer/:id                      @controllers.Staff.update(id:Long)
 
 POST        /staffer/:id/delete               @controllers.Staff.delete(id:Long)
 POST        /news/:id/delete                  @controllers.News.delete(id:Long)
@@ -45,6 +45,11 @@ GET         /api/addAdmin                     @controllers.Administrator.addAdmi
 GET         /api/deleteAdmin                  @controllers.Administrator.deleteAdmin(login: String, password: String)
 
 GET         /api/checkCode                    @controllers.Staff.checkCode
+
+GET         /api/device/registerDevice        @controllers.DeviceController.registerDevice(tokenId: String)
+GET         /api/device/removeDevice          @controllers.DeviceController.removeDevice(tokenId: String)
+GET         /api/device/updateDevice          @controllers.DeviceController.updateDevice(tokenId: String)
+GET         /api/device/getAllDevices         @controllers.DeviceController.getAllDevices
 
 GET         /api/getStatistics                @controllers.Administrator.getStatistics(login: String, password: String)
 GET         /api/getAllHistory                @controllers.Staff.getAllHistory(login: String, password: String)

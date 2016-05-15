@@ -9,7 +9,7 @@ import play.api.libs.functional.syntax._
 /**
  * Created by dzhuraev on 3/15/16.
  */
-case class Staffer(name: String, image: String, birth: DateTime, surname: String, middle_name: String, code: String, position: String, email: String)
+case class Staffer(name: String, image: String, birth: DateTime, surname: String, middle_name: String, code: String, positions: Positions, email: String)
 
 case class Page[+A](items: Seq[A with Persisted], page: Int, offset: Long, total: Long) {
   lazy val prev = Option(page - 1).filter(_ >= 0)
@@ -18,42 +18,6 @@ case class Page[+A](items: Seq[A with Persisted], page: Int, offset: Long, total
 
 object Staffer {
   implicit val format = Json.format[Staffer]
-//  implicit val read: Reads[Staffer] = Json.reads[Staffer]
-//  implicit val write: Writes[Staffer] = Json.writes[Staffer]
-
-//  implicit val personReads = (
-//    (JsPath \ 'name).read[String] and
-//      (JsPath \ 'image).read[String] and
-//      (JsPath \ 'birth).read[DateTime] and
-//      (JsPath \ 'surname).read[String] and
-//      (JsPath \ 'middle_name).read[String] and
-//      (JsPath \ 'code).read[String] and
-//      (JsPath \ 'position).read[String]
-//    )(Staffer.apply _)
-
-//  implicit val read: Reads[Staffer] = (
-//    (JsPath \ "name").read[String] and
-//      (JsPath \ "image").read[String] and
-//      (JsPath \ "birth").read[DateTime] and
-//      (JsPath \ "surname").read[String] and
-//      (JsPath \ "middle_name").read[String] and
-//      (JsPath \ "code").read[String] and
-//      (JsPath \ "position").read[String] and
-//      (JsPath \ "email").read[String]
-//    )(Staffer.apply _)
-////
-//  implicit val write: Writes[Staffer] = (
-//    (JsPath \ "name").write[String] and
-//      (JsPath \ "image").write[String] and
-//      (JsPath \ "birth").write[DateTime] and
-//      (JsPath \ "surname").write[String] and
-//      (JsPath \ "middle_name").write[String] and
-//      (JsPath \ "code").write[String] and
-//      (JsPath \ "position").write[String] and
-//      (JsPath \ "email").write[String]
-//    )(unlift(Staffer.unapply))
-
-
 
   def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Page[Staffer] = {
 
@@ -89,9 +53,9 @@ object Staffer {
 
   def updateStaffer(staffer: Staffer, name: String, image: String,
                     birth: DateTime, surname: String, middle_name: String,
-                    position: String, email: String) = {
+                    positions: Positions, email: String) = {
     Db.save(staffer.copy(name = name, image = image, birth = birth,
-      surname = surname, middle_name = middle_name, position = position, email = email))
+      surname = surname, middle_name = middle_name, positions = positions, email = email))
   }
 
   def staffCount() = {
