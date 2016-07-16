@@ -103,7 +103,7 @@ class Administrator extends Controller {
 //  def sendPicture = Action(parse.temporaryFile) { request =>
 //    request.body.moveTo(new File("public/images"))
 //    Ok("File uploaded")
-//  }
+//  }ф
 
 //  def staffRegistration() = Action { implicit request =>
 //
