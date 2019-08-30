@@ -1,7 +1,8 @@
   package controllers
 
+  import com.google.gson.JsonObject
   import models.Device
-  import play.api.libs.json.Json
+  import play.api.libs.json.{JsArray, JsObject, Json}
   import play.api.mvc._
 
   /**
@@ -9,19 +10,19 @@
    */
   class DeviceController extends Controller {
 
-    def registerDevice(tokenId: String) = Action {
-      Device.findDevice(tokenId).map {
+    def registerDevice(deviceId: Int, tokenId: String): Action[AnyContent] = Action {
+      Device.findDevice(deviceId, tokenId).map {
         device => {
           Ok(Json.obj("status" -> "fail", "message" -> "device already exists"))
         }
       }.getOrElse {
-        Device.saveDevice(tokenId)
+        Device.saveDevice(deviceId, tokenId)
         Ok(Json.obj("status" -> "success", "message" -> "device saved"))
       }
     }
 
-    def removeDevice(tokenId: String) = Action {
-      Device.findDevice(tokenId).map {
+    def removeDevice(deviceId: Int, tokenId: String): Action[AnyContent] = Action {
+      Device.findDevice(deviceId, tokenId).map {
         device => {
           Device.removeDevice(device)
           Ok(Json.obj("status" -> "success", "message" -> "device removed"))
@@ -31,8 +32,8 @@
       }
     }
 
-    def updateDevice(tokenId: String) = Action {
-      Device.findDevice(tokenId).map {
+    def updateDevice(deviceId: Int, tokenId: String): Action[AnyContent] = Action {
+      Device.findDevice(deviceId, tokenId).map {
         device => {
           Device.updateDevice(device)
           Ok(Json.obj("status" -> "success", "message" -> "device updated"))
@@ -42,9 +43,23 @@
       }
     }
 
-    def getAllDevices() = Action {
+    def getAllDevices = Action {
       val devices = Device.getAllDevices()
-      Ok(Json.toJson(devices))
+
+      val list = devices.map {
+        device => {
+          Json.obj(
+            "id" -> device.id,
+            "deviceId" -> device.deviceId,
+            "token" -> device.token
+          )
+        }
+      }
+      Ok(Json.toJson(list))
     }
 
+    def removeAllDevices = Action {
+      Device.removeAllDevices()
+      Ok(Json.obj("status" -> "success", "message" -> "devices removed"))
+    }
   }

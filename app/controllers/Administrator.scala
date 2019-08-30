@@ -3,12 +3,12 @@ package controllers
 import java.util.concurrent.Future
 
 import models._
+import play.api.libs.Files
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 
 class Administrator extends Controller {
-  def adminAuth(login: String, password: String) = Action {
-
+  def adminAuth(login: String, password: String): Action[AnyContent] = Action {
     Admin.findAdmin(login, password).map {
       admin => {
         Ok(Json.obj("status" -> "success", "id" -> admin.id))
@@ -18,16 +18,16 @@ class Administrator extends Controller {
     }
   }
 
-  def getPositions = Action {
+  def getPositions: Action[AnyContent] = Action {
     val positions = Db.query[Positions].order("id", true).fetch()
     Ok(Json.toJson(positions))
   }
 
-  def getAdmins() = Action {
+  def getAdmins: Action[AnyContent] = Action {
     Ok(Json.toJson(Db.query[Admin].fetch()))
   }
 
-  def addPosition(title: String) = Action {
+  def addPosition(title: String): Action[AnyContent] = Action {
     Positions.findByTitle(title).map {
       position => {
         Ok(Json.obj("status" -> "fail", "message" -> "Уже существует"))
@@ -39,7 +39,7 @@ class Administrator extends Controller {
     }
   }
 
-  def deletePosition(title: String) = Action {
+  def deletePosition(title: String): Action[AnyContent] = Action {
     Positions.findByTitle(title).map {
       position => {
         Positions.delete(position)
@@ -50,8 +50,7 @@ class Administrator extends Controller {
     }
   }
 
-  def editPosition(oldTitle: String, newTitle: String) = Action {
-
+  def editPosition(oldTitle: String, newTitle: String): Action[AnyContent] = Action {
     Positions.findByTitle(newTitle).map {
       position => {
         Ok(Json.obj("status" -> "fail", "message" -> "Уже существует"))
@@ -63,7 +62,7 @@ class Administrator extends Controller {
     }
   }
 
-  def sendPicture = Action(parse.multipartFormData) { request =>
+  def sendPicture: Action[MultipartFormData[Files.TemporaryFile]] = Action(parse.multipartFormData) { request =>
     request.body.file("file").map { picture =>
       import java.io.File
       val filename = picture.filename
@@ -75,8 +74,7 @@ class Administrator extends Controller {
     }
   }
 
-  def addAdmin(name: String, surname: String, login: String, password: String) = Action {
-
+  def addAdmin(name: String, surname: String, login: String, password: String): Action[AnyContent] = Action {
     Admin.findAdmin(login: String, password: String).map {
       admin => {
         Ok(Json.obj("status" -> "fail", "message" -> "Уже существует"))
@@ -88,8 +86,7 @@ class Administrator extends Controller {
     }
   }
 
-
-  def deleteAdmin(login: String, password: String) = Action {
+  def deleteAdmin(login: String, password: String): Action[AnyContent] = Action {
     Admin.findAdmin(login, password).map {
       admin => {
         Admin.delete(admin)
@@ -128,7 +125,7 @@ class Administrator extends Controller {
 //    }
 //  }
 
-  def getStatistics(login: String, password: String) = Action {
+  def getStatistics(login: String, password: String): Action[AnyContent] = Action {
     Admin.findAdmin(login, password).map {
       admin => {
         val staffCounter = Staffer.staffCount()

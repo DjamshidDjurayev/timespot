@@ -15,11 +15,12 @@ object Db extends Instance(
     Entity[Admin](),
     Entity[Device]()),
     url = "jdbc:postgresql://ec2-174-129-18-170.compute-1.amazonaws.com:5432/dd83d204polrve",
-//    url = "jdbc:postgresql://localhost/timespot_db",
+//  url = "jdbc:h2:mem:play",
+//  url = "jdbc:postgresql://localhost/timespot_db",
     user = "ntlmnyvtuvpwpv",
     password = "_AwM27MHmyBzkIXPPDOVu1I32L",
-//    user = "postgres",
-//    password = "postgres",
+//    user = "",
+//    password = "",
     initMode = InitMode.Create
 )
 

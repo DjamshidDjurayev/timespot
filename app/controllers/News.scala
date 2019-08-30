@@ -50,7 +50,6 @@ class News extends Controller {
         Home.flashing("success" -> "User %s has been updated".format(paperNew.title))
       }
     )
-
   }
 
   def edit(id: Long) = Action { implicit request =>

@@ -10,7 +10,7 @@ herokuAppName in Compile := "time-spot"
 
 libraryDependencies ++= Seq(
   jdbc,
-  "org.postgresql" % "postgresql" % "9.4-1205-jdbc42",
+  "org.postgresql" % "postgresql" % "9.4-1200-jdbc41",
   "org.sorm-framework" % "sorm" % "0.3.19",
   "org.webjars" % "jquery" % "2.1.4",
   "org.webjars" % "bootstrap" % "3.3.5",

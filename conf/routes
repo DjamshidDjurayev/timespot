@@ -46,10 +46,11 @@ GET         /api/deleteAdmin                  @controllers.Administrator.deleteA
 GET         /api/allAdmins                    @controllers.Administrator.getAdmins
 GET         /api/checkCode                    @controllers.Staff.checkCode
 
-GET         /api/device/registerDevice        @controllers.DeviceController.registerDevice(tokenId: String)
-GET         /api/device/removeDevice          @controllers.DeviceController.removeDevice(tokenId: String)
-GET         /api/device/updateDevice          @controllers.DeviceController.updateDevice(tokenId: String)
+GET         /api/device/registerDevice        @controllers.DeviceController.registerDevice(deviceId: Int, tokenId: String)
+GET         /api/device/removeDevice          @controllers.DeviceController.removeDevice(deviceId: Int, tokenId: String)
+GET         /api/device/updateDevice          @controllers.DeviceController.updateDevice(deviceId: Int, tokenId: String)
 GET         /api/device/getAllDevices         @controllers.DeviceController.getAllDevices
+GET         /api/device/removeAllDevices      @controllers.DeviceController.removeAllDevices
 
 GET         /api/getStatistics                @controllers.Administrator.getStatistics(login: String, password: String)
 GET         /api/getAllHistory                @controllers.Staff.getAllHistory(login: String, password: String)
