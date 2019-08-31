@@ -44,10 +44,10 @@ class News extends Controller {
 //            imageName = "/Users/djamshiddjuraev/store/backend/scala/timespot/public/images/" + filename;
 
             val rootPath = Play.application.path
-            val path = FileSystems.getDefault.getPath("/" + rootPath + "/public/images/" + filename)
+            val path = FileSystems.getDefault.getPath("/" + rootPath + "/public/images/")
 
             imageName = "https://timespot.herokuapp.com/assets/images/" + filename;
-            image.ref.moveTo(new File(path.toString))
+            image.ref.moveTo(new File(path.toString + "/" + filename))
 //            image.ref.moveTo(new File(s"/Users/djamshiddjuraev/store/backend/scala/timespot/public/images/$filename"))
           }
         }
