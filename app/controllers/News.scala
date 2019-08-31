@@ -1,9 +1,11 @@
 package controllers
 
 import java.io.File
+import java.nio.file.FileSystems
 
 import models.{Db, PaperNew, Staffer}
 import org.joda.time.DateTime
+import play.api.Play
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
@@ -41,8 +43,11 @@ class News extends Controller {
             val filename = image.filename
 //            imageName = "/Users/djamshiddjuraev/store/backend/scala/timespot/public/images/" + filename;
 
+            val rootPath = Play.application.path
+            val path = FileSystems.getDefault.getPath("/" + rootPath + "/public/images/" + filename)
+
             imageName = "https://timespot.herokuapp.com/assets/images/" + filename;
-            image.ref.moveTo(new File(s"https:///timespot.herokuapp.com/assets/public/images/$filename"))
+            image.ref.moveTo(new File(path.toString))
 //            image.ref.moveTo(new File(s"/Users/djamshiddjuraev/store/backend/scala/timespot/public/images/$filename"))
           }
         }
