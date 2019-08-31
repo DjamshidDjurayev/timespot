@@ -39,10 +39,10 @@ class News extends Controller {
         .map {
           image => {
             val filename = image.filename
-            imageName = "/Users/djamshiddjuraev/store/backend/scala/timespot/public/images/" + filename;
-//            imageName = "/assets/public/images/" + filename;
-//            image.ref.moveTo(new File(s"/assets/public/images/$filename"))
-            image.ref.moveTo(new File(s"/Users/djamshiddjuraev/store/backend/scala/timespot/public/images/$filename"))
+//            imageName = "/Users/djamshiddjuraev/store/backend/scala/timespot/public/images/" + filename;
+            imageName = "/assets/public/images/" + filename;
+            image.ref.moveTo(new File(s"/assets/public/images/$filename"))
+//            image.ref.moveTo(new File(s"/Users/djamshiddjuraev/store/backend/scala/timespot/public/images/$filename"))
           }
         }
 
