@@ -11,7 +11,7 @@ import scala.util.parsing.json.JSONArray
  * Created by dzhuraev on 3/16/16.
  */
 
-case class PaperNew(title: String, description: String, creation_date: DateTime)
+case class PaperNew(title: String, description: String, creation_date: DateTime, image: String)
 
 case class Page2[+A](items: Seq[A with Persisted], page: Int, offset: Long, total: Long) {
   lazy val prev = Option(page - 1).filter(_ >= 0)

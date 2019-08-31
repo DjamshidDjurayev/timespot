@@ -1,5 +1,6 @@
 package controllers
 
+import java.io.File
 import java.util.concurrent.Future
 
 import models._
@@ -63,10 +64,8 @@ class Administrator extends Controller {
   }
 
   def sendPicture: Action[MultipartFormData[Files.TemporaryFile]] = Action(parse.multipartFormData) { request =>
-    request.body.file("file").map { picture =>
-      import java.io.File
+    request.body.file("picture").map { picture =>
       val filename = picture.filename
-      val contentType = picture.contentType
       picture.ref.moveTo(new File(s"/assets/public/images/$filename"))
       Ok("File uploaded")
     }.getOrElse {

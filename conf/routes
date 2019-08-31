@@ -34,12 +34,12 @@ POST        /api/sendPicture                  @controllers.Administrator.sendPic
 GET         /api/getStaffByCode               @controllers.Staff.getStaffByQrCode(code: String)
 GET         /api/persons                      @controllers.Staff.getStaff
 GET         /api/news                         @controllers.News.getNews
+GET         /api/news/getNewsFeed             @controllers.News.getNewsFeed
 GET         /api/positions                    @controllers.Administrator.getPositions
 
 GET         /api/addPosition                  @controllers.Administrator.addPosition(title: String)
 GET         /api/deletePosition               @controllers.Administrator.deletePosition(title: String)
 GET         /api/editPosition                 @controllers.Administrator.editPosition(oldTitle: String, newTitle: String)
-#GET         /api/addNews               @controllers.News.addOneNews(title: String, description: String)
 GET         /api/adminAuth                    @controllers.Administrator.adminAuth(login: String, password: String)
 GET         /api/addAdmin                     @controllers.Administrator.addAdmin(name: String, surname: String, login: String, password: String)
 GET         /api/deleteAdmin                  @controllers.Administrator.deleteAdmin(login: String, password: String)
