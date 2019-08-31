@@ -2,9 +2,10 @@ package controllers
 
 import java.nio.file.Paths
 
+import akka.event.Logging
 import models.{Db, PaperNew, Staffer}
 import org.joda.time.DateTime
-import play.api.Play
+import play.api.{Logger, Play}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
@@ -41,14 +42,10 @@ class News extends Controller {
           image => {
             import java.io.File
             val filename = image.filename
-
             val rootPath = Play.application.path
-
-            imageName = s"https://timespot.herokuapp.com/public/images/$filename"
-
-            //            imageName = "https://timespot.herokuapp.com/assets/images/" + filename;
-            image.ref.moveTo(new File(s"https://timespot.herokuapp.com/public/images/$filename"))
-//            image.ref.moveTo(new File(s"/Users/djamshiddjuraev/store/backend/scala/timespot/public/images/$filename"))
+            imageName = s"${rootPath.toString}/public/images/$filename"
+            image.ref.moveTo(new File(s"${rootPath.toString}/public/images/$filename"))
+            Logger.logger.info(rootPath.toString)
           }
         }
 
