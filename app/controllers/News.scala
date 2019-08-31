@@ -43,8 +43,8 @@ class News extends Controller {
             import java.io.File
             val filename = image.filename
             val rootPath = Play.application.path
-            imageName = s"${rootPath.toString}/public/images/$filename"
-            image.ref.moveTo(new File(s"${rootPath.toString}/public/images/$filename"))
+            imageName = s"${rootPath.toString}/assets/images/$filename"
+            image.ref.moveTo(new File("https:///timespot.herokuapp.com/assets/images/" + filename))
             Logger.logger.info(rootPath.toString)
           }
         }
