@@ -42,7 +42,7 @@ class News extends Controller {
 //            imageName = "/Users/djamshiddjuraev/store/backend/scala/timespot/public/images/" + filename;
 
             imageName = "https://timespot.herokuapp.com/assets/images/" + filename;
-            image.ref.moveTo(new File(s"https://timespot.herokuapp.com/assets/public/images/$filename"))
+            image.ref.moveTo(new File(s"https:///timespot.herokuapp.com/assets/public/images/$filename"))
 //            image.ref.moveTo(new File(s"/Users/djamshiddjuraev/store/backend/scala/timespot/public/images/$filename"))
           }
         }
