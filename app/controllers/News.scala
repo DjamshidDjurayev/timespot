@@ -1,9 +1,10 @@
 package controllers
 
-import java.io.File
+import java.nio.file.Paths
 
 import models.{Db, PaperNew, Staffer}
 import org.joda.time.DateTime
+import play.api.Play
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
@@ -38,11 +39,15 @@ class News extends Controller {
     request.body.file("image")
         .map {
           image => {
+            import java.io.File
             val filename = image.filename
-//            imageName = "/Users/djamshiddjuraev/store/backend/scala/timespot/public/images/" + filename;
 
-            imageName = "https://timespot.herokuapp.com/assets/images/" + filename;
-            image.ref.moveTo(new File(s"/assets/public/images/$filename"))
+            val rootPath = Play.application.path
+
+            imageName = s"$rootPath//public/images/$filename"
+
+            //            imageName = "https://timespot.herokuapp.com/assets/images/" + filename;
+            image.ref.moveTo(new File(s"$rootPath//public/images/$filename"))
 //            image.ref.moveTo(new File(s"/Users/djamshiddjuraev/store/backend/scala/timespot/public/images/$filename"))
           }
         }
