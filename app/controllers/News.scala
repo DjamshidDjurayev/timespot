@@ -3,6 +3,7 @@ package controllers
 import java.nio.file.Paths
 
 import akka.event.Logging
+import com.cloudinary.Cloudinary
 import models.{Db, PaperNew, Staffer}
 import org.joda.time.DateTime
 import play.api.{Logger, Play}
@@ -35,17 +36,19 @@ class News extends Controller {
     ))
   }
 
+  val cloudinary = new Cloudinary(Map(
+    "cloud_name" -> "ds5cpnnkl",
+    "api_key" -> "566579673111817",
+    "api_secret" -> "gx5pxezG25hPdqvNEEk8GWdeTcQ"
+  ))
+
   def addNews(): Action[MultipartFormData[Files.TemporaryFile]] = Action(parse.multipartFormData) { implicit request => {
-    var imageName = ""
+    val imageName = ""
     request.body.file("image")
         .map {
           image => {
-            import java.io.File
             val filename = image.filename
-            val rootPath = Play.application.path
-            imageName = "https://" + "timespot.herokuapp.com/assets/images/" + filename
-//            image.ref.moveTo(new File("https://" + "timespot.herokuapp.com/assets/images/" + filename))
-            image.ref.moveTo(new File(s"/assets/public/$filename"))
+            cloudinary.uploader().upload(filename)
           }
         }
 

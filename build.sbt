@@ -16,6 +16,7 @@ libraryDependencies ++= Seq(
   "org.webjars" % "bootstrap" % "3.3.5",
   "com.google.code.gson" % "gson" % "2.4",
   "com.github.nscala-time" %% "nscala-time" % "2.12.0",
+  "com.cloudinary" %% "cloudinary-scala-play" % "1.2.1",
   cache,
   ws,
   specs2 % Test
