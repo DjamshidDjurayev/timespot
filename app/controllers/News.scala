@@ -1,9 +1,11 @@
 package controllers
 
+import java.io.File
 import java.nio.file.Paths
 
 import akka.event.Logging
 import com.cloudinary.Cloudinary
+import com.cloudinary.response.UploadResponse
 import models.{Db, PaperNew, Staffer}
 import org.joda.time.DateTime
 import play.api.{Logger, Play}
@@ -15,6 +17,8 @@ import play.api.i18n.Messages.Implicits._
 import play.api.libs.Files
 import play.api.libs.json.Json
 
+import scala.util.{Failure, Success}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class News extends Controller {
 
@@ -43,34 +47,26 @@ class News extends Controller {
   ))
 
   def addNews(): Action[MultipartFormData[Files.TemporaryFile]] = Action(parse.multipartFormData) { implicit request => {
-    val imageName = ""
     request.body.file("image")
         .map {
           image => {
-            val filename = image.filename
-            cloudinary.uploader().upload(filename)
+            val result = cloudinary.uploader().upload(image.ref.file)
+            result.onComplete {
+              case Success(value) =>
+                val data = request.body.dataParts
+                val title = data.get("title").map { item => item.head }.head
+                val description = data.get("description").map { item => item.head }.head
+                val creationDate = data.get("creation_date").map { item => item.head }.head
+
+                val singleNews = new PaperNew(title, description, new DateTime(creationDate), value.url)
+                Db.save[PaperNew](singleNews)
+              case Failure(exception) =>
+                Home.flashing("error" -> "Error during upload".format(exception))
+            }
           }
-        }
-
-    val data = request.body.dataParts
-
-    val title = data.get("title").map { item => item.head }.head
-    val description = data.get("description").map { item => item.head }.head
-    val creationDate = data.get("creation_date").map { item => item.head }.head
-
-    val singleNews = new PaperNew(title, description, new DateTime(creationDate), imageName)
-
-    Db.save[PaperNew](singleNews)
-    Home.flashing("success" -> "News %s has been created".format(singleNews.title))
-
-//    newsForm.bindFromRequest(request.body.asFormUrlEncoded).fold(
-//      formWithErrors => BadRequest(views.html.createFormNews(formWithErrors)),
-//      newsPaper => {
-//        Db.save[PaperNew](newsPaper)
-//        Home.flashing("success" -> "News %s has been created".format(newsPaper.title))
-//      }
-//    )
+        }.getOrElse(NotFound)
   }
+    Home.flashing()
   }
 
   def create: Action[AnyContent] = Action {
