@@ -27,8 +27,15 @@
       jsonBody.map { json => {
         val deviceId = (json \ "deviceId").as[String]
         val token = (json \ "token").as[String]
-        Device.saveDevice(deviceId, token)
-        Ok(Json.obj("status" -> "success", "message" -> "Device added successfully"))
+
+        Device.findDevice(deviceId, token).map {
+          device => {
+            Ok(Json.obj("status" -> "fail", "message" -> "device already exists"))
+          }
+        }.getOrElse {
+          Device.saveDevice(deviceId, token)
+          Ok(Json.obj("status" -> "success", "message" -> "Device added successfully"))
+        }
       }
       }.getOrElse {
         BadRequest("Expecting application/json request body")
