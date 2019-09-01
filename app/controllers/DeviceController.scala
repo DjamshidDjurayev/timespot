@@ -39,7 +39,7 @@
         }
       }
       }.getOrElse {
-        BadRequest("status" -> "fail", "message" -> "Error while parsing json body")
+        BadRequest("Error while parsing json body")
       }
     }
 
