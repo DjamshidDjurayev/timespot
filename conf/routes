@@ -34,7 +34,9 @@ POST        /api/sendPicture                  @controllers.Administrator.sendPic
 GET         /api/getStaffByCode               @controllers.Staff.getStaffByQrCode(code: String)
 GET         /api/persons                      @controllers.Staff.getStaff
 GET         /api/news                         @controllers.News.getNews
+GET         /api/news/removeNews              @controllers.News.clearNews
 GET         /api/news/getNewsFeed             @controllers.News.getNewsFeed
+GET         /api/news/sendNotification        @controllers.News.sendNotification(title: String, message: String)
 GET         /api/positions                    @controllers.Administrator.getPositions
 
 GET         /api/addPosition                  @controllers.Administrator.addPosition(title: String)

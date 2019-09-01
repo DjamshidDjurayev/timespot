@@ -34,6 +34,10 @@ object PaperNew {
 
   }
 
+  def getAllNews(): Stream[PaperNew with Persisted] = {
+    Db.query[PaperNew].fetch()
+  }
+
   def update(id: Long, paperNew: PaperNew) = {
     Db.query[PaperNew].whereEqual("id", id).replace(paperNew)
   }
@@ -48,6 +52,13 @@ object PaperNew {
 
   def newsCount() = {
     Db.query[PaperNew].count()
+  }
+
+  def clearNews(): Unit = {
+    val newsList = getAllNews()
+    for (news <- newsList) {
+      Db.delete[PaperNew](news)
+    }
   }
 
 }

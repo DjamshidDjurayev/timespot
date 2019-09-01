@@ -1,7 +1,7 @@
   package controllers
 
-  import models.{Db, Device, Positions, Staffer}
-  import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
+  import models.Device
+  import play.api.libs.json.{JsValue, Json}
   import play.api.mvc._
 
   /**
@@ -10,13 +10,13 @@
   class DeviceController extends Controller {
 
     def registerDevice(deviceId: String, tokenId: String): Action[AnyContent] = Action {
-      Device.findDevice(deviceId, tokenId).map {
+      Device.findDevice(deviceId).map {
         device => {
-          Ok(Json.obj("status" -> "fail", "message" -> "device already exists"))
+          Ok(Json.obj("status" -> "fail", "message" -> "Device already exists"))
         }
       }.getOrElse {
         Device.saveDevice(deviceId, tokenId)
-        Ok(Json.obj("status" -> "success", "message" -> "device saved"))
+        Ok(Json.obj("status" -> "success", "message" -> "Device saved"))
       }
     }
 
@@ -28,7 +28,7 @@
         val deviceId = (json \ "deviceId").as[String]
         val token = (json \ "token").as[String]
 
-        Device.findDevice(deviceId, token).map {
+        Device.findDevice(deviceId).map {
           device => {
             Device.updateDeviceByDeviceId(device, token)
             Ok(Json.obj("status" -> "success", "message" -> "Device updated successfully"))
@@ -39,33 +39,33 @@
         }
       }
       }.getOrElse {
-        BadRequest("Expecting application/json request body")
+        BadRequest("status" -> "fail", "message" -> "Error while parsing json body")
       }
     }
 
     def removeDevice(deviceId: String, tokenId: String): Action[AnyContent] = Action {
-      Device.findDevice(deviceId, tokenId).map {
+      Device.findDevice(deviceId).map {
         device => {
           Device.removeDevice(device)
-          Ok(Json.obj("status" -> "success", "message" -> "device removed"))
+          Ok(Json.obj("status" -> "success", "message" -> "Device removed"))
         }
       }.getOrElse {
-        Ok(Json.obj("status" -> "fail", "message" -> "device not found"))
+        Ok(Json.obj("status" -> "fail", "message" -> "Device not found"))
       }
     }
 
     def updateDevice(deviceId: String, tokenId: String): Action[AnyContent] = Action {
-      Device.findDevice(deviceId, tokenId).map {
+      Device.findDevice(deviceId).map {
         device => {
           Device.updateDevice(device)
-          Ok(Json.obj("status" -> "success", "message" -> "device updated"))
+          Ok(Json.obj("status" -> "success", "message" -> "Device updated"))
         }
       }.getOrElse {
-        Ok(Json.obj("status" -> "fail", "message" -> "device not found"))
+        Ok(Json.obj("status" -> "fail", "message" -> "Device not found"))
       }
     }
 
-    def getAllDevices = Action {
+    def getAllDevices: Action[AnyContent] = Action {
       val devices = Device.getAllDevices()
 
       val list = devices.map {
@@ -80,8 +80,8 @@
       Ok(Json.toJson(list))
     }
 
-    def removeAllDevices = Action {
+    def removeAllDevices(): Action[AnyContent] = Action {
       Device.removeAllDevices()
-      Ok(Json.obj("status" -> "success", "message" -> "devices removed"))
+      Ok(Json.obj("status" -> "success", "message" -> "Device removed successfully"))
     }
   }

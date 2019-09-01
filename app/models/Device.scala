@@ -33,7 +33,7 @@ object Device {
     Db.save[Device](device.copy(token = token))
   }
 
-  def findDevice(deviceId: String, tokenId: String): Option[Device with Persisted] = {
+  def findDevice(deviceId: String): Option[Device with Persisted] = {
     Db.query[Device].whereEqual("deviceId", deviceId).fetchOne()
   }
 

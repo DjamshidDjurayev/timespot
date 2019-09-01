@@ -76,6 +76,17 @@ class News extends Controller {
     Ok(views.html.createFormNews(newsForm))
   }
 
+  def sendNotification(title: String, message: String): Action[AnyContent] = Action {
+    val server = new GcmRestServer("AAAAIr9zZnk:APA91bFuiPycVWFSclIlcxZOmkgTD_QPk1nxtTAnJjj1NbvzMvmSKZXjBT2Tr18NYOncwgyjI1PkeGauivrvTZINqTSPcCaOonx83bplyETRRpophuYNvSyPNkkFM0AtlKFeLh6S3sEn")
+    val devices = Device.getAllDevices().map(_.token).toList
+
+    server.send(devices, Map(
+      "title" -> title,
+      "message" -> message
+    ))
+    Ok("success")
+  }
+
   def update(id: Long): Action[AnyContent] = Action { implicit request =>
     newsForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.editFormNews(id, formWithErrors)),
@@ -100,6 +111,11 @@ class News extends Controller {
   def getNews: Action[AnyContent] = Action {
     val news = Db.query[PaperNew].order("id", reverse = true).fetch()
     Ok(Json.toJson(news))
+  }
+
+  def clearNews: Action[AnyContent] = Action {
+    PaperNew.clearNews()
+    Ok(Json.obj("status" -> "success", "message" -> "News were removed successfully"))
   }
 
   def getNewsFeed: Action[AnyContent] = Action {
