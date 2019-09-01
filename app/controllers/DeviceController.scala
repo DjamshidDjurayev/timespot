@@ -30,7 +30,8 @@
 
         Device.findDevice(deviceId, token).map {
           device => {
-            Ok(Json.obj("status" -> "fail", "message" -> "device already exists"))
+            Device.updateDeviceByDeviceId(device, token)
+            Ok(Json.obj("status" -> "success", "message" -> "Device updated successfully"))
           }
         }.getOrElse {
           Device.saveDevice(deviceId, token)
