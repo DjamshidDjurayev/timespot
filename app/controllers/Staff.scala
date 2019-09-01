@@ -87,7 +87,7 @@ class Staff extends Controller {
   }
 
   def addHistory(code: String) = Action {
-    val server = new GcmRestServer("AIzaSyBZC_-8MCJu6tM7H1P_RI7dfvXD7pMaGaY")
+    val server = new GcmRestServer("AIzaSyB_alsXuKslW8tdxfgCh--xrFrdt0EW-WA")
     val firstNames = Device.getAllDevices().map(_.token).toList
 
     val actionDateTime = DateTime.now() // TODO check

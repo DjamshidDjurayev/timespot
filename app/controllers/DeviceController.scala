@@ -1,8 +1,7 @@
   package controllers
 
-  import com.google.gson.JsonObject
-  import models.Device
-  import play.api.libs.json.{JsArray, JsObject, Json}
+  import models.{Db, Device, Positions, Staffer}
+  import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
   import play.api.mvc._
 
   /**
@@ -10,7 +9,7 @@
    */
   class DeviceController extends Controller {
 
-    def registerDevice(deviceId: Int, tokenId: String): Action[AnyContent] = Action {
+    def registerDevice(deviceId: String, tokenId: String): Action[AnyContent] = Action {
       Device.findDevice(deviceId, tokenId).map {
         device => {
           Ok(Json.obj("status" -> "fail", "message" -> "device already exists"))
@@ -21,7 +20,22 @@
       }
     }
 
-    def removeDevice(deviceId: Int, tokenId: String): Action[AnyContent] = Action {
+    def registerDevicePost(): Action[AnyContent] = Action { implicit request =>
+      val body: AnyContent = request.body
+      val jsonBody: Option[JsValue] = body.asJson
+
+      jsonBody.map { json => {
+        val deviceId = (json \ "deviceId").as[String]
+        val token = (json \ "token").as[String]
+        Device.saveDevice(deviceId, token)
+        Ok(Json.obj("status" -> "success", "message" -> "Device added successfully"))
+      }
+      }.getOrElse {
+        BadRequest("Expecting application/json request body")
+      }
+    }
+
+    def removeDevice(deviceId: String, tokenId: String): Action[AnyContent] = Action {
       Device.findDevice(deviceId, tokenId).map {
         device => {
           Device.removeDevice(device)
@@ -32,7 +46,7 @@
       }
     }
 
-    def updateDevice(deviceId: Int, tokenId: String): Action[AnyContent] = Action {
+    def updateDevice(deviceId: String, tokenId: String): Action[AnyContent] = Action {
       Device.findDevice(deviceId, tokenId).map {
         device => {
           Device.updateDevice(device)

@@ -1,14 +1,8 @@
 package controllers
 
-import java.io.File
-import java.nio.file.Paths
-
-import akka.event.Logging
 import com.cloudinary.Cloudinary
-import com.cloudinary.response.UploadResponse
-import models.{Db, PaperNew, Staffer}
+import models.{Db, Device, GcmRestServer, PaperNew}
 import org.joda.time.DateTime
-import play.api.{Logger, Play}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
@@ -60,6 +54,15 @@ class News extends Controller {
 
                 val singleNews = new PaperNew(title, description, new DateTime(creationDate), value.url)
                 Db.save[PaperNew](singleNews)
+
+                val server = new GcmRestServer("AAAAIr9zZnk:APA91bFuiPycVWFSclIlcxZOmkgTD_QPk1nxtTAnJjj1NbvzMvmSKZXjBT2Tr18NYOncwgyjI1PkeGauivrvTZINqTSPcCaOonx83bplyETRRpophuYNvSyPNkkFM0AtlKFeLh6S3sEn")
+                val devices = Device.getAllDevices().map(_.token).toList
+
+                server.send(devices, Map(
+                  "title" -> title,
+                  "message" -> description
+                ))
+
               case Failure(exception) =>
                 Home.flashing("error" -> "Error during upload".format(exception))
             }

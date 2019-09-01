@@ -20,7 +20,7 @@ class GcmRestServer(val key: String) {
       "data" -> data
     )
 
-    WS.url("https://android.googleapis.com/gcm/send")
+    WS.url("https://fcm.googleapis.com/fcm/send")
       .withHeaders(
         "Authorization" -> s"key=$key",
         "Content-type" -> "application/json"

@@ -6,7 +6,7 @@ import sorm.Persisted
 /**
  * Created by dzhuraev on 5/12/16.
  */
-case class Device(deviceId: Int, token: String)
+case class Device(deviceId: String, token: String)
 
 object Device {
 
@@ -16,7 +16,7 @@ object Device {
     Db.query[Device].fetch()
   }
 
-  def saveDevice(deviceId: Int, tokenId: String): Device with Persisted = {
+  def saveDevice(deviceId: String, tokenId: String): Device with Persisted = {
     val device = new Device(deviceId, tokenId)
     Db.save[Device](device)
   }
@@ -29,7 +29,7 @@ object Device {
     Db.save[Device](device)
   }
 
-  def findDevice(deviceId: Int, tokenId: String): Option[Device with Persisted] = {
+  def findDevice(deviceId: String, tokenId: String): Option[Device with Persisted] = {
     Db.query[Device].whereEqual("deviceId", deviceId).fetchOne()
   }
 
