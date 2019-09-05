@@ -25,8 +25,8 @@ object PaperNew {
     Page2(news, page, offest, totalRows)
   }
 
-  def getAllNews(): Stream[PaperNew with Persisted] = {
-    Db.query[PaperNew].fetch()
+  def getFeedList(rev: Boolean): Stream[PaperNew with Persisted] = {
+    Db.query[PaperNew].order("id", reverse = rev).fetch()
   }
 
   def update(id: Long, paperNew: PaperNew): List[PaperNew with Persisted] = {
@@ -41,12 +41,16 @@ object PaperNew {
     Db.delete[PaperNew](Db.fetchById[PaperNew](id))
   }
 
+  def save(feed: PaperNew): PaperNew with Persisted = {
+    Db.save[PaperNew](feed)
+  }
+
   def newsCount(): Int = {
     Db.query[PaperNew].count()
   }
 
   def clearNews(): Unit = {
-    val newsList = getAllNews()
+    val newsList = getFeedList(false)
     for (news <- newsList) {
       Db.delete[PaperNew](news)
     }

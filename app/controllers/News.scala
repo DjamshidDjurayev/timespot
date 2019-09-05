@@ -1,7 +1,7 @@
 package controllers
 
 import com.cloudinary.Cloudinary
-import models.{Db, Device, GcmRestServer, PaperNew}
+import models.{Device, GcmRestServer, PaperNew}
 import org.joda.time.DateTime
 import play.api.data.Form
 import play.api.data.Forms._
@@ -52,11 +52,13 @@ class News extends Controller {
               val description = data.get("description").map { item => item.head }.head
 
               val singleNews = new PaperNew(title, description, DateTime.now(), value.url)
-              val savedDevice = Db.save[PaperNew](singleNews)
+              // save to DB
+              val savedDevice = PaperNew.save(singleNews)
 
               val server = new GcmRestServer("AAAAIr9zZnk:APA91bFuiPycVWFSclIlcxZOmkgTD_QPk1nxtTAnJjj1NbvzMvmSKZXjBT2Tr18NYOncwgyjI1PkeGauivrvTZINqTSPcCaOonx83bplyETRRpophuYNvSyPNkkFM0AtlKFeLh6S3sEn")
               val devices = Device.getAllDevices().map(_.token).toList
 
+              // send push notifications
               server.send(devices, Map(
                 "title" -> savedDevice.title,
                 "message" -> savedDevice.description,
@@ -130,7 +132,7 @@ class News extends Controller {
   }
 
   def getNews: Action[AnyContent] = Action {
-    val news = Db.query[PaperNew].order("id", reverse = true).fetch()
+    val news = PaperNew.getFeedList(true)
     Ok(Json.toJson(news))
   }
 
@@ -140,7 +142,7 @@ class News extends Controller {
   }
 
   def getNewsFeed: Action[AnyContent] = Action {
-    val newsFeed = Db.query[PaperNew].order("id", reverse = true).fetch()
+    val newsFeed = PaperNew.getFeedList(true)
 
     val list = newsFeed.map {
       feed => {

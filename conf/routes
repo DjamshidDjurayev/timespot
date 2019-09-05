@@ -18,14 +18,14 @@ POST        /staffer/:id/delete               @controllers.Staff.delete(id:Long)
 # Api (json)
 POST        /api/addStaff                     @controllers.Staff.addNewStaff
 POST        /api/editStaff                    @controllers.Staff.editStaff
-GET         /api/deleteStaff                  @controllers.Staff.deleteOneStaff(id:String)
+DELETE      /api/deleteStaff                  @controllers.Staff.deleteOneStaff(id:String)
 
 POST        /api/sendPicture                  @controllers.Administrator.sendPicture
 
 GET         /api/getStaffByCode               @controllers.Staff.getStaffByQrCode(code: String)
 GET         /api/persons                      @controllers.Staff.getStaff
 GET         /api/news                         @controllers.News.getNews
-GET         /api/news/removeNews              @controllers.News.clearNews
+DELETE      /api/news/removeNews              @controllers.News.clearNews
 GET         /api/news/getNewsFeed             @controllers.News.getNewsFeed
 GET         /api/news/getSingleNews           @controllers.News.getSingleNews(id: Long)
 GET         /api/news/sendNotification        @controllers.News.sendNotification(title: String, message: String, id: Int)
@@ -33,20 +33,20 @@ GET         /api/news/sendPushByDevice        @controllers.News.sendNotification
 GET         /api/positions                    @controllers.Administrator.getPositions
 
 GET         /api/addPosition                  @controllers.Administrator.addPosition(title: String)
-GET         /api/deletePosition               @controllers.Administrator.deletePosition(title: String)
+DELETE      /api/deletePosition               @controllers.Administrator.deletePosition(title: String)
 GET         /api/editPosition                 @controllers.Administrator.editPosition(oldTitle: String, newTitle: String)
 GET         /api/adminAuth                    @controllers.Administrator.adminAuth(login: String, password: String)
 GET         /api/addAdmin                     @controllers.Administrator.addAdmin(name: String, surname: String, login: String, password: String)
-GET         /api/deleteAdmin                  @controllers.Administrator.deleteAdmin(login: String, password: String)
+DELETE      /api/deleteAdmin                  @controllers.Administrator.deleteAdmin(login: String, password: String)
 GET         /api/allAdmins                    @controllers.Administrator.getAdmins
 GET         /api/checkCode                    @controllers.Staff.checkCode
 
 GET         /api/device/registerDevice        @controllers.DeviceController.registerDevice(deviceId: String, tokenId: String)
 POST        /api/device/registerDevicePost    @controllers.DeviceController.registerDevicePost
-GET         /api/device/removeDevice          @controllers.DeviceController.removeDevice(deviceId: String, tokenId: String)
-GET         /api/device/updateDevice          @controllers.DeviceController.updateDevice(deviceId: String, tokenId: String)
+DELETE      /api/device/removeDevice          @controllers.DeviceController.removeDevice(deviceId: String)
+GET         /api/device/updateDevice          @controllers.DeviceController.updateDevice(deviceId: String)
 GET         /api/device/getAllDevices         @controllers.DeviceController.getAllDevices
-GET         /api/device/removeAllDevices      @controllers.DeviceController.removeAllDevices
+DELETE      /api/device/removeAllDevices      @controllers.DeviceController.removeAllDevices
 
 GET         /api/getStatistics                @controllers.Administrator.getStatistics(login: String, password: String)
 GET         /api/getAllHistory                @controllers.Staff.getAllHistory(login: String, password: String)

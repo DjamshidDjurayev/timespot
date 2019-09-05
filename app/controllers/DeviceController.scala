@@ -43,7 +43,7 @@
       }
     }
 
-    def removeDevice(deviceId: String, tokenId: String): Action[AnyContent] = Action {
+    def removeDevice(deviceId: String): Action[AnyContent] = Action {
       Device.findDevice(deviceId).map {
         device => {
           Device.removeDevice(device)
@@ -54,7 +54,7 @@
       }
     }
 
-    def updateDevice(deviceId: String, tokenId: String): Action[AnyContent] = Action {
+    def updateDevice(deviceId: String): Action[AnyContent] = Action {
       Device.findDevice(deviceId).map {
         device => {
           Device.updateDevice(device)
