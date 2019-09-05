@@ -50,9 +50,8 @@ class News extends Controller {
               val data = request.body.dataParts
               val title = data.get("title").map { item => item.head }.head
               val description = data.get("description").map { item => item.head }.head
-              val creationDate = data.get("creation_date").map { item => item.head }.head
 
-              val singleNews = new PaperNew(title, description, new DateTime(creationDate), value.url)
+              val singleNews = new PaperNew(title, description, DateTime.now(), value.url)
               val savedDevice = Db.save[PaperNew](singleNews)
 
               val server = new GcmRestServer("AAAAIr9zZnk:APA91bFuiPycVWFSclIlcxZOmkgTD_QPk1nxtTAnJjj1NbvzMvmSKZXjBT2Tr18NYOncwgyjI1PkeGauivrvTZINqTSPcCaOonx83bplyETRRpophuYNvSyPNkkFM0AtlKFeLh6S3sEn")
@@ -68,7 +67,9 @@ class News extends Controller {
               Home.flashing("error" -> "Error during upload".format(exception))
           }
         }
-      }.getOrElse(NotFound)
+      }.getOrElse {
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Error occured"))
+    }
   }
     Home.flashing()
   }
@@ -86,7 +87,7 @@ class News extends Controller {
       "message" -> message,
       "feed_id" -> String.valueOf(id)
     ))
-    Ok("success")
+    Ok(Json.obj("status" -> "success", "message" -> "Notification sent successfully"))
   }
 
   def sendNotificationByDeviceId(title: String, message: String, id: Int, deviceId: String): Action[AnyContent] = Action {
@@ -118,7 +119,9 @@ class News extends Controller {
   def edit(id: Long): Action[AnyContent] = Action { implicit request =>
     PaperNew.findById(id).map { paperNew =>
       Ok(views.html.editFormNews(id, newsForm.fill(paperNew)))
-    }.getOrElse(NotFound)
+    }.getOrElse {
+      NotFound(Json.obj("status" -> "fail", "message" -> "Feed not found"))
+    }
   }
 
   def delete(id: Long): Action[AnyContent] = Action {

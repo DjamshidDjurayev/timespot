@@ -43,8 +43,7 @@ class Staff extends Controller {
   def addHistory(code: String): Action[AnyContent] = Action {
     val server = new GcmRestServer("AIzaSyB_alsXuKslW8tdxfgCh--xrFrdt0EW-WA")
     val firstNames = Device.getAllDevices().map(_.token).toList
-
-    val actionDateTime = DateTime.now() // TODO check
+    val actionDateTime = DateTime.now()
 
     Staffer.findByQrCode(code).map {
       staffer => {
@@ -88,20 +87,18 @@ class Staff extends Controller {
         Ok(Json.toJson(History.findById(history)))
       }
     }.getOrElse {
-      BadRequest(Json.obj("status" -> "fail", "message" -> "not found"))
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Staff not found"))
     }
   }
 
   def getActionsByDate(userId: String, date: Long): Action[AnyContent] = Action {
-
     Staffer.findByQrCode(userId).map {
       staff => {
         Ok(Json.toJson(History.getStaffActionsByDate(staff, date)))
       }
     }.getOrElse {
-      BadRequest(Json.obj("status" -> "fail", "message" -> "not found"))
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Staff not found"))
     }
-
   }
 
   def checkCode(): Action[AnyContent] = Action {
@@ -112,7 +109,7 @@ class Staff extends Controller {
       val generatedCode = BearerTokenGenerator.generateMD5Token()
 
       Staffer.findByQrCode(generatedCode).map {
-        staff => {
+        _ => {
           isExist = true
         }
       }.getOrElse {
@@ -129,10 +126,10 @@ class Staff extends Controller {
     Staffer.findByQrCode(id).map {
       staff => {
         Staffer.deleteByCode(staff)
-        Ok(Json.obj("status" -> "success", "message" -> "Сотрудник удален"))
+        Ok(Json.obj("status" -> "success", "message" -> "Staff removed"))
       }
     }.getOrElse {
-      BadRequest(Json.obj("status" -> "fail", "message" -> "Сотрудник не найден"))
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Staff not found"))
     }
   }
 
@@ -155,10 +152,10 @@ class Staff extends Controller {
         Positions.findByTitle(position).get, email)
       Db.save[Staffer](staff)
 
-      Ok(Json.obj("status" -> "success", "message" -> "Сотрудник добавлен"))
+      Ok(Json.obj("status" -> "success", "message" -> "Staff added"))
     }
     }.getOrElse {
-      BadRequest("Expecting application/json request body")
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Expecting application/json request body"))
     }
     }
 
@@ -182,20 +179,20 @@ class Staff extends Controller {
         staffer => {
           Staffer.updateStaffer(staffer, name, image, new DateTime(birth), surname, middle_name,
             Positions.findByTitle(position).get, email)
-          Ok(Json.obj("status" -> "success", "message" -> "Сотрудник изменен"))
+          Ok(Json.obj("status" -> "success", "message" -> "Staff info changed"))
         }
       }.getOrElse{
-        Ok(Json.obj("status" -> "fail", "message" -> "Сотрудник не найден"))
+        BadRequest(Json.obj("status" -> "fail", "message" -> "Staff not found"))
       }
     }
     }.getOrElse {
-      BadRequest("Expecting application/json request body")
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Expecting application/json request body"))
     }
   }
 
   def getAllHistory(login: String, password: String): Action[AnyContent] = Action {
     Admin.findAdmin(login, password).map {
-      admin => {
+      _ => {
         val histories = Db.query[History].order("id", reverse = true).fetch()
         Ok(Json.toJson(histories))
       }

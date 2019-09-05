@@ -12,7 +12,7 @@
     def registerDevice(deviceId: String, tokenId: String): Action[AnyContent] = Action {
       Device.findDevice(deviceId).map {
         _ => {
-          BadRequest("Device already exists")
+          BadRequest(Json.obj("status" -> "fail", "message" -> "Device already exists"))
         }
       }.getOrElse {
         Device.saveDevice(deviceId, tokenId)
@@ -39,7 +39,7 @@
         }
       }
       }.getOrElse {
-        BadRequest("Error while parsing json body")
+        BadRequest(Json.obj("status" -> "fail", "message" -> "Error while parsing json body"))
       }
     }
 
@@ -50,7 +50,7 @@
           Ok(Json.obj("status" -> "success", "message" -> "Device removed"))
         }
       }.getOrElse {
-        BadRequest("Device not found")
+        BadRequest(Json.obj("status" -> "fail", "message" -> "Device not found"))
       }
     }
 
@@ -61,7 +61,7 @@
           Ok(Json.obj("status" -> "success", "message" -> "Device updated"))
         }
       }.getOrElse {
-        BadRequest("Device not found")
+        BadRequest(Json.obj("status" -> "fail", "message" -> "Device not found"))
       }
     }
 
