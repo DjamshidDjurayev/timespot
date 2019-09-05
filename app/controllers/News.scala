@@ -53,14 +53,15 @@ class News extends Controller {
                 val creationDate = data.get("creation_date").map { item => item.head }.head
 
                 val singleNews = new PaperNew(title, description, new DateTime(creationDate), value.url)
-                Db.save[PaperNew](singleNews)
+                val savedDevice = Db.save[PaperNew](singleNews)
 
                 val server = new GcmRestServer("AAAAIr9zZnk:APA91bFuiPycVWFSclIlcxZOmkgTD_QPk1nxtTAnJjj1NbvzMvmSKZXjBT2Tr18NYOncwgyjI1PkeGauivrvTZINqTSPcCaOonx83bplyETRRpophuYNvSyPNkkFM0AtlKFeLh6S3sEn")
                 val devices = Device.getAllDevices().map(_.token).toList
 
                 server.send(devices, Map(
-                  "title" -> title,
-                  "message" -> description
+                  "title" -> savedDevice.title,
+                  "message" -> savedDevice.description,
+                  "feed_id" -> String.valueOf(savedDevice.id)
                 ))
 
               case Failure(exception) =>
@@ -76,13 +77,14 @@ class News extends Controller {
     Ok(views.html.createFormNews(newsForm))
   }
 
-  def sendNotification(title: String, message: String): Action[AnyContent] = Action {
+  def sendNotification(title: String, message: String, id: Int): Action[AnyContent] = Action {
     val server = new GcmRestServer("AAAAIr9zZnk:APA91bFuiPycVWFSclIlcxZOmkgTD_QPk1nxtTAnJjj1NbvzMvmSKZXjBT2Tr18NYOncwgyjI1PkeGauivrvTZINqTSPcCaOonx83bplyETRRpophuYNvSyPNkkFM0AtlKFeLh6S3sEn")
     val devices = Device.getAllDevices().map(_.token).toList
 
     server.send(devices, Map(
       "title" -> title,
-      "message" -> message
+      "message" -> message,
+      "feed_id" -> String.valueOf(id)
     ))
     Ok("success")
   }

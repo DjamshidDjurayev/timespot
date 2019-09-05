@@ -1,13 +1,10 @@
 package controllers
 
 
-import java.util.SimpleTimeZone
 
 import models._
-import org.joda.time.{DateTimeZone, DateTime}
+import org.joda.time.DateTime
 import play.api.Logger
-import play.api.data.Form
-import play.api.data.Forms._
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 import play.api.Play.current
@@ -15,78 +12,35 @@ import play.api.i18n.Messages.Implicits._
 
 class Staff extends Controller {
 
+  val Home: Result = Redirect(routes.Staff.list(0, 2, ""))
 
-  val Home = Redirect(routes.Staff.list(0, 2, ""))
-
-//  val stafferForm: Form[Staffer] = Form(
-//    mapping(
-//      "name" -> text,
-//      "image" -> text,
-//      "birth" -> jodaDate("yyyy-MM-dd"),
-//      "surname" -> text,
-//      "middle_name" -> text,
-//      "code" -> nonEmptyText,
-//      "position" -> text,
-//      "email" -> email
-//    )(Staffer.apply)(Staffer.unapply))
-
-//  def addStaff = Action { implicit request =>
-//    stafferForm.bindFromRequest().fold(
-//      formWithErrors => BadRequest(views.html.createForm(formWithErrors)),
-//      staff => {
-//        Db.save[Staffer](staff)
-//        Home.flashing("success" -> "User %s has been created".format(staff.name))
-//      }
-//    )
-//  }
-
-  def getStaff = Action {
-    val staffs = Db.query[Staffer].order("id", true).fetch()
+  def getStaff: Action[AnyContent] = Action {
+    val staffs = Db.query[Staffer].order("id", reverse = true).fetch()
 //    staffs.
     Ok(Json.toJson(staffs))
   }
 
-  def getOneStaff(id: Long) = Action {
+  def getOneStaff(id: Long): Action[AnyContent] = Action {
     Ok(Json.toJson(Staffer.findById(id)))
   }
 
-  def getStaffByQrCode(code: String) = Action {
+  def getStaffByQrCode(code: String): Action[AnyContent] = Action {
     Ok(Json.toJson(Staffer.findByQrCode(code)))
   }
 
-//  def create = Action {
-//    Ok(views.html.createForm(stafferForm))
-//  }
-
-  def list(page: Int, orderBy: Int, filter: String) = Action { implicit request =>
+  def list(page: Int, orderBy: Int, filter: String): Action[AnyContent] = Action { implicit request =>
     Ok(views.html.staff(
       Staffer.list(page = page, orderBy = orderBy, filter = ("%"+filter+"%")),
       orderBy, filter
     ))
   }
 
-//  def update(id: Long) = Action { implicit request =>
-//    stafferForm.bindFromRequest.fold(
-//    formWithErrors => BadRequest(views.html.editForm(id, formWithErrors)),
-//    staff => {
-//      Staffer.update(id, staff)
-//      Home.flashing("success" -> "User %s has been updated".format(staff.name))
-//    }
-//    )
-//  }
-
-//  def edit(id: Long) = Action { implicit request =>
-//    Staffer.findById(id).map { staff =>
-//      Ok(views.html.editForm(id, stafferForm.fill(staff)))
-//    }.getOrElse(NotFound)
-//  }
-
-  def delete(id: Long) = Action {
+  def delete(id: Long): Action[AnyContent] = Action {
     Staffer.delete(id)
     Home.flashing("success" -> "User has been deleted")
   }
 
-  def addHistory(code: String) = Action {
+  def addHistory(code: String): Action[AnyContent] = Action {
     val server = new GcmRestServer("AIzaSyB_alsXuKslW8tdxfgCh--xrFrdt0EW-WA")
     val firstNames = Device.getAllDevices().map(_.token).toList
 
@@ -96,7 +50,7 @@ class Staff extends Controller {
       staffer => {
         val counter: Int = History.historyCount(staffer, actionDateTime.getMillis)
         counter match {
-          case 0 => {
+          case 0 =>
             val history = History(staffer, 0, actionDateTime, actionDateTime.toLocalDate)
             Db.save[History](history)
 
@@ -107,8 +61,7 @@ class Staff extends Controller {
             ))
 
             Ok(Json.obj("status" -> "success", "count" -> counter, "staff" -> Json.toJson(staffer)))
-          }
-          case 1 => {
+          case 1 =>
             val history = History(staffer, 1, actionDateTime, actionDateTime.toLocalDate)
             Db.save[History](history)
 
@@ -119,10 +72,8 @@ class Staff extends Controller {
             ))
 
             Ok(Json.obj("status" -> "success", "count" -> counter, "staff" -> Json.toJson(staffer)))
-          }
-          case 2 => {
+          case 2 =>
             Ok(Json.obj("status" -> "fail", "count" -> counter,"staff" -> Json.toJson(staffer)))
-          }
         }
       }
     }.getOrElse {
@@ -131,7 +82,7 @@ class Staff extends Controller {
   }
 
 
-  def getHistory(code: String) = Action {
+  def getHistory(code: String): Action[AnyContent] = Action {
     Staffer.findByQrCode(code).map {
       history => {
         Ok(Json.toJson(History.findById(history)))
@@ -141,7 +92,7 @@ class Staff extends Controller {
     }
   }
 
-  def getActionsByDate(userId: String, date: Long) = Action {
+  def getActionsByDate(userId: String, date: Long): Action[AnyContent] = Action {
 
     Staffer.findByQrCode(userId).map {
       staff => {
@@ -153,7 +104,7 @@ class Staff extends Controller {
 
   }
 
-  def checkCode() = Action {
+  def checkCode(): Action[AnyContent] = Action {
     var isExist = true
     var totalResult = ""
 
@@ -174,7 +125,7 @@ class Staff extends Controller {
   }
 
 
-  def deleteOneStaff(id: String) = Action {
+  def deleteOneStaff(id: String): Action[AnyContent] = Action {
     Staffer.findByQrCode(id).map {
       staff => {
         Staffer.deleteByCode(staff)
@@ -186,7 +137,7 @@ class Staff extends Controller {
   }
 
   // handling POST request  from client side
-  def addNewStaff() = Action { implicit request =>
+  def addNewStaff(): Action[AnyContent] = Action { implicit request =>
     val body: AnyContent = request.body
     val jsonBody: Option[JsValue] = body.asJson
 
@@ -211,7 +162,7 @@ class Staff extends Controller {
     }
     }
 
-  def editStaff() = Action { implicit request =>
+  def editStaff(): Action[AnyContent] = Action { implicit request =>
     val body: AnyContent = request.body
     val jsonBody: Option[JsValue] = body.asJson
 
@@ -226,7 +177,6 @@ class Staff extends Controller {
       val email = (json \ "email").as[String]
 
       Logger.debug("positions: " + position)
-
 
       Staffer.findByQrCode(code).map {
         staffer => {
@@ -243,16 +193,14 @@ class Staff extends Controller {
     }
   }
 
-  def getAllHistory(login: String, password: String) = Action {
-
+  def getAllHistory(login: String, password: String): Action[AnyContent] = Action {
     Admin.findAdmin(login, password).map {
       admin => {
-        val histories = Db.query[History].order("id", true).fetch()
+        val histories = Db.query[History].order("id", reverse = true).fetch()
         Ok(Json.toJson(histories))
       }
     }.getOrElse {
       BadRequest(Json.obj("status" -> "fail", "message" -> "Администратор не найден"))
     }
-
   }
 }

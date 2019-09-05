@@ -11,8 +11,8 @@
 
     def registerDevice(deviceId: String, tokenId: String): Action[AnyContent] = Action {
       Device.findDevice(deviceId).map {
-        device => {
-          Ok(Json.obj("status" -> "fail", "message" -> "Device already exists"))
+        _ => {
+          BadRequest("Device already exists")
         }
       }.getOrElse {
         Device.saveDevice(deviceId, tokenId)
@@ -50,7 +50,7 @@
           Ok(Json.obj("status" -> "success", "message" -> "Device removed"))
         }
       }.getOrElse {
-        Ok(Json.obj("status" -> "fail", "message" -> "Device not found"))
+        BadRequest("Device not found")
       }
     }
 
@@ -61,14 +61,12 @@
           Ok(Json.obj("status" -> "success", "message" -> "Device updated"))
         }
       }.getOrElse {
-        Ok(Json.obj("status" -> "fail", "message" -> "Device not found"))
+        BadRequest("Device not found")
       }
     }
 
     def getAllDevices: Action[AnyContent] = Action {
-      val devices = Device.getAllDevices()
-
-      val list = devices.map {
+      val list = Device.getAllDevices().map {
         device => {
           Json.obj(
             "id" -> device.id,
