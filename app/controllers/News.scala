@@ -98,9 +98,11 @@ class News extends Controller {
           "message" -> message,
           "feed_id" -> String.valueOf(id)
         ))
+        Ok(Json.obj("status" -> "success", "message" -> "Notifications sent successfully"))
       }
-    }.getOrElse(NotFound)
-    Ok(Json.obj("status" -> "success", "message" -> "Notifications sent successfully"))
+    }.getOrElse {
+      NotFound(Json.obj("status" -> "fail", "message" -> "Device not found"))
+    }
   }
 
   def update(id: Long): Action[AnyContent] = Action { implicit request =>
@@ -165,7 +167,9 @@ class News extends Controller {
           )
         ))
       }
-    }.getOrElse(NotFound)
+    }.getOrElse {
+      NotFound(Json.obj("status" -> "fail", "message" -> "Feed not found"))
+    }
   }
 
 }
