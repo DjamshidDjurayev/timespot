@@ -29,7 +29,7 @@ class News extends Controller {
 
   def list2(page: Int, orderBy: Int, filter: String): Action[AnyContent] = Action { implicit request =>
     Ok(views.html.news(
-      PaperNew.list2(page = page, orderBy = orderBy, filter = ("%"+filter+"%")),
+      PaperNew.list2(page = page, orderBy = orderBy, filter = ("%" + filter + "%")),
       orderBy, filter
     ))
   }
@@ -42,33 +42,33 @@ class News extends Controller {
 
   def addNews(): Action[MultipartFormData[Files.TemporaryFile]] = Action(parse.multipartFormData) { implicit request => {
     request.body.file("image")
-        .map {
-          image => {
-            val result = cloudinary.uploader().upload(image.ref.file)
-            result.onComplete {
-              case Success(value) =>
-                val data = request.body.dataParts
-                val title = data.get("title").map { item => item.head }.head
-                val description = data.get("description").map { item => item.head }.head
-                val creationDate = data.get("creation_date").map { item => item.head }.head
+      .map {
+        image => {
+          val result = cloudinary.uploader().upload(image.ref.file)
+          result.onComplete {
+            case Success(value) =>
+              val data = request.body.dataParts
+              val title = data.get("title").map { item => item.head }.head
+              val description = data.get("description").map { item => item.head }.head
+              val creationDate = data.get("creation_date").map { item => item.head }.head
 
-                val singleNews = new PaperNew(title, description, new DateTime(creationDate), value.url)
-                val savedDevice = Db.save[PaperNew](singleNews)
+              val singleNews = new PaperNew(title, description, new DateTime(creationDate), value.url)
+              val savedDevice = Db.save[PaperNew](singleNews)
 
-                val server = new GcmRestServer("AAAAIr9zZnk:APA91bFuiPycVWFSclIlcxZOmkgTD_QPk1nxtTAnJjj1NbvzMvmSKZXjBT2Tr18NYOncwgyjI1PkeGauivrvTZINqTSPcCaOonx83bplyETRRpophuYNvSyPNkkFM0AtlKFeLh6S3sEn")
-                val devices = Device.getAllDevices().map(_.token).toList
+              val server = new GcmRestServer("AAAAIr9zZnk:APA91bFuiPycVWFSclIlcxZOmkgTD_QPk1nxtTAnJjj1NbvzMvmSKZXjBT2Tr18NYOncwgyjI1PkeGauivrvTZINqTSPcCaOonx83bplyETRRpophuYNvSyPNkkFM0AtlKFeLh6S3sEn")
+              val devices = Device.getAllDevices().map(_.token).toList
 
-                server.send(devices, Map(
-                  "title" -> savedDevice.title,
-                  "message" -> savedDevice.description,
-                  "feed_id" -> String.valueOf(savedDevice.id)
-                ))
+              server.send(devices, Map(
+                "title" -> savedDevice.title,
+                "message" -> savedDevice.description,
+                "feed_id" -> String.valueOf(savedDevice.id)
+              ))
 
-              case Failure(exception) =>
-                Home.flashing("error" -> "Error during upload".format(exception))
-            }
+            case Failure(exception) =>
+              Home.flashing("error" -> "Error during upload".format(exception))
           }
-        }.getOrElse(NotFound)
+        }
+      }.getOrElse(NotFound)
   }
     Home.flashing()
   }
@@ -87,6 +87,22 @@ class News extends Controller {
       "feed_id" -> String.valueOf(id)
     ))
     Ok("success")
+  }
+
+  def sendNotificationByDeviceId(title: String, message: String, id: Int, deviceId: String): Action[AnyContent] = Action {
+    val server = new GcmRestServer("AAAAIr9zZnk:APA91bFuiPycVWFSclIlcxZOmkgTD_QPk1nxtTAnJjj1NbvzMvmSKZXjBT2Tr18NYOncwgyjI1PkeGauivrvTZINqTSPcCaOonx83bplyETRRpophuYNvSyPNkkFM0AtlKFeLh6S3sEn")
+    Device.findDevice(deviceId).map {
+      device => {
+        server.send(List[String](device.token), Map(
+          "title" -> title,
+          "message" -> message,
+          "feed_id" -> String.valueOf(id)
+        ))
+      }
+    }.getOrElse {
+      Ok(Json.obj("status" -> "fail", "message" -> "Device not found"))
+    }
+    Ok(Json.obj("status" -> "success", "message" -> "Notifications sent successfully"))
   }
 
   def update(id: Long): Action[AnyContent] = Action { implicit request =>

@@ -37,6 +37,7 @@ GET         /api/news                         @controllers.News.getNews
 GET         /api/news/removeNews              @controllers.News.clearNews
 GET         /api/news/getNewsFeed             @controllers.News.getNewsFeed
 GET         /api/news/sendNotification        @controllers.News.sendNotification(title: String, message: String, id: Int)
+GET         /api/news/sendPushByDevice        @controllers.News.sendNotificationByDeviceId(title: String, message: String, id: Int, deviceId:String)
 GET         /api/positions                    @controllers.Administrator.getPositions
 
 GET         /api/addPosition                  @controllers.Administrator.addPosition(title: String)
