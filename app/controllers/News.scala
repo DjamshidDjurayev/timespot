@@ -99,9 +99,7 @@ class News extends Controller {
           "feed_id" -> String.valueOf(id)
         ))
       }
-    }.getOrElse {
-      Ok(Json.obj("status" -> "fail", "message" -> "Device not found"))
-    }
+    }.getOrElse(NotFound)
     Ok(Json.obj("status" -> "success", "message" -> "Notifications sent successfully"))
   }
 
@@ -154,7 +152,20 @@ class News extends Controller {
     Ok(Json.toJson(list))
   }
 
-  def getOneNews(id: Long): Action[AnyContent] = Action {
-    Ok(Json.toJson(PaperNew.findById(id)))
+  def getSingleNews(id: Long): Action[AnyContent] = Action {
+    PaperNew.findById(id).map {
+      feed => {
+        Ok(Json.toJson(
+          Json.obj(
+            "id" -> feed.id,
+            "title" -> feed.title,
+            "description" -> feed.description,
+            "creation_date" -> feed.creation_date,
+            "image" -> feed.image
+          )
+        ))
+      }
+    }.getOrElse(NotFound)
   }
+
 }
