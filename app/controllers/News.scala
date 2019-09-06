@@ -70,7 +70,7 @@ class News extends Controller {
           }
         }
       }.getOrElse {
-      BadRequest(Json.obj("status" -> "fail", "message" -> "Error occured"))
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Error occurred"))
     }
   }
     Home.flashing()

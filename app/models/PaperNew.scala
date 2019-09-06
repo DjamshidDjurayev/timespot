@@ -25,8 +25,8 @@ object PaperNew {
     Page2(news, page, offest, totalRows)
   }
 
-  def getFeedList(rev: Boolean): Stream[PaperNew with Persisted] = {
-    Db.query[PaperNew].order("id", reverse = rev).fetch()
+  def getFeedList(reverse: Boolean): Stream[PaperNew with Persisted] = {
+    Db.query[PaperNew].order("id", reverse).fetch()
   }
 
   def update(id: Long, paperNew: PaperNew): List[PaperNew with Persisted] = {
