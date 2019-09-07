@@ -1,7 +1,5 @@
 package controllers
 
-
-
 import models._
 import org.joda.time.DateTime
 import play.api.Logger
@@ -120,7 +118,6 @@ class Staff extends Controller {
 
     Ok(totalResult)
   }
-
 
   def deleteOneStaff(id: String): Action[AnyContent] = Action {
     Staffer.findByQrCode(id).map {
