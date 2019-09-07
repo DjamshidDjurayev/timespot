@@ -20,7 +20,7 @@ object PaperNew {
 
   def list2(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Page2[PaperNew] = {
     val offest = pageSize * page
-    val news = Db.query[PaperNew].limit(pageSize).offset(offest).fetch()
+    val news = Db.query[PaperNew].order("id", reverse = true).limit(pageSize).offset(offest).fetch()
     val totalRows = Db.query[PaperNew].count()
     Page2(news, page, offest, totalRows)
   }

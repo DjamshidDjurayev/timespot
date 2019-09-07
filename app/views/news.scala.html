@@ -6,7 +6,6 @@
 
 @implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
 
-
 <html lang="en">
     <head>
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
@@ -53,7 +52,6 @@
             routes.News.list2(newPage, newOrderBy.map { orderBy =>
                 if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
             }.getOrElse(currentOrderBy), currentFilter)
-
         }
 
         @header(orderBy: Int, title: String) = {
@@ -76,13 +74,12 @@
             <tbody>
 
             @paperNews.map {
-                case (paperNew) => {
+                paperNew => {
                     <tr>
-                        <td><h5><a href="@routes.News.edit(paperNew.id)">@paperNew.title @paperNew.description</a></h5></td>
+                        <td><h5><a href="@routes.News.edit(paperNew.id)">@paperNew.title</a></h5></td>
                     </tr>
                 }
             }
-
             </tbody>
         </table>
 
@@ -90,11 +87,11 @@
             <ul>
                 @currentPage.prev.map { page =>
                 <li class="prev">
-                    <a href="@link(page)">&larr; Предыдущий</a>
+                    <a href="@link(page)">&larr; Previous</a>
                 </li>
                 }.getOrElse {
                     <li class="prev disabled">
-                        <a>&larr; Предыдущий</a>
+                        <a>&larr; Previous</a>
                     </li>
                 }
             <li class="current">
@@ -102,22 +99,20 @@
             </li>
                 @currentPage.next.map { page =>
                 <li class="next">
-                    <a href="@link(page)">Следующий &rarr;</a>
+                    <a href="@link(page)">Next &rarr;</a>
                 </li>
                 }.getOrElse {
                     <li class="next disabled">
-                        <a>Следующий &rarr;</a>
+                        <a>Next &rarr;</a>
                     </li>
                 }
             </ul>
         </div>
 
         }.getOrElse {
-
             <div class="well">
                 <em>Пусто</em>
             </div>
-
         }
 
 
