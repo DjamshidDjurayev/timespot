@@ -1,19 +1,16 @@
 package service
 
 import controllers.socket.LightSocketActor
-import model.Message
 import org.eclipse.paho.client.mqttv3.{IMqttDeliveryToken, MqttCallback, MqttClient, MqttMessage}
+import service.model.Message
 
 /**
-  * Created by camilosampedro on 29/03/17.
   */
 object SubscribeService {
-  val client = new MqttClient(brokerUrl, MqttClient.generateClientId(), persistence)
+  val client = new MqttClient(constants.BROKER_URL, MqttClient.generateClientId(), persistence)
 
   def subscribe(): Unit = {
     client.connect()
-
-    // TODO: Change topic
     client.subscribe(topic)
 
     val callback = new MqttCallback {

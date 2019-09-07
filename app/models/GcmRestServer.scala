@@ -4,12 +4,14 @@ import play.api.Logger
 import play.api.libs.json.Json
 import play.api.libs.ws.WS
 
+import scala.concurrent.Future
+
 /**
  * Created by dzhuraev on 5/11/16.
  */
 class GcmRestServer(val key: String) {
 
-  def send(ids: List[String], data: Map[String, String]) = {
+  def send(ids: List[String], data: Map[String, String]): Future[Unit] = {
 
     import play.api.Play.current
 

@@ -27,8 +27,9 @@ object BearerTokenGenerator {
   // use tail recursion, functional style to build string.
   private def generateToken(tokenLength: Int) : String = {
     val charLen = TOKEN_CHARS.length()
+    @scala.annotation.tailrec
     def generateTokenAccumulator(accumulator: String, number: Int) : String = {
-      if (number == 0) return accumulator
+      if (number == 0) accumulator
       else
         generateTokenAccumulator(accumulator + TOKEN_CHARS(secureRandom.nextInt(charLen)).toString, number - 1)
     }
@@ -46,7 +47,7 @@ object BearerTokenGenerator {
      * or
      *  SHA-256 hash of (username + current time + random token generator) as token, 256 bits, 64 characters
      */
-  def generateMD5Token() =  {
+  def generateMD5Token(): String =  {
     md5(System.nanoTime().toString + generateToken(TOKEN_LENGTH))
   }
   def generateSHAToken() {

@@ -1,10 +1,9 @@
 package models
 
 
-import org.joda.time.{LocalDate, DateTime}
-import play.api.libs.json.{Writes, Reads, JsPath, Json}
+import org.joda.time.DateTime
+import play.api.libs.json.{Json, OFormat}
 import sorm._
-import play.api.libs.functional.syntax._
 
 /**
  * Created by dzhuraev on 3/15/16.
@@ -12,23 +11,18 @@ import play.api.libs.functional.syntax._
 case class Staffer(name: String, image: String, birth: DateTime, surname: String, middle_name: String, code: String, positions: Positions, email: String)
 
 case class Page[+A](items: Seq[A with Persisted], page: Int, offset: Long, total: Long) {
-  lazy val prev = Option(page - 1).filter(_ >= 0)
-  lazy val next = Option(page + 1).filter(_ => (offset + items.size) < total)
+  lazy val prev: Option[Int] = Option(page - 1).filter(_ >= 0)
+  lazy val next: Option[Int] = Option(page + 1).filter(_ => (offset + items.size) < total)
 }
 
 object Staffer {
-  implicit val format = Json.format[Staffer]
+  implicit val format: OFormat[Staffer] = Json.format[Staffer]
 
   def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Page[Staffer] = {
-
     val offest = pageSize * page
-
-    val users = Db.query[Staffer].limit(pageSize).order("id", true).offset(offest).fetch()
-
+    val users = Db.query[Staffer].limit(pageSize).order("id", reverse = true).offset(offest).fetch()
     val totalRows = Db.query[Staffer].count()
-
     Page(users, page, offest, totalRows)
-
   }
 
   def update(id: Long, staffer: Staffer) = {

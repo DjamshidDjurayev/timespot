@@ -17,6 +17,7 @@ libraryDependencies ++= Seq(
   "com.google.code.gson" % "gson" % "2.4",
   "com.github.nscala-time" %% "nscala-time" % "2.12.0",
   "com.cloudinary" %% "cloudinary-scala-play" % "1.2.1",
+  "org.eclipse.paho" % "org.eclipse.paho.client.mqttv3" % "1.1.1",
   cache,
   ws,
   specs2 % Test

@@ -9,7 +9,9 @@ import play.api.mvc._
 import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.libs.Files
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, JsValue, Json}
+import service.PublishService
+import service.model.MQTTPayload
 
 import scala.util.{Failure, Success}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,9 +37,9 @@ class News extends Controller {
   }
 
   val cloudinary = new Cloudinary(Map(
-    "cloud_name" -> "ds5cpnnkl",
-    "api_key" -> "566579673111817",
-    "api_secret" -> "gx5pxezG25hPdqvNEEk8GWdeTcQ"
+    "cloud_name" -> constants.CLOUDINARY_CLOUD_NAME,
+    "api_key" -> constants.CLOUDINARY_API_KEY,
+    "api_secret" -> constants.CLOUDINARY_API_SECRET
   ))
 
   def addNews(): Action[MultipartFormData[Files.TemporaryFile]] = Action(parse.multipartFormData) { implicit request => {
@@ -55,7 +57,7 @@ class News extends Controller {
               // save to DB
               val savedDevice = PaperNew.save(singleNews)
 
-              val server = new GcmRestServer("AAAAIr9zZnk:APA91bFuiPycVWFSclIlcxZOmkgTD_QPk1nxtTAnJjj1NbvzMvmSKZXjBT2Tr18NYOncwgyjI1PkeGauivrvTZINqTSPcCaOonx83bplyETRRpophuYNvSyPNkkFM0AtlKFeLh6S3sEn")
+              val server = new GcmRestServer(constants.FCMKey)
               val devices = Device.getAllDevices().map(_.token).toList
 
               // send push notifications
@@ -64,6 +66,18 @@ class News extends Controller {
                 "message" -> savedDevice.description,
                 "feed_id" -> String.valueOf(savedDevice.id)
               ))
+
+              // publish using WS
+              val payload: JsObject = Json.obj(
+                "id" -> savedDevice.id,
+                "title" -> savedDevice.title,
+                "description" -> savedDevice.description,
+                "creation_date" -> savedDevice.creation_date,
+                "image" -> savedDevice.image
+              )
+
+              val mqttPayload: MQTTPayload = MQTTPayload(savedDevice.id, "feed", Json.stringify(payload))
+              PublishService.publish(Json.stringify(Json.toJson(mqttPayload)))
 
             case Failure(exception) =>
               Home.flashing("error" -> "Error during upload".format(exception))
@@ -81,7 +95,7 @@ class News extends Controller {
   }
 
   def sendNotification(title: String, message: String, id: Int): Action[AnyContent] = Action {
-    val server = new GcmRestServer("AAAAIr9zZnk:APA91bFuiPycVWFSclIlcxZOmkgTD_QPk1nxtTAnJjj1NbvzMvmSKZXjBT2Tr18NYOncwgyjI1PkeGauivrvTZINqTSPcCaOonx83bplyETRRpophuYNvSyPNkkFM0AtlKFeLh6S3sEn")
+    val server = new GcmRestServer(constants.FCMKey)
     val devices = Device.getAllDevices().map(_.token).toList
 
     server.send(devices, Map(
@@ -93,7 +107,7 @@ class News extends Controller {
   }
 
   def sendNotificationByDeviceId(title: String, message: String, id: Int, deviceId: String): Action[AnyContent] = Action {
-    val server = new GcmRestServer("AAAAIr9zZnk:APA91bFuiPycVWFSclIlcxZOmkgTD_QPk1nxtTAnJjj1NbvzMvmSKZXjBT2Tr18NYOncwgyjI1PkeGauivrvTZINqTSPcCaOonx83bplyETRRpophuYNvSyPNkkFM0AtlKFeLh6S3sEn")
+    val server = new GcmRestServer(constants.FCMKey)
     Device.findDevice(deviceId).map {
       device => {
         server.send(List[String](device.token), Map(
@@ -177,4 +191,8 @@ class News extends Controller {
     }
   }
 
+  def publishMessage(message: String): Action[AnyContent] = Action {
+    PublishService.publish(message)
+    Ok(Json.obj("status" -> "success", "message" -> "success"))
+  }
 }

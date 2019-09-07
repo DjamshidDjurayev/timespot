@@ -1,11 +1,10 @@
 package controllers
 
 import java.io.File
-import java.util.concurrent.Future
 
 import models._
 import play.api.libs.Files
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import play.api.mvc._
 
 class Administrator extends Controller {
@@ -96,34 +95,6 @@ class Administrator extends Controller {
     }
   }
 
-//  def sendPicture = Action(parse.temporaryFile) { request =>
-//    request.body.moveTo(new File("public/images"))
-//    Ok("File uploaded")
-//  }ф
-
-//  def staffRegistration() = Action { implicit request =>
-//
-//    val body: AnyContent = request.body
-//    val jsonBody: Option[JsValue] = body.asJson
-//
-//    // Expecting json body
-//    jsonBody.map { json => {
-//      val name = (json \ "name").as[String]
-//      val image = (json \ "image").as[String]
-//      val birth = (json \ "birth").as[Long]
-//      val surname = (json \ "surname").as[String]
-//      val middle_name = (json \ "middle_name").as[String]
-//      val code = (json \ "code").as[String]
-//      val position = (json \ "position").as[String]
-//      //      Ok(Json.obj())
-//      val staff = new Staffer(name, image, new DateTime(birth), surname, middle_name, code, position)
-//      Ok(Json.toJson(staff))
-//    }
-//    }.getOrElse {
-//      BadRequest("Expecting application/json request body")
-//    }
-//  }
-
   def getStatistics(login: String, password: String): Action[AnyContent] = Action {
     Admin.findAdmin(login, password).map {
       admin => {
@@ -142,5 +113,4 @@ class Administrator extends Controller {
       BadRequest(Json.obj("status" -> "fail", "message" -> "Администратор не найден"))
     }
   }
-
 }

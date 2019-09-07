@@ -1,8 +1,6 @@
 package models
 
-import org.joda.time.DateTime
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Writes, Json}
+import play.api.libs.json.{Format, Json}
 import sorm.Persisted
 
 /**
@@ -12,62 +10,29 @@ case class Admin(name: String, surname: String, login: String, password: String)
 
 object Admin {
 
-  implicit val adminFormat = Json.format[Admin]
+  implicit val adminFormat: Format[Admin] = Json.format[Admin]
 
-//  implicit val adminWrite = Json.writes[Admin]
-
-
-//  implicit val adminWrite: Writes[Admin] = (
-//      (JsPath \ "name").write[String] and
-//      (JsPath \ "surname").write[String] and
-//      (JsPath \ "login").write[String] and
-//      (JsPath \ "password").write[String]
-//    )(unlift(Admin.unapply))
-
-
-
-
-//  implicit val adminWrite = Json.toJsFieldJsValueWrapper(
-//  "id" -> 1,
-//  "name" -> "name",
-//  "surname" -> "surname",
-//  "login" -> "login",
-//  "password" -> "password"
-//  )
-
-
-  def findAdmin(login: String, password: String) = {
+  def findAdmin(login: String, password: String): Option[Admin with Persisted] = {
     Db.query[Admin with Persisted].whereEqual("login", login).whereEqual("password", password).fetchOne()
   }
 
-  def findAdminByLogin(login: String) = {
+  def findAdminByLogin(login: String): Option[Admin with Persisted] = {
     Db.query[Admin with Persisted].whereEqual("login", login).fetchOne()
   }
 
-  def getAdminId(login: String, password: String) = {
+  def getAdminId(login: String, password: String): Option[Long] = {
     Db.query[Admin].whereEqual("login", login).whereEqual("password", password).fetchOneId()
   }
 
-  def save(admin: Admin) = {
+  def save(admin: Admin): Admin with Persisted = {
     Db.save[Admin](admin)
   }
 
-  def delete(admin: Admin) = {
+  def delete(admin: Admin): Unit = {
     Db.delete[Admin](admin)
   }
 
-  def adminCount() = {
+  def adminCount(): Int = {
     Db.query[Admin].count()
   }
-
-//  def isExist(login: String, password: String) = {
-//    DBase.query[Admin].exists()
-//  }
-
-//  def getAdmins() = {
-//    DBase.query[Admin].fetch()
-//
-////    DBase.query[Admin].fetch()
-//
-//  }
 }
