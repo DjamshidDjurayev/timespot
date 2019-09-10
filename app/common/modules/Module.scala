@@ -3,7 +3,7 @@ package common.modules
 import com.tzavellas.sse.guice.ScalaModule
 import common.cloudinary.{CloudinaryProvider, CloudinaryProviderImpl}
 import common.mqtt.{MqttClientImpl, MqttClientProvider, MqttServiceProvider, MqttServiceProviderImpl}
-import common.ws.{FcmProvider, FcmProviderImpl}
+import common.fcm.{FcmProvider, FcmProviderImpl}
 
 class Module extends ScalaModule {
   override def configure(): Unit = {

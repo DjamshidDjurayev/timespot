@@ -3,9 +3,10 @@ package controllers
 import com.google.inject.Inject
 import common.cloudinary.CloudinaryProvider
 import common.mqtt.MqttServiceProvider
-import common.ws.FcmProvider
+import common.fcm.FcmProvider
 import models.{Device, PaperNew}
 import org.joda.time.DateTime
+import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc._
@@ -16,6 +17,7 @@ import play.api.libs.json.{JsObject, Json}
 import service.model.MQTTPayload
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Future, TimeoutException}
 import scala.util.{Failure, Success}
 
 class News @Inject()(fcmProvider: FcmProvider,
@@ -55,14 +57,14 @@ class News @Inject()(fcmProvider: FcmProvider,
               val savedDevice = PaperNew.save(singleNews)
               val devices = Device.getAllDevices().map(_.token).toList
 
-              // send push notifications
-              fcmProvider.send(devices, Map(
+              val pushBody: Map[String, String] = Map(
                 "title" -> savedDevice.title,
                 "message" -> savedDevice.description,
                 "feed_id" -> String.valueOf(savedDevice.id)
-              ))
+              )
+              // send push notifications
+              fcmProvider.send(devices, pushBody).map { result => Logger.debug(result.body)}
 
-              // publish using MQTT
               val payload: JsObject = Json.obj(
                 "id" -> savedDevice.id,
                 "title" -> savedDevice.title,
@@ -70,7 +72,7 @@ class News @Inject()(fcmProvider: FcmProvider,
                 "creation_date" -> savedDevice.creation_date,
                 "image" -> savedDevice.image
               )
-
+              // publish using MQTT
               val mqttPayload: MQTTPayload = MQTTPayload(savedDevice.id, "feed", Json.stringify(payload))
               mqttServiceProvider.publishToTopic(constants.topic, Json.stringify(Json.toJson(mqttPayload)))
 
@@ -89,30 +91,47 @@ class News @Inject()(fcmProvider: FcmProvider,
     Ok(views.html.createFormNews(newsForm))
   }
 
-  def sendNotification(title: String, message: String, id: Int): Action[AnyContent] = Action {
+  def sendNotification(title: String, message: String, id: Int): Action[AnyContent] = Action.async {
     val devices = Device.getAllDevices().map(_.token).toList
 
-    fcmProvider.send(devices, Map(
+    val body = Map(
       "title" -> title,
       "message" -> message,
       "feed_id" -> String.valueOf(id)
-    ))
-    Ok(Json.obj("status" -> "success", "message" -> "Notification sent successfully"))
+    )
+
+    fcmProvider.send(devices, body).map {
+      response => {
+        Ok(Json.toJson(Json.obj("code" -> response.status, "status" -> response.statusText, "message" -> response.body)))
+      }
+    }.recover {
+      case t: TimeoutException => InternalServerError(s"Api Timed out $t")
+      case t: Throwable => InternalServerError(s"Exception in the api $t")
+    }
   }
 
-  def sendNotificationByDeviceId(title: String, message: String, id: Int, deviceId: String): Action[AnyContent] = Action {
+  def sendNotificationByDeviceId(title: String, message: String, id: Int, deviceId: String): Action[AnyContent] = Action.async {
     Device.findDevice(deviceId).map {
       device => {
         val deviceList = List[String](device.token)
-        fcmProvider.send(deviceList, Map(
+        val body = Map(
           "title" -> title,
           "message" -> message,
           "feed_id" -> String.valueOf(id)
-        ))
-        Ok(Json.obj("status" -> "success", "message" -> "Notifications sent successfully"))
+        )
+        fcmProvider.send(deviceList, body).map {
+          response => {
+            Ok(Json.toJson(Json.obj("code" -> response.status, "status" -> response.statusText, "message" -> response.body)))
+          }
+        }.recover {
+          case t: TimeoutException => InternalServerError(s"Api Timed out $t")
+          case t: Throwable => InternalServerError(s"Exception in the api $t")
+        }
       }
     }.getOrElse {
-      NotFound(Json.obj("status" -> "fail", "message" -> "Device not found"))
+      Future {
+        NotFound(Json.obj("status" -> "fail", "message" -> "Device not found"))
+      }
     }
   }
 
@@ -135,12 +154,15 @@ class News @Inject()(fcmProvider: FcmProvider,
   }
 
   def delete(id: Long): Action[AnyContent] = Action {
-    PaperNew.delete(id)
-    Home.flashing("success" -> "News has been deleted")
+    PaperNew.findById(id).map { paperNew =>
+      PaperNew.delete(paperNew)
+      Home.flashing("success" -> "News has been deleted")
+    }.getOrElse {
+      Home.flashing("fail" -> "News not found")
+    }
   }
 
   def getNews: Action[AnyContent] = Action {
-    fcmProvider.send(List[String]("axax"), Map("title" -> "title"))
     val news = PaperNew.getFeedList(true)
     Ok(Json.toJson(news))
   }

@@ -41,6 +41,10 @@ object PaperNew {
     Db.delete[PaperNew](Db.fetchById[PaperNew](id))
   }
 
+  def delete(paperNew: PaperNew): Unit = {
+    Db.delete[PaperNew](paperNew)
+  }
+
   def save(feed: PaperNew): PaperNew with Persisted = {
     Db.save[PaperNew](feed)
   }

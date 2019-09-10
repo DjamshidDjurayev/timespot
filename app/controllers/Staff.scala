@@ -1,6 +1,6 @@
 package controllers
 
-import common.ws.FcmProvider
+import common.fcm.FcmProvider
 import javax.inject.Inject
 import models._
 import org.joda.time.DateTime
