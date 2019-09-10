@@ -1,6 +1,6 @@
 package controllers
 
-import common.ws.WsProvider
+import common.ws.FcmProvider
 import javax.inject.Inject
 import models._
 import org.joda.time.DateTime
@@ -12,7 +12,7 @@ import play.api.Play.current
 
 import scala.concurrent.ExecutionContext
 
-class Staff @Inject()(implicit context: ExecutionContext, wsProvider: WsProvider) extends Controller {
+class Staff @Inject()(implicit context: ExecutionContext, fcmProvider: FcmProvider) extends Controller {
   val Home: Result = Redirect(routes.Staff.list(0, 2, ""))
 
   def getStaff: Action[AnyContent] = Action {
@@ -52,7 +52,7 @@ class Staff @Inject()(implicit context: ExecutionContext, wsProvider: WsProvider
             val history = History(staffer, 0, actionDateTime, actionDateTime.toLocalDate)
             Db.save[History](history)
 
-            wsProvider.send(firstNames, Map(
+            fcmProvider.send(firstNames, Map(
               "message" ->" пришел",
               "name" -> staffer.name,
               "surname" -> staffer.surname
@@ -63,7 +63,7 @@ class Staff @Inject()(implicit context: ExecutionContext, wsProvider: WsProvider
             val history = History(staffer, 1, actionDateTime, actionDateTime.toLocalDate)
             Db.save[History](history)
 
-            wsProvider.send(firstNames, Map(
+            fcmProvider.send(firstNames, Map(
               "message" ->" ушел",
               "name" -> staffer.name,
               "surname" -> staffer.surname

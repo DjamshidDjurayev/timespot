@@ -7,7 +7,7 @@ import play.api.libs.ws.WSClient
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class WsProviderImpl @Inject()(implicit executionContext: ExecutionContext, ws: WSClient) extends WsProvider {
+class FcmProviderImpl @Inject()(implicit executionContext: ExecutionContext, ws: WSClient) extends FcmProvider {
   private val key: String = constants.FCMKey
 
   override def send(ids: List[String], data: Map[String, String]): Future[Unit] = {

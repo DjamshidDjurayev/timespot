@@ -2,7 +2,8 @@ package controllers
 
 import com.google.inject.Inject
 import common.cloudinary.CloudinaryProvider
-import common.ws.WsProvider
+import common.mqtt.MqttServiceProvider
+import common.ws.FcmProvider
 import models.{Device, PaperNew}
 import org.joda.time.DateTime
 import play.api.data.Form
@@ -12,15 +13,16 @@ import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
 import play.api.libs.Files
 import play.api.libs.json.{JsObject, Json}
-import service.PublishService
 import service.model.MQTTPayload
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 
-class News @Inject()(wsProvider: WsProvider, cloudinaryProvider: CloudinaryProvider)  extends Controller {
-  val Home: Result = Redirect(routes.News.list2(0, 2, ""))
+class News @Inject()(fcmProvider: FcmProvider,
+                     cloudinaryProvider: CloudinaryProvider,
+                     mqttServiceProvider: MqttServiceProvider)  extends Controller {
 
+  val Home: Result = Redirect(routes.News.list2(0, 2, ""))
   val newsForm: Form[PaperNew] = Form(
     mapping(
       "title" -> nonEmptyText,
@@ -54,13 +56,13 @@ class News @Inject()(wsProvider: WsProvider, cloudinaryProvider: CloudinaryProvi
               val devices = Device.getAllDevices().map(_.token).toList
 
               // send push notifications
-              wsProvider.send(devices, Map(
+              fcmProvider.send(devices, Map(
                 "title" -> savedDevice.title,
                 "message" -> savedDevice.description,
                 "feed_id" -> String.valueOf(savedDevice.id)
               ))
 
-              // publish using WS
+              // publish using MQTT
               val payload: JsObject = Json.obj(
                 "id" -> savedDevice.id,
                 "title" -> savedDevice.title,
@@ -70,7 +72,7 @@ class News @Inject()(wsProvider: WsProvider, cloudinaryProvider: CloudinaryProvi
               )
 
               val mqttPayload: MQTTPayload = MQTTPayload(savedDevice.id, "feed", Json.stringify(payload))
-              PublishService.publish(Json.stringify(Json.toJson(mqttPayload)))
+              mqttServiceProvider.publishToTopic(constants.topic, Json.stringify(Json.toJson(mqttPayload)))
 
             case Failure(exception) =>
               Home.flashing("error" -> "Error during upload".format(exception))
@@ -90,7 +92,7 @@ class News @Inject()(wsProvider: WsProvider, cloudinaryProvider: CloudinaryProvi
   def sendNotification(title: String, message: String, id: Int): Action[AnyContent] = Action {
     val devices = Device.getAllDevices().map(_.token).toList
 
-    wsProvider.send(devices, Map(
+    fcmProvider.send(devices, Map(
       "title" -> title,
       "message" -> message,
       "feed_id" -> String.valueOf(id)
@@ -101,7 +103,8 @@ class News @Inject()(wsProvider: WsProvider, cloudinaryProvider: CloudinaryProvi
   def sendNotificationByDeviceId(title: String, message: String, id: Int, deviceId: String): Action[AnyContent] = Action {
     Device.findDevice(deviceId).map {
       device => {
-        wsProvider.send(List[String](device.token), Map(
+        val deviceList = List[String](device.token)
+        fcmProvider.send(deviceList, Map(
           "title" -> title,
           "message" -> message,
           "feed_id" -> String.valueOf(id)
@@ -137,7 +140,7 @@ class News @Inject()(wsProvider: WsProvider, cloudinaryProvider: CloudinaryProvi
   }
 
   def getNews: Action[AnyContent] = Action {
-    wsProvider.send(List[String]("axax"), Map("title" -> "title"))
+    fcmProvider.send(List[String]("axax"), Map("title" -> "title"))
     val news = PaperNew.getFeedList(true)
     Ok(Json.toJson(news))
   }
@@ -183,7 +186,7 @@ class News @Inject()(wsProvider: WsProvider, cloudinaryProvider: CloudinaryProvi
   }
 
   def publishMessage(message: String): Action[AnyContent] = Action {
-    PublishService.publish(message)
+    mqttServiceProvider.publishToTopic(constants.topic, message)
     Ok(Json.obj("status" -> "success", "message" -> "success"))
   }
 }

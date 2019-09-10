@@ -2,16 +2,17 @@ package controllers
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
+import com.google.inject.{Inject, Singleton}
+import common.mqtt.MqttServiceProvider
 import controllers.socket.LightSocketActor
-import javax.inject.{Inject, Singleton}
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-import service.SubscribeService
 import service.model.Message
 
 @Singleton
-class Application @Inject()(implicit system: ActorSystem, materializer: Materializer) extends Controller {
-  SubscribeService.subscribe()
+class Application @Inject()(implicit system: ActorSystem, materializer: Materializer, mqttServiceProvider: MqttServiceProvider) extends Controller {
+  mqttServiceProvider.subscribeToTopic(constants.topic)
+
   def socket: WebSocket = WebSocket.accept[Message, Message] { _ =>
     ActorFlow.actorRef(out => LightSocketActor.props(out))
   }

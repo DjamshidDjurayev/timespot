@@ -2,6 +2,6 @@ package common.ws
 
 import scala.concurrent.Future
 
-trait WsProvider {
+trait FcmProvider {
   def send(ids: List[String], data: Map[String, String]): Future[Unit]
 }
