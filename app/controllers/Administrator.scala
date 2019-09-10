@@ -29,7 +29,7 @@ class Administrator extends Controller {
 
   def addPosition(title: String): Action[AnyContent] = Action {
     Positions.findByTitle(title).map {
-      position => {
+      _ => {
         Ok(Json.obj("status" -> "fail", "message" -> "Уже существует"))
       }
     }.getOrElse {
@@ -52,7 +52,7 @@ class Administrator extends Controller {
 
   def editPosition(oldTitle: String, newTitle: String): Action[AnyContent] = Action {
     Positions.findByTitle(newTitle).map {
-      position => {
+      _ => {
         Ok(Json.obj("status" -> "fail", "message" -> "Уже существует"))
       }
     }.getOrElse {
@@ -74,11 +74,11 @@ class Administrator extends Controller {
 
   def addAdmin(name: String, surname: String, login: String, password: String): Action[AnyContent] = Action {
     Admin.findAdmin(login: String, password: String).map {
-      admin => {
+      _ => {
         Ok(Json.obj("status" -> "fail", "message" -> "Уже существует"))
       }
     }.getOrElse {
-      val admin = new Admin(name,surname,login,password)
+      val admin = new Admin(name, surname, login, password)
       Admin.save(admin)
       Ok(Json.obj("status" -> "success", "message" -> "Администратор добавлен"))
     }
@@ -97,17 +97,19 @@ class Administrator extends Controller {
 
   def getStatistics(login: String, password: String): Action[AnyContent] = Action {
     Admin.findAdmin(login, password).map {
-      admin => {
+      _ => {
         val staffCounter = Staffer.staffCount()
         val historyCounter = History.historyGeneralCount()
         val newsCounter = PaperNew.newsCount()
         val adminCounter = Admin.adminCount()
         val positionCounter = Positions.positionCount()
-        Ok(Json.obj("staff_count" -> staffCounter,
+
+        Ok(Json.obj(
+          "staff_count" -> staffCounter,
           "history_count" -> historyCounter,
-        "news_count" -> newsCounter,
-        "admin_count" -> adminCounter,
-        "position_count" -> positionCounter))
+          "news_count" -> newsCounter,
+          "admin_count" -> adminCounter,
+          "position_count" -> positionCounter))
       }
     }.getOrElse {
       BadRequest(Json.obj("status" -> "fail", "message" -> "Администратор не найден"))

@@ -1,20 +1,22 @@
 package controllers
 
+import common.ws.WsProvider
+import javax.inject.Inject
 import models._
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import play.api.Play.current
 import play.api.i18n.Messages.Implicits._
+import play.api.Play.current
 
-class Staff extends Controller {
+import scala.concurrent.ExecutionContext
 
+class Staff @Inject()(implicit context: ExecutionContext, wsProvider: WsProvider) extends Controller {
   val Home: Result = Redirect(routes.Staff.list(0, 2, ""))
 
   def getStaff: Action[AnyContent] = Action {
     val staffs = Db.query[Staffer].order("id", reverse = true).fetch()
-//    staffs.
     Ok(Json.toJson(staffs))
   }
 
@@ -39,7 +41,6 @@ class Staff extends Controller {
   }
 
   def addHistory(code: String): Action[AnyContent] = Action {
-    val server = new GcmRestServer("AIzaSyB_alsXuKslW8tdxfgCh--xrFrdt0EW-WA")
     val firstNames = Device.getAllDevices().map(_.token).toList
     val actionDateTime = DateTime.now()
 
@@ -51,7 +52,7 @@ class Staff extends Controller {
             val history = History(staffer, 0, actionDateTime, actionDateTime.toLocalDate)
             Db.save[History](history)
 
-            server.send(firstNames, Map(
+            wsProvider.send(firstNames, Map(
               "message" ->" пришел",
               "name" -> staffer.name,
               "surname" -> staffer.surname
@@ -62,7 +63,7 @@ class Staff extends Controller {
             val history = History(staffer, 1, actionDateTime, actionDateTime.toLocalDate)
             Db.save[History](history)
 
-            server.send(firstNames, Map(
+            wsProvider.send(firstNames, Map(
               "message" ->" ушел",
               "name" -> staffer.name,
               "surname" -> staffer.surname
@@ -105,7 +106,6 @@ class Staff extends Controller {
 
     do {
       val generatedCode = BearerTokenGenerator.generateMD5Token()
-
       Staffer.findByQrCode(generatedCode).map {
         _ => {
           isExist = true
@@ -154,7 +154,7 @@ class Staff extends Controller {
     }.getOrElse {
       BadRequest(Json.obj("status" -> "fail", "message" -> "Expecting application/json request body"))
     }
-    }
+  }
 
   def editStaff(): Action[AnyContent] = Action { implicit request =>
     val body: AnyContent = request.body

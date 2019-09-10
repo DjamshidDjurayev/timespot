@@ -1,5 +1,6 @@
 package object constants {
   val FCMKey: String = "AAAAIr9zZnk:APA91bFuiPycVWFSclIlcxZOmkgTD_QPk1nxtTAnJjj1NbvzMvmSKZXjBT2Tr18NYOncwgyjI1PkeGauivrvTZINqTSPcCaOonx83bplyETRRpophuYNvSyPNkkFM0AtlKFeLh6S3sEn"
+  val FCMUrl: String = "https://fcm.googleapis.com/fcm/send"
   val DB_URL: String = "jdbc:postgresql://ec2-174-129-18-170.compute-1.amazonaws.com:5432/dd83d204polrve"
   val DB_USER: String = "ntlmnyvtuvpwpv"
   val DB_PASSWORD: String = "_AwM27MHmyBzkIXPPDOVu1I32L"

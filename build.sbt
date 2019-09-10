@@ -18,6 +18,8 @@ libraryDependencies ++= Seq(
   "com.github.nscala-time" %% "nscala-time" % "2.12.0",
   "com.cloudinary" %% "cloudinary-scala-play" % "1.2.1",
   "org.eclipse.paho" % "org.eclipse.paho.client.mqttv3" % "1.1.1",
+  "com.tzavellas" %% "sse-guice" % "0.7.2",
+  "com.google.inject" % "guice"  % "4.1.0",
   cache,
   ws,
   specs2 % Test
