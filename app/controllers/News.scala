@@ -189,6 +189,23 @@ class News @Inject()(fcmProvider: FcmProvider,
     Ok(Json.toJson(list))
   }
 
+  def getFeed(offset: Int, limit: Int): Action[AnyContent] = Action {
+    val newsFeed = PaperNew.getFeedListWithOffset(reverse = true, offset, limit)
+
+    val list = newsFeed.map {
+      feed => {
+        Json.obj(
+          "id" -> feed.id,
+          "title" -> feed.title,
+          "description" -> feed.description,
+          "creation_date" -> feed.creation_date,
+          "image" -> feed.image
+        )
+      }
+    }
+    Ok(Json.toJson(list))
+  }
+
   def getSingleNews(id: Long): Action[AnyContent] = Action {
     PaperNew.findById(id).map {
       feed => {

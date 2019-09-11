@@ -29,6 +29,10 @@ object PaperNew {
     Db.query[PaperNew].order("id", reverse).fetch()
   }
 
+  def getFeedListWithOffset(reverse: Boolean, offset: Int, limit: Int): Stream[PaperNew with Persisted] = {
+    Db.query[PaperNew].order("id", reverse).limit(limit).offset(offset).fetch()
+  }
+
   def update(id: Long, paperNew: PaperNew): List[PaperNew with Persisted] = {
     Db.query[PaperNew].whereEqual("id", id).replace(paperNew)
   }

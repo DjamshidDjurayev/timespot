@@ -30,6 +30,7 @@ GET         /api/persons                      @controllers.Staff.getStaff
 GET         /api/news                         @controllers.News.getNews
 DELETE      /api/news/removeNews              @controllers.News.clearNews
 GET         /api/news/getNewsFeed             @controllers.News.getNewsFeed
+GET         /api/news/getFeed                 @controllers.News.getFeed(offset: Int, limit: Int)
 GET         /api/news/getSingleNews           @controllers.News.getSingleNews(id: Long)
 GET         /api/news/sendNotification        @controllers.News.sendNotification(title: String, message: String, id: Int)
 GET         /api/news/sendPushByDevice        @controllers.News.sendNotificationByDeviceId(title: String, message: String, id: Int, deviceId:String)
