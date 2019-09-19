@@ -20,18 +20,23 @@ libraryDependencies ++= Seq(
   "org.eclipse.paho" % "org.eclipse.paho.client.mqttv3" % "1.1.1",
   "com.tzavellas" %% "sse-guice" % "0.7.2",
   "com.google.inject" % "guice"  % "4.1.0",
-  cache,
+  "com.typesafe.play" %% "play-json" % "2.7.3",
+  "com.typesafe.play" %% "play-json-joda" % "2.7.3",
+  "org.joda" % "joda-convert" % "1.8.1",
+  "com.h2database" % "h2" % "1.4.193",
+  jodaForms,
+  guice,
+  cacheApi,
   ws,
   specs2 % Test
 )
 
-
 dependencyOverrides += "org.scala-lang" % "scala-compiler" % scalaVersion.value
-
-resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
 
 routesGenerator := InjectedRoutesGenerator
 routesGenerator := StaticRoutesGenerator
+

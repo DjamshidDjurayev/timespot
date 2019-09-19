@@ -1,5 +1,6 @@
   package controllers
 
+  import com.google.inject.Inject
   import models.Device
   import play.api.libs.json.{JsValue, Json}
   import play.api.mvc._
@@ -7,7 +8,7 @@
   /**
    * Created by dzhuraev on 5/12/16.
    */
-  class DeviceController extends Controller {
+  class DeviceController @Inject()(components: ControllerComponents) extends AbstractController(components) {
 
     def registerDevice(deviceId: String, tokenId: String): Action[AnyContent] = Action {
       Device.findDevice(deviceId).map {

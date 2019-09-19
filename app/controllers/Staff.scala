@@ -5,14 +5,15 @@ import javax.inject.Inject
 import models._
 import org.joda.time.DateTime
 import play.api.Logger
+import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
-import play.api.i18n.Messages.Implicits._
-import play.api.Play.current
 
 import scala.concurrent.ExecutionContext
 
-class Staff @Inject()(implicit context: ExecutionContext, fcmProvider: FcmProvider) extends Controller {
+class Staff @Inject()(implicit context: ExecutionContext,
+                      fcmProvider: FcmProvider,
+                      components: ControllerComponents) extends AbstractController(components) with I18nSupport {
   val Home: Result = Redirect(routes.Staff.list(0, 2, ""))
 
   def getStaff: Action[AnyContent] = Action {
@@ -42,14 +43,14 @@ class Staff @Inject()(implicit context: ExecutionContext, fcmProvider: FcmProvid
 
   def addHistory(code: String): Action[AnyContent] = Action {
     val firstNames = Device.getAllDevices().map(_.token).toList
-    val actionDateTime = DateTime.now()
+    val actionDateTime = DateTime.now().getMillis
 
     Staffer.findByQrCode(code).map {
       staffer => {
-        val counter: Int = History.historyCount(staffer, actionDateTime.getMillis)
+        val counter: Int = History.historyCount(staffer, actionDateTime)
         counter match {
           case 0 =>
-            val history = History(staffer, 0, actionDateTime, actionDateTime.toLocalDate)
+            val history = History(staffer, 0, actionDateTime, actionDateTime)
             Db.save[History](history)
 
             fcmProvider.send(firstNames, Map(
@@ -60,7 +61,7 @@ class Staff @Inject()(implicit context: ExecutionContext, fcmProvider: FcmProvid
 
             Ok(Json.obj("status" -> "success", "count" -> counter, "staff" -> Json.toJson(staffer)))
           case 1 =>
-            val history = History(staffer, 1, actionDateTime, actionDateTime.toLocalDate)
+            val history = History(staffer, 1, actionDateTime, actionDateTime)
             Db.save[History](history)
 
             fcmProvider.send(firstNames, Map(
@@ -145,7 +146,7 @@ class Staff @Inject()(implicit context: ExecutionContext, fcmProvider: FcmProvid
       val position = (json \ "positions" \ "title").as[String]
       val email = (json \ "email").as[String]
 
-      val staff = new Staffer(name, image, new DateTime(birth), surname, middle_name, code,
+      val staff = new Staffer(name, image, birth, surname, middle_name, code,
         Positions.findByTitle(position).get, email)
       Db.save[Staffer](staff)
 
@@ -174,7 +175,7 @@ class Staff @Inject()(implicit context: ExecutionContext, fcmProvider: FcmProvid
 
       Staffer.findByQrCode(code).map {
         staffer => {
-          Staffer.updateStaffer(staffer, name, image, new DateTime(birth), surname, middle_name,
+          Staffer.updateStaffer(staffer, name, image, birth, surname, middle_name,
             Positions.findByTitle(position).get, email)
           Ok(Json.obj("status" -> "success", "message" -> "Staff info changed"))
         }

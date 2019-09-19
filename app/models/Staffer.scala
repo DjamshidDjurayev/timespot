@@ -8,7 +8,7 @@ import sorm._
 /**
  * Created by dzhuraev on 3/15/16.
  */
-case class Staffer(name: String, image: String, birth: DateTime, surname: String, middle_name: String, code: String, positions: Positions, email: String)
+case class Staffer(name: String, image: String, birth: Long, surname: String, middle_name: String, code: String, positions: Positions, email: String)
 
 case class Page[+A](items: Seq[A with Persisted], page: Int, offset: Long, total: Long) {
   lazy val prev: Option[Int] = Option(page - 1).filter(_ >= 0)
@@ -46,7 +46,7 @@ object Staffer {
   }
 
   def updateStaffer(staffer: Staffer, name: String, image: String,
-                    birth: DateTime, surname: String, middle_name: String,
+                    birth: Long, surname: String, middle_name: String,
                     positions: Positions, email: String) = {
     Db.save(staffer.copy(name = name, image = image, birth = birth,
       surname = surname, middle_name = middle_name, positions = positions, email = email))

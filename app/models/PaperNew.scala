@@ -1,14 +1,12 @@
 package models
 
-import org.joda.time.DateTime
 import play.api.libs.json.{Format, Json}
 import sorm.Persisted
-
 /**
  * Created by dzhuraev on 3/16/16.
  */
 
-case class PaperNew(title: String, description: String, creation_date: DateTime, image: String)
+case class PaperNew(title: String, description: String, creation_date: Long, image: String)
 
 case class Page2[+A](items: Seq[A with Persisted], page: Int, offset: Long, total: Long) {
   lazy val prev: Option[Int] = Option(page - 1).filter(_ >= 0)

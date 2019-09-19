@@ -10,7 +10,10 @@ import play.api.mvc._
 import service.model.Message
 
 @Singleton
-class Application @Inject()(implicit system: ActorSystem, materializer: Materializer, mqttServiceProvider: MqttServiceProvider) extends Controller {
+class Application @Inject()(implicit system: ActorSystem,
+                            materializer: Materializer,
+                            mqttServiceProvider: MqttServiceProvider,
+                            components: ControllerComponents) extends AbstractController(components) {
   mqttServiceProvider.subscribeToTopic(constants.topic)
 
   def socket: WebSocket = WebSocket.accept[Message, Message] { _ =>

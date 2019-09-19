@@ -5,16 +5,15 @@ import common.cloudinary.CloudinaryProvider
 import common.mqtt.MqttServiceProvider
 import common.fcm.FcmProvider
 import models.{Device, PaperNew}
-import org.joda.time.DateTime
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.i18n.I18nSupport
 import play.api.mvc._
-import play.api.Play.current
-import play.api.i18n.Messages.Implicits._
 import play.api.libs.Files
 import play.api.libs.json.{JsObject, Json}
 import service.model.MQTTPayload
+import org.joda.time.DateTime
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, TimeoutException}
@@ -22,14 +21,15 @@ import scala.util.{Failure, Success}
 
 class News @Inject()(fcmProvider: FcmProvider,
                      cloudinaryProvider: CloudinaryProvider,
-                     mqttServiceProvider: MqttServiceProvider)  extends Controller {
+                     mqttServiceProvider: MqttServiceProvider,
+                     components: ControllerComponents) extends AbstractController(components) with I18nSupport {
 
   val Home: Result = Redirect(routes.News.list2(0, 2, ""))
   val newsForm: Form[PaperNew] = Form(
     mapping(
       "title" -> nonEmptyText,
       "description" -> nonEmptyText,
-      "creation_date" -> jodaDate,
+      "creation_date" -> longNumber,
       "image" -> text
     )(PaperNew.apply)(PaperNew.unapply)
   )
@@ -52,7 +52,7 @@ class News @Inject()(fcmProvider: FcmProvider,
               val title = data.get("title").map { item => item.head }.head
               val description = data.get("description").map { item => item.head }.head
 
-              val singleNews = new PaperNew(title, description, DateTime.now(), value.url)
+              val singleNews = new PaperNew(title, description, DateTime.now().getMillis, value.url)
               // save to DB
               val savedDevice = PaperNew.save(singleNews)
               val devices = Device.getAllDevices().map(_.token).toList
@@ -87,7 +87,7 @@ class News @Inject()(fcmProvider: FcmProvider,
     Home.flashing()
   }
 
-  def create: Action[AnyContent] = Action {
+  def create: Action[AnyContent] = Action { implicit request =>
     Ok(views.html.createFormNews(newsForm))
   }
 

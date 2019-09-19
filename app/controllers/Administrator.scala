@@ -2,12 +2,13 @@ package controllers
 
 import java.io.File
 
+import com.google.inject.Inject
 import models._
 import play.api.libs.Files
 import play.api.libs.json.Json
 import play.api.mvc._
 
-class Administrator extends Controller {
+class Administrator @Inject()(components: ControllerComponents) extends AbstractController(components) {
   def adminAuth(login: String, password: String): Action[AnyContent] = Action {
     Admin.findAdmin(login, password).map {
       admin => {

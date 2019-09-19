@@ -1,15 +1,21 @@
 package models
 
 import org.joda.time.{DateTime, LocalDate}
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Json, OFormat, Reads, Writes}
 import sorm.Persisted
+
+import play.api.libs.json.JodaWrites._
+import play.api.libs.json.JodaReads._
 
 /**
  * Created by dzhuraev on 4/20/16.
  */
-case class History(staffer: Staffer, action: Int, action_date: DateTime, action_value: org.joda.time.LocalDate)
+case class History(staffer: Staffer, action: Int, action_date: Long, action_value: Long)
 
 object History {
+  implicit val dateTimeWriter: Writes[DateTime] = jodaDateWrites("dd/MM/yyyy HH:mm:ss")
+  implicit val dateTimeJsReader: Reads[DateTime] = jodaDateReads("yyyyMMddHHmmss")
+
   implicit val historyFormat: OFormat[History] = Json.format[History]
 
   def findById(staffer: Staffer with Persisted): Stream[History with Persisted] = {
