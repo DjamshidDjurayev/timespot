@@ -47,11 +47,11 @@ class Staff @Inject()(implicit context: ExecutionContext,
 
     Staffer.findByQrCode(code).map {
       staffer => {
-        val counter: Int = History.historyCount(staffer, actionDateTime)
+        val counter: Int = StaffHistory.historyCount(staffer, actionDateTime)
         counter match {
           case 0 =>
-            val history = History(staffer, 0, actionDateTime, actionDateTime)
-            Db.save[History](history)
+            val history = StaffHistory(staffer, 0, actionDateTime, actionDateTime)
+            Db.save[StaffHistory](history)
 
             fcmProvider.send(firstNames, Map(
               "message" ->" пришел",
@@ -61,8 +61,8 @@ class Staff @Inject()(implicit context: ExecutionContext,
 
             Ok(Json.obj("status" -> "success", "count" -> counter, "staff" -> Json.toJson(staffer)))
           case 1 =>
-            val history = History(staffer, 1, actionDateTime, actionDateTime)
-            Db.save[History](history)
+            val history = StaffHistory(staffer, 1, actionDateTime, actionDateTime)
+            Db.save[StaffHistory](history)
 
             fcmProvider.send(firstNames, Map(
               "message" ->" ушел",
@@ -84,7 +84,7 @@ class Staff @Inject()(implicit context: ExecutionContext,
   def getHistory(code: String): Action[AnyContent] = Action {
     Staffer.findByQrCode(code).map {
       history => {
-        Ok(Json.toJson(History.findById(history)))
+        Ok(Json.toJson(StaffHistory.findById(history)))
       }
     }.getOrElse {
       BadRequest(Json.obj("status" -> "fail", "message" -> "Staff not found"))
@@ -94,7 +94,7 @@ class Staff @Inject()(implicit context: ExecutionContext,
   def getActionsByDate(userId: String, date: Long): Action[AnyContent] = Action {
     Staffer.findByQrCode(userId).map {
       staff => {
-        Ok(Json.toJson(History.getStaffActionsByDate(staff, date)))
+        Ok(Json.toJson(StaffHistory.getStaffActionsByDate(staff, date)))
       }
     }.getOrElse {
       BadRequest(Json.obj("status" -> "fail", "message" -> "Staff not found"))
@@ -191,7 +191,7 @@ class Staff @Inject()(implicit context: ExecutionContext,
   def getAllHistory(login: String, password: String): Action[AnyContent] = Action {
     Admin.findAdmin(login, password).map {
       _ => {
-        val histories = Db.query[History].order("id", reverse = true).fetch()
+        val histories = Db.query[StaffHistory].order("id", reverse = true).fetch()
         Ok(Json.toJson(histories))
       }
     }.getOrElse {

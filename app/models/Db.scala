@@ -11,7 +11,7 @@ object Db extends Instance(
     Entity[Staffer](),
     Entity[PaperNew](),
     Entity[Positions](),
-    Entity[History](),
+    Entity[StaffHistory](),
     Entity[Admin](),
     Entity[Device]()
   ),

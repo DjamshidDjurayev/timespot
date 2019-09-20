@@ -100,7 +100,7 @@ class Administrator @Inject()(components: ControllerComponents) extends Abstract
     Admin.findAdmin(login, password).map {
       _ => {
         val staffCounter = Staffer.staffCount()
-        val historyCounter = History.historyGeneralCount()
+        val historyCounter = StaffHistory.historyGeneralCount()
         val newsCounter = PaperNew.newsCount()
         val adminCounter = Admin.adminCount()
         val positionCounter = Positions.positionCount()
