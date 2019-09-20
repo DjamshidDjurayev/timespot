@@ -19,17 +19,17 @@ object StaffHistory {
   implicit val historyFormat: OFormat[StaffHistory] = Json.format[StaffHistory]
 
   def findById(staffer: Staffer with Persisted): Stream[StaffHistory with Persisted] = {
-    Db.query[StaffHistory].whereEqual("staffer.id", staffer.id).order("id", reverse = true).fetch()
+    Db.query[StaffHistory].whereEqual("id", staffer.id).order("id", reverse = true).fetch()
   }
 
   def getStaffActionsByDate(staffer: Staffer with Persisted, dataTime: Long): Stream[StaffHistory with Persisted] = {
     val bal = new LocalDate(dataTime)
-    Db.query[StaffHistory].whereEqual("staffer.id", staffer.id).whereEqual("action_value", bal).order("id", reverse = true).fetch()
+    Db.query[StaffHistory].whereEqual("id", staffer.id).whereEqual("action_value", bal).order("id", reverse = true).fetch()
   }
 
   def historyCount(staffer: Staffer with Persisted, date: Long): Int = {
     val bal = new LocalDate(date)
-    Db.query[StaffHistory].whereEqual("staffer.id", staffer.id).whereEqual("action_value", bal).count()
+    Db.query[StaffHistory].whereEqual("id", staffer.id).whereEqual("action_value", bal).count()
   }
 
   def historyGeneralCount(): Int = {
