@@ -19,5 +19,5 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-mocha" % "1.1.2")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.4.1")
 
-addSbtPlugin("com.heroku" % "sbt-heroku" % "2.1.2")
+addSbtPlugin("com.heroku" % "sbt-heroku" % "2.1.4")
 
