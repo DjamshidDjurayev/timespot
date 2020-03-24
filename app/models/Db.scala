@@ -8,9 +8,7 @@ import sorm._
 
 object Db extends Instance(
   entities = Set(
-    Entity[Staffer](),
     Entity[PaperNew](),
-    Entity[Positions](),
     Entity[StaffHistory](),
     Entity[Admin](),
     Entity[Device]()
@@ -18,6 +16,6 @@ object Db extends Instance(
   url = constants.DB_URL,
   user = constants.DB_USER,
   password = constants.DB_PASSWORD,
-  initMode = InitMode.DropAllCreate
+  initMode = InitMode.Create
 )
 
