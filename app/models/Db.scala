@@ -18,6 +18,6 @@ object Db extends Instance(
   url = constants.DB_URL,
   user = constants.DB_USER,
   password = constants.DB_PASSWORD,
-  initMode = InitMode.Create
+  initMode = InitMode.DropAllCreate
 )
 
