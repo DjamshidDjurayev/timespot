@@ -4,7 +4,7 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.12"
+scalaVersion := "2.11.8"
 herokuJdkVersion in Compile := "1.8"
 herokuAppName in Compile := "time-spot"
 
@@ -24,6 +24,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-json-joda" % "2.7.3",
   "org.joda" % "joda-convert" % "1.8.1",
   "com.h2database" % "h2" % "1.4.193",
+  "com.typesafe.play" %% "play-iteratees" % "2.6.1",
+  "com.typesafe.play" %% "play-iteratees-reactive-streams" % "2.6.1",
   jodaForms,
   guice,
   cacheApi,

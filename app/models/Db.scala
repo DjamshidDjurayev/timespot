@@ -8,7 +8,9 @@ import sorm._
 
 object Db extends Instance(
   entities = Set(
+    Entity[Staffer](),
     Entity[PaperNew](),
+    Entity[Positions](),
     Entity[StaffHistory](),
     Entity[Admin](),
     Entity[Device]()
