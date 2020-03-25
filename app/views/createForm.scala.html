@@ -18,6 +18,7 @@
             @inputText(stafferForm("name"), '_label -> "Имя", '_help -> "")
             @inputText(stafferForm("surname"), '_label -> "Фамилия", '_help -> "")
             @inputText(stafferForm("middle_name"), '_label -> "Отчество", '_help -> "")
+            @inputText(stafferForm("email"), '_label -> "E-mail", '_help -> "")
 
             @inputText(stafferForm("code"), '_label -> "Код сотрудника", '_help -> "")
 
@@ -25,7 +26,7 @@
             @inputDate(stafferForm("birth"), '_label -> "Дата рождения", '_help -> "")
 
             @select(
-                stafferForm("position"),
+                stafferForm("positions"),
                 Positions.getAllPositions,
                 '_label -> "Должность", '_default -> "-- Choose a position --",
                 '_showConstraints -> false

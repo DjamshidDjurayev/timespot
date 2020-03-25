@@ -1,0 +1,27 @@
+@(adminsForm: Form[Admin])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Добавить Админа</h1>
+
+    @helper.form(action = routes.Administrator.adminForm(), 'enctype -> "multipart/form-data") {
+        <fieldset>
+            @inputText(adminsForm("name"), '_label -> "Имя", '_help -> "")
+            @inputText(adminsForm("surname"), '_label -> "Фамилия", '_help -> "")
+            @inputText(adminsForm("login"), '_label -> "Логин", '_help -> "")
+            @inputText(adminsForm("password"), '_label -> "Пароль", '_help -> "")
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Добавить админа" class="btn success"> или
+            <a href="@routes.Administrator.list3()" class="btn">Отмена</a>
+        </div>
+    }
+    </div>
+
+}

@@ -8,6 +8,7 @@ GET         /websocket                        @controllers.Application.socket
 GET         /                                 @controllers.Staff.list(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /staff/                           @controllers.Staff.list(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /news/                            @controllers.News.list2(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /admin/                           @controllers.Administrator.list3(p:Int ?= 0, s:Int ?= 2, f ?= "")
 
 GET         /news/new                         @controllers.News.create
 POST        /news                             @controllers.News.addNews
@@ -15,7 +16,12 @@ GET         /news/:id                         @controllers.News.edit(id:Long)
 POST        /news/:id                         @controllers.News.update(id:Long)
 POST        /news/:id/delete                  @controllers.News.delete(id:Long)
 
-POST        /staffer/:id/delete               @controllers.Staff.delete(id:Long)
+POST        /admin                            @controllers.Administrator.adminForm
+GET         /admin/new                        @controllers.Administrator.create
+POST        /admin/:id                        @controllers.Administrator.update(id:Long)
+GET         /admin/:id                        @controllers.Administrator.edit(id:Long)
+POST        /admin/:id/delete                 @controllers.Administrator.delete(id:Long)
+POST        /staff/:id/delete                 @controllers.Staff.delete(id:Long)
 
 # Api (json)
 
@@ -41,7 +47,7 @@ GET         /api/positions                    @controllers.Administrator.getPosi
 GET         /api/addPosition                  @controllers.Administrator.addPosition(title: String)
 DELETE      /api/deletePosition               @controllers.Administrator.deletePosition(title: String)
 GET         /api/editPosition                 @controllers.Administrator.editPosition(oldTitle: String, newTitle: String)
-GET         /api/adminAuth                    @controllers.Administrator.adminAuth(login: String, password: String)
+POST        /api/login                        @controllers.Administrator.login
 GET         /api/addAdmin                     @controllers.Administrator.addAdmin(name: String, surname: String, login: String, password: String)
 DELETE      /api/deleteAdmin                  @controllers.Administrator.deleteAdmin(login: String, password: String)
 GET         /api/allAdmins                    @controllers.Administrator.getAdmins

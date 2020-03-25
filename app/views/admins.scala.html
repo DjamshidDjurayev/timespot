@@ -1,4 +1,4 @@
-@(currentPage: Page2[PaperNew], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
+@(currentPage: Page3[Admin], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
 
 <!DOCTYPE html>
 
@@ -20,8 +20,8 @@
                     <div id="main_menu">
                         <ul>
                             <li><a href="@routes.Staff.list()">Сотрудники</a></li>
-                            <li class="active"><a href="@routes.News.list2()">Новости</a></li>
-                            <li><a href="@routes.Administrator.list3()">Администраторы</a></li>
+                            <li><a href="@routes.News.list2()">Новости</a></li>
+                            <li class="active"><a href="@routes.Administrator.list3()">Администраторы</a></li>
                         </ul>
                     </div>
                 </div>
@@ -46,12 +46,12 @@
         </section>
 
         <div id="actions">
-            <a class="btn success" id="add" href="@routes.News.create()">Добавить новость</a>
+            <a class="btn success" id="add" href="@routes.Administrator.create()">Добавить админа</a>
         </div>
 
 
         @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
-            routes.News.list2(newPage, newOrderBy.map { orderBy =>
+            routes.Administrator.list3(newPage, newOrderBy.map { orderBy =>
                 if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
             }.getOrElse(currentOrderBy), currentFilter)
 
@@ -63,10 +63,10 @@
             </th>
         }
 
-        <h1 id="title_message">@Messages("news.list.title", currentPage.total)</h1>
+        <h1 id="title_message">@Messages("admins.list.title", currentPage.total)</h1>
 
 
-        @Option(currentPage.items).filterNot(_.isEmpty).map { paperNews =>
+        @Option(currentPage.items).filterNot(_.isEmpty).map { admins =>
 
         <table class="computers zebra-striped">
             <thead>
@@ -76,10 +76,10 @@
             </thead>
             <tbody>
 
-            @paperNews.map {
-                case (paperNew) => {
+            @admins.map {
+                case (admin) => {
                     <tr>
-                        <td><h5><a href="@routes.News.edit(paperNew.id)">@paperNew.title</a></h5></td>
+                        <td><h5><a href="@routes.Administrator.edit(admin.id)">@admin.name</a></h5></td>
                     </tr>
                 }
             }
@@ -99,7 +99,7 @@
                     </li>
                 }
             <li class="current">
-                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + paperNews.size) из @currentPage.total</a>
+                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + admins.size) из @currentPage.total</a>
             </li>
                 @currentPage.next.map { page =>
                 <li class="next">

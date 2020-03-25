@@ -4,18 +4,72 @@ import java.io.File
 
 import com.google.inject.Inject
 import models._
+import play.api.data.Form
+import play.api.data.Forms._
+import play.api.i18n.I18nSupport
 import play.api.libs.Files
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
 
-class Administrator @Inject()(components: ControllerComponents) extends AbstractController(components) {
-  def adminAuth(login: String, password: String): Action[AnyContent] = Action {
-    Admin.findAdmin(login, password).map {
+import scala.concurrent.ExecutionContext
+
+class Administrator @Inject()(implicit context: ExecutionContext, components: ControllerComponents) extends AbstractController(components) with I18nSupport {
+  val Home: Result = Redirect(routes.Administrator.list3(0, 2, ""))
+
+  val adminsForm: Form[Admin] = Form(
+    mapping(
+      "name" -> text,
+      "surname" -> text,
+      "login" -> nonEmptyText,
+      "password" -> nonEmptyText
+    )(Admin.apply)(Admin.unapply)
+  )
+
+  def update(id: Long): Action[AnyContent] = Action { implicit request =>
+    adminsForm.bindFromRequest.fold(
+      formWithErrors => BadRequest(views.html.editFormAdmins(id, formWithErrors)),
       admin => {
-        Ok(Json.obj("status" -> "success", "id" -> admin.id))
+        Admin.update(id, admin)
+        Home.flashing("success" -> "Admin %s has been updated".format(admin.login))
       }
+    )
+  }
+
+  def adminForm(): Action[AnyContent] = Action { implicit request =>
+    adminsForm.bindFromRequest.fold(
+      formWithErrors => BadRequest(views.html.createFormaAdmins(formWithErrors)),
+      admin => {
+        Admin.save(admin)
+        Home.flashing("success" -> "Admin %s has been created".format(admin.login))
+      }
+    )
+  }
+
+  def delete(id: Long): Action[AnyContent] = Action {
+    Admin.findById(id).map { admin =>
+      Admin.delete(admin)
+      Home.flashing("success" -> "Admin has been deleted")
     }.getOrElse {
-      BadRequest(Json.obj("status" -> "fail", "message" -> "Администратор не найден"))
+      Home.flashing("fail" -> "Admin not found")
+    }
+  }
+
+  def list3(page: Int, orderBy: Int, filter: String): Action[AnyContent] = Action { implicit request =>
+    Ok(views.html.admins(
+      Admin.list3(page = page, orderBy = orderBy, filter = ("%" + filter + "%")),
+      orderBy, filter
+    ))
+  }
+
+  def create: Action[AnyContent] = Action { implicit request =>
+    Ok(views.html.createFormaAdmins(adminsForm))
+  }
+
+  def edit(id: Long): Action[AnyContent] = Action { implicit request =>
+    Admin.findById(id).map { admin =>
+      Ok(views.html.editFormAdmins(id, adminsForm.fill(admin)))
+    }.getOrElse {
+      NotFound(Json.obj("status" -> "fail", "message" -> "Admin not found"))
     }
   }
 
@@ -25,7 +79,53 @@ class Administrator @Inject()(components: ControllerComponents) extends Abstract
   }
 
   def getAdmins: Action[AnyContent] = Action {
-    Ok(Json.toJson(Db.query[Admin].fetch()))
+    val admins = Admin.getAdmins()
+
+    val list = admins.map {
+      admin => {
+        Json.obj(
+          "id" -> admin.id,
+          "name" -> admin.name,
+          "surname" -> admin.surname,
+          "login" -> admin.login,
+          "password" -> admin.password
+        )
+      }
+    }
+    Ok(Json.toJson(list))
+  }
+
+  def login(): Action[AnyContent] = Action { implicit request =>
+    val body: AnyContent = request.body
+    val jsonBody: Option[JsValue] = body.asJson
+
+    jsonBody.map { json => {
+      val login = (json \ "login").as[String]
+      val password = (json \ "password").as[String]
+
+      Admin.findAdmin(login, password).map {
+        admin => {
+          Ok(Json.toJson(
+            Json.obj(
+              "status" -> "success",
+              "code" -> 200,
+              "response" -> Json.obj(
+                "id" -> admin.id,
+                "name" -> admin.name,
+                "surname" -> admin.surname,
+                "login" -> admin.login,
+                "password" -> admin.password
+              )
+            )
+          ))
+        }
+      }.getOrElse {
+        NotFound(Json.obj("status" -> "fail", "message" -> "User not found"))
+      }
+    }
+    }.getOrElse {
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Expecting application/json request body"))
+    }
   }
 
   def addPosition(title: String): Action[AnyContent] = Action {

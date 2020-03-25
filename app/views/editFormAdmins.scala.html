@@ -1,0 +1,32 @@
+@(id: Long, adminsForm: Form[Admin])(implicit messages: Messages)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Редактировать админа</h1>
+
+    <div id="remove_button">
+    @form(routes.Administrator.delete(id), 'class -> "topRight") {
+        <input type="submit" value="Удалить новость" class="btn danger">
+    }
+    </div>
+
+    @form(routes.Administrator.update(id)) {
+        <fieldset>
+            @inputText(adminsForm("name"), '_label -> "Имя", '_help -> "")
+            @inputText(adminsForm("surname"), '_label -> "Фамилия", '_help -> "")
+            @inputText(adminsForm("login"), '_label -> "Логин", '_help -> "")
+            @inputText(adminsForm("password"), '_label -> "Пароль", '_help -> "")
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="Сохранить админа" class="btn success"> или
+            <a href="@routes.Administrator.list3()" class="btn">Отмена</a>
+        </div>
+    }
+    </div>
+}

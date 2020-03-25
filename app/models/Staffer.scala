@@ -55,7 +55,5 @@ object Staffer {
   def staffCount() = {
     Db.query[Staffer].count()
   }
-
-
 }
 
