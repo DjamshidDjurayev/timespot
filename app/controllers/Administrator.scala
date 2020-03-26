@@ -10,6 +10,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.Files
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
+import utils.JwtUtility
 
 import scala.concurrent.ExecutionContext
 
@@ -22,7 +23,9 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
       "surname" -> text,
       "login" -> nonEmptyText,
       "password" -> nonEmptyText
-    )(Admin.apply)(Admin.unapply)
+    )((name, surname, login, password) =>
+      Admin(name, surname, login, password, JwtUtility.createToken(login + password + System.currentTimeMillis())))
+    ((arg: Admin) => Some(arg.name, arg.surname, arg.login, arg.password))
   )
 
   def update(id: Long): Action[AnyContent] = Action { implicit request =>
@@ -88,7 +91,8 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
           "name" -> admin.name,
           "surname" -> admin.surname,
           "login" -> admin.login,
-          "password" -> admin.password
+          "password" -> admin.password,
+          "token" -> admin.token
         )
       }
     }
@@ -104,18 +108,47 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
       val password = (json \ "password").as[String]
 
       Admin.findAdmin(login, password).map {
-        admin => {
+        v => {
+          Admin.updateToken(v).map {
+            admin => {
+              Ok(Json.toJson(
+                Json.obj(
+                  "status" -> "success",
+                  "code" -> 200,
+                  "response" -> Json.obj(
+                    "id" -> admin.id,
+                    "name" -> admin.name,
+                    "surname" -> admin.surname,
+                    "login" -> admin.login,
+                    "password" -> admin.password,
+                    "token" -> admin.token
+                  )
+                )
+              ))
+            }
+          }.getOrElse {
+            NotFound(Json.obj("status" -> "fail", "message" -> "Error"))
+          }
+        }
+      }.getOrElse {
+        NotFound(Json.obj("status" -> "fail", "message" -> "User not found"))
+      }
+    }
+    }.getOrElse {
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Expecting application/json request body"))
+    }
+  }
+
+  def logout(): Action[AnyContent] = Action { implicit request =>
+    val requestHeader = request.headers.get("jwt_token")
+
+    requestHeader.map { token => {
+      Admin.findAdminByToken(token).map {
+        _ => {
           Ok(Json.toJson(
             Json.obj(
               "status" -> "success",
-              "code" -> 200,
-              "response" -> Json.obj(
-                "id" -> admin.id,
-                "name" -> admin.name,
-                "surname" -> admin.surname,
-                "login" -> admin.login,
-                "password" -> admin.password
-              )
+              "code" -> 200
             )
           ))
         }
@@ -179,8 +212,8 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
         Ok(Json.obj("status" -> "fail", "message" -> "Уже существует"))
       }
     }.getOrElse {
-      val admin = new Admin(name, surname, login, password)
-      Admin.save(admin)
+      //      val admin = new Admin(name, surname, login, password, "")
+      //      Admin.save(admin)
       Ok(Json.obj("status" -> "success", "message" -> "Администратор добавлен"))
     }
   }
