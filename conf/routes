@@ -48,6 +48,7 @@ GET         /api/addPosition                  @controllers.Administrator.addPosi
 DELETE      /api/deletePosition               @controllers.Administrator.deletePosition(title: String)
 GET         /api/editPosition                 @controllers.Administrator.editPosition(oldTitle: String, newTitle: String)
 POST        /api/login                        @controllers.Administrator.login
+POST        /api/updateUser                   @controllers.Administrator.updateUser
 POST        /api/logout                       @controllers.Administrator.logout
 GET         /api/addAdmin                     @controllers.Administrator.addAdmin(name: String, surname: String, login: String, password: String)
 DELETE      /api/deleteAdmin                  @controllers.Administrator.deleteAdmin(login: String, password: String)

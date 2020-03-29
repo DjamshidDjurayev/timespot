@@ -22,10 +22,13 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
       "name" -> text,
       "surname" -> text,
       "login" -> nonEmptyText,
-      "password" -> nonEmptyText
-    )((name, surname, login, password) =>
-      Admin(name, surname, login, password, JwtUtility.createToken(login + password + System.currentTimeMillis())))
-    ((arg: Admin) => Some(arg.name, arg.surname, arg.login, arg.password))
+      "password" -> nonEmptyText,
+      "middleName" -> text,
+      "phone" -> text,
+      "passport" -> text
+    )((name, surname, login, password, middleName, phone, passport) =>
+      Admin(name, surname, login, password, JwtUtility.createToken(login + password + System.currentTimeMillis()), middleName, phone, passport))
+    ((arg: Admin) => Some(arg.name, arg.surname, arg.login, arg.password, arg.middleName, arg.phone, arg.passport))
   )
 
   def update(id: Long): Action[AnyContent] = Action { implicit request =>
@@ -92,7 +95,10 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
           "surname" -> admin.surname,
           "login" -> admin.login,
           "password" -> admin.password,
-          "token" -> admin.token
+          "token" -> admin.token,
+          "middleName" -> admin.middleName,
+          "phone" -> admin.phone,
+          "passport" -> admin.passport
         )
       }
     }
@@ -115,13 +121,16 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
                 Json.obj(
                   "status" -> "success",
                   "code" -> 200,
-                  "response" -> Json.obj(
+                  "token" -> admin.token,
+                  "account" -> Json.obj(
                     "id" -> admin.id,
                     "name" -> admin.name,
                     "surname" -> admin.surname,
                     "login" -> admin.login,
                     "password" -> admin.password,
-                    "token" -> admin.token
+                    "middleName" -> admin.middleName,
+                    "phone" -> admin.phone,
+                    "passport" -> admin.passport
                   )
                 )
               ))
@@ -129,6 +138,37 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
           }.getOrElse {
             NotFound(Json.obj("status" -> "fail", "message" -> "Error"))
           }
+        }
+      }.getOrElse {
+        NotFound(Json.obj("status" -> "fail", "message" -> "User not found"))
+      }
+    }
+    }.getOrElse {
+      BadRequest(Json.obj("status" -> "fail", "message" -> "Expecting application/json request body"))
+    }
+  }
+
+  def updateUser(): Action[AnyContent] = Action { implicit request =>
+    val body: AnyContent = request.body
+    val jsonBody: Option[JsValue] = body.asJson
+
+    jsonBody.map { json => {
+      val name = (json \ "name").as[String]
+      val surname = (json \ "surname").as[String]
+      val login = (json \ "login").as[String]
+      val middleName = (json \ "middleName").as[String]
+      val phone = (json \ "phone").as[String]
+      val passport = (json \ "passport").as[String]
+
+      Admin.findAdminByLogin(login).map {
+        v => {
+          Admin.updateAdmin(v, name, surname, login, middleName, phone, passport)
+          Ok(Json.toJson(
+            Json.obj(
+              "status" -> "success",
+              "code" -> 200
+            )
+          ))
         }
       }.getOrElse {
         NotFound(Json.obj("status" -> "fail", "message" -> "User not found"))
