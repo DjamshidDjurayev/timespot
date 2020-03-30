@@ -9,6 +9,7 @@ GET         /                                 @controllers.Staff.list(p:Int ?= 0
 GET         /staff/                           @controllers.Staff.list(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /news/                            @controllers.News.list2(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /admin/                           @controllers.Administrator.list3(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /notifications/                   @controllers.Notifications.list4(p:Int ?= 0, s:Int ?= 2, f ?= "")
 
 GET         /news/new                         @controllers.News.create
 POST        /news                             @controllers.News.addNews
@@ -22,6 +23,13 @@ POST        /admin/:id                        @controllers.Administrator.update(
 GET         /admin/:id                        @controllers.Administrator.edit(id:Long)
 POST        /admin/:id/delete                 @controllers.Administrator.delete(id:Long)
 POST        /staff/:id/delete                 @controllers.Staff.delete(id:Long)
+
+GET         /notifications/new                @controllers.Notifications.create
+POST        /notifications                    @controllers.Notifications.addNotification
+GET         /notifications/:id                @controllers.Notifications.edit(id:Long)
+POST        /notifications/:id                @controllers.Notifications.update(id:Long)
+POST        /notifications/:id/delete         @controllers.Notifications.delete(id:Long)
+GET         /api/allNotifications             @controllers.Notifications.getNotifications
 
 # Api (json)
 

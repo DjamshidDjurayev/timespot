@@ -1,4 +1,4 @@
-@(currentPage: Page2[PaperNew], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
+@(currentPage: Page4[Alert], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
 
 <!DOCTYPE html>
 
@@ -20,9 +20,9 @@
                     <div id="main_menu">
                         <ul>
                             <li><a href="@routes.Staff.list()">Сотрудники</a></li>
-                            <li class="active"><a href="@routes.News.list2()">Новости</a></li>
+                            <li><a href="@routes.News.list2()">Новости</a></li>
                             <li><a href="@routes.Administrator.list3()">Администраторы</a></li>
-                            <li><a href="@routes.Notifications.list4()">Уведомления</a></li>
+                            <li class="active"><a href="@routes.Notifications.list4()">Уведомления</a></li>
                         </ul>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
 
         <header class="topbar">
             <h1 class="fill">
-                <a>Новости</a>
+                <a>Уведомления</a>
             </h1>
         </header>
 
@@ -47,12 +47,12 @@
         </section>
 
         <div id="actions">
-            <a class="btn success" id="add" href="@routes.News.create()">Добавить новость</a>
+            <a class="btn success" id="add" href="@routes.Notifications.create()">Добавить уведомление</a>
         </div>
 
 
         @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
-            routes.News.list2(newPage, newOrderBy.map { orderBy =>
+            routes.Notifications.list4(newPage, newOrderBy.map { orderBy =>
                 if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
             }.getOrElse(currentOrderBy), currentFilter)
 
@@ -64,23 +64,23 @@
             </th>
         }
 
-        <h1 id="title_message">@Messages("news.list.title", currentPage.total)</h1>
+        <h1 id="title_message">@Messages("notifications.list.title", currentPage.total)</h1>
 
 
-        @Option(currentPage.items).filterNot(_.isEmpty).map { paperNews =>
+        @Option(currentPage.items).filterNot(_.isEmpty).map { notifications =>
 
         <table class="computers zebra-striped">
             <thead>
                 <tr>
-                    @header(1, "Новости")
+                    @header(1, "Уведомления")
                 </tr>
             </thead>
             <tbody>
 
-            @paperNews.map {
-                case (paperNew) => {
+            @notifications.map {
+                case (alert) => {
                     <tr>
-                        <td><h5><a href="@routes.News.edit(paperNew.id)">@paperNew.title</a></h5></td>
+                        <td><h5><a href="@routes.Notifications.edit(alert.id)">@alert.title</a></h5></td>
                     </tr>
                 }
             }
@@ -100,7 +100,7 @@
                     </li>
                 }
             <li class="current">
-                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + paperNews.size) из @currentPage.total</a>
+                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + notifications.size) из @currentPage.total</a>
             </li>
                 @currentPage.next.map { page =>
                 <li class="next">
@@ -121,8 +121,6 @@
             </div>
 
         }
-
-
     </body>
 </html>
 

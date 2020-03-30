@@ -13,7 +13,8 @@ object Db extends Instance(
     Entity[Positions](),
     Entity[StaffHistory](),
     Entity[Admin](),
-    Entity[Device]()
+    Entity[Device](),
+    Entity[Alert]()
   ),
   url = constants.DB_URL,
   user = constants.DB_USER,

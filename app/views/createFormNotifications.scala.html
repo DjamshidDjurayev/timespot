@@ -1,0 +1,44 @@
+@(alertsForm: Form[Alert])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Добавить уведомление</h1>
+
+    @helper.form(action = routes.Notifications.addNotification(), 'enctype -> "multipart/form-data") {
+        <fieldset>
+            @inputText(alertsForm("title"), '_label -> "Название", '_help -> "")
+            @textarea(alertsForm("description"), '_label -> "Описание", '_help -> "")
+            @select(
+                alertsForm("notificationType"),
+                Seq(
+                    "alert" -> "alert",
+                    "offer" -> "offer"
+                ),
+                '_label -> "Вид уведомления", '_default -> "-- Choose a notification type --",
+                '_showConstraints -> false
+            )
+            @select(
+                alertsForm("action"),
+                Seq(
+                    "payment" -> "payment",
+                    "details" -> "details",
+                    "appointment" -> "appointment"
+                ),
+                '_label -> "Action", '_default -> "-- Choose an action --",
+                '_showConstraints -> false
+            )
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Добавить уведомление" class="btn success"> или
+            <a href="@routes.Notifications.list4()" class="btn">Отмена</a>
+        </div>
+    }
+    </div>
+
+}
