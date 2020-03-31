@@ -162,11 +162,12 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
 
       Admin.findAdminByLogin(login).map {
         v => {
-          Admin.updateAdmin(v, name, surname, login, middleName, phone, passport)
+          val updatedAdmin = Admin.updateAdmin(v, name, surname, login, middleName, phone, passport)
           Ok(Json.toJson(
             Json.obj(
               "status" -> "success",
-              "code" -> 200
+              "code" -> 200,
+              "token" -> updatedAdmin.token
             )
           ))
         }
