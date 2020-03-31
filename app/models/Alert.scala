@@ -20,10 +20,6 @@ object Alert {
     Page4(users, page, offset, totalRows)
   }
 
-  def getAlerts(): Stream[Alert with Persisted] = {
-    Db.query[Alert].fetch()
-  }
-
   def saveAlert(title: String, description: String, date: Long, notificationType: String, action: String): Alert with Persisted = {
     val alert = new Alert(title, description, date, notificationType, action)
     Db.save[Alert](alert)
@@ -55,6 +51,14 @@ object Alert {
 
   def getNotifications(): Stream[Alert with Persisted] = {
     Db.query[Alert].order("date", reverse = true).fetch()
+  }
+
+  def getAlerts(): Stream[Alert with Persisted] = {
+    Db.query[Alert].whereEqual("notificationType", "alert").order("date", reverse = true).fetch()
+  }
+
+  def getOffers(): Stream[Alert with Persisted] = {
+    Db.query[Alert].whereEqual("notificationType", "offer").order("date", reverse = true).fetch()
   }
 }
 

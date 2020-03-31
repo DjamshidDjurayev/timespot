@@ -30,6 +30,8 @@ GET         /notifications/:id                @controllers.Notifications.edit(id
 POST        /notifications/:id                @controllers.Notifications.update(id:Long)
 POST        /notifications/:id/delete         @controllers.Notifications.delete(id:Long)
 GET         /api/allNotifications             @controllers.Notifications.getNotifications
+GET         /api/getAlerts                    @controllers.Notifications.getAlerts
+GET         /api/getOffers                    @controllers.Notifications.getOffers
 
 # Api (json)
 

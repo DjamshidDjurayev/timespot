@@ -72,9 +72,27 @@ class Notifications @Inject()(implicit context: ExecutionContext, components: Co
   }
 
   def getNotifications: Action[AnyContent] = Action {
-    val alerts = Alert.getNotifications()
+    val notifications = Alert.getNotifications()
 
-    val list = alerts.map {
+    val notificationList = notifications.map {
+      notification => {
+        Json.obj(
+          "id" -> notification.id,
+          "title" -> notification.title,
+          "description" -> notification.description,
+          "date" -> notification.date,
+          "notificationType" -> notification.notificationType,
+          "action" -> notification.action
+        )
+      }
+    }
+    Ok(Json.toJson(notificationList))
+  }
+
+  def getAlerts: Action[AnyContent] = Action {
+    val alerts = Alert.getAlerts()
+
+    val alertList = alerts.map {
       alert => {
         Json.obj(
           "id" -> alert.id,
@@ -86,6 +104,24 @@ class Notifications @Inject()(implicit context: ExecutionContext, components: Co
         )
       }
     }
-    Ok(Json.toJson(list))
+    Ok(Json.toJson(alertList))
+  }
+
+  def getOffers: Action[AnyContent] = Action {
+    val offers = Alert.getOffers()
+
+    val offerList = offers.map {
+      offer => {
+        Json.obj(
+          "id" -> offer.id,
+          "title" -> offer.title,
+          "description" -> offer.description,
+          "date" -> offer.date,
+          "notificationType" -> offer.notificationType,
+          "action" -> offer.action
+        )
+      }
+    }
+    Ok(Json.toJson(offerList))
   }
 }
