@@ -153,6 +153,7 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
     val jsonBody: Option[JsValue] = body.asJson
 
     jsonBody.map { json => {
+      val id = (json \ "id").as[Long]
       val name = (json \ "name").as[String]
       val surname = (json \ "surname").as[String]
       val login = (json \ "login").as[String]
@@ -160,7 +161,7 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
       val phone = (json \ "phone").as[String]
       val passport = (json \ "passport").as[String]
 
-      Admin.findAdminByLogin(login).map {
+      Admin.findById(id).map {
         v => {
           val updatedAdmin = Admin.updateAdmin(v, name, surname, login, middleName, phone, passport)
           Ok(Json.toJson(
