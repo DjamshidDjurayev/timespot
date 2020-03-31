@@ -54,7 +54,7 @@ object Alert {
   }
 
   def getNotifications(): Stream[Alert with Persisted] = {
-    Db.query[Alert].fetch()
+    Db.query[Alert].order("date", reverse = true).fetch()
   }
 }
 
