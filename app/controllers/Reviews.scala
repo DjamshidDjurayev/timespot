@@ -18,7 +18,7 @@ class Reviews @Inject()(implicit context: ExecutionContext, components: Controll
       val userId = (json \ "id").as[Long]
       val name = (json \ "name").as[String]
       val comment = (json \ "comment").as[String]
-      val rating = (json \ "rating").as[Float]
+      val rating = (json \ "rating").as[Double]
       val siteIncluded = (json \ "siteIncluded").as[Boolean]
       val socialIncluded = (json \ "socialIncluded").as[Boolean]
       val toDirector = (json \ "toDirector").as[Boolean]
