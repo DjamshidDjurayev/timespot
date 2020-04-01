@@ -65,6 +65,11 @@ DELETE      /api/deleteAdmin                  @controllers.Administrator.deleteA
 GET         /api/allAdmins                    @controllers.Administrator.getAdmins
 GET         /api/checkCode                    @controllers.Staff.checkCode
 
+POST        /api/addReview                    @controllers.Reviews.addReview
+POST        /api/callOrder                    @controllers.Reviews.callOrder
+GET         /api/getReviews                   @controllers.Reviews.getReviews
+GET         /api/getCalls                     @controllers.Reviews.getCalls
+
 GET         /api/device/registerDevice        @controllers.DeviceController.registerDevice(deviceId: String, tokenId: String)
 POST        /api/device/registerDevicePost    @controllers.DeviceController.registerDevicePost
 DELETE      /api/device/removeDevice          @controllers.DeviceController.removeDevice(deviceId: String)

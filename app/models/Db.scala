@@ -14,7 +14,9 @@ object Db extends Instance(
     Entity[StaffHistory](),
     Entity[Admin](),
     Entity[Device](),
-    Entity[Alert]()
+    Entity[Alert](),
+    Entity[Review](),
+    Entity[Call]()
   ),
   url = constants.DB_URL,
   user = constants.DB_USER,
