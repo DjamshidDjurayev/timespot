@@ -18,11 +18,12 @@ class Reviews @Inject()(implicit context: ExecutionContext, components: Controll
       val userId = (json \ "id").as[Long]
       val name = (json \ "name").as[String]
       val comment = (json \ "comment").as[String]
+      val rating = (json \ "rating").as[Float]
       val siteIncluded = (json \ "siteIncluded").as[Boolean]
       val socialIncluded = (json \ "socialIncluded").as[Boolean]
       val toDirector = (json \ "toDirector").as[Boolean]
 
-      val review = new Review(userId, name, comment, siteIncluded, socialIncluded, toDirector)
+      val review = new Review(userId, name, comment, rating, siteIncluded, socialIncluded, toDirector)
       val savedReview = Review.save(review)
 
       if (savedReview != null) {
@@ -79,6 +80,7 @@ class Reviews @Inject()(implicit context: ExecutionContext, components: Controll
           "userId" -> review.userId,
           "name" -> review.name,
           "comment" -> review.comment,
+          "rating" -> review.rating,
           "siteIncluded" -> review.siteIncluded,
           "socialIncluded" -> review.socialIncluded,
           "toDirector" -> review.toDirector

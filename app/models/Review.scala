@@ -2,7 +2,7 @@ package models
 import play.api.libs.json.{Format, Json}
 import sorm.Persisted
 
-case class Review(userId: Long, name: String, comment: String, siteIncluded: Boolean, socialIncluded: Boolean, toDirector: Boolean)
+case class Review(userId: Long, name: String, comment: String, rating: Float, siteIncluded: Boolean, socialIncluded: Boolean, toDirector: Boolean)
 
 
 object Review {
