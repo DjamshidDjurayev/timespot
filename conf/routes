@@ -10,6 +10,12 @@ GET         /staff/                           @controllers.Staff.list(p:Int ?= 0
 GET         /news/                            @controllers.News.list2(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /admin/                           @controllers.Administrator.list3(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /notifications/                   @controllers.Notifications.list4(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /contacts/                        @controllers.ContactController.contactsList(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /questions/                       @controllers.QuestionController.questionList(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /tariffs/                         @controllers.TariffController.tariffList(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /assigners/                       @controllers.AssignersController.assignerList(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /tariffOptions/                   @controllers.TariffOptionsController.tariffOptionsList(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /recommendations/                 @controllers.RecommendationsController.recommendationsList(p:Int ?= 0, s:Int ?= 2, f ?= "")
 
 GET         /news/new                         @controllers.News.create
 POST        /news                             @controllers.News.addNews
@@ -32,6 +38,50 @@ POST        /notifications/:id/delete         @controllers.Notifications.delete(
 GET         /api/allNotifications             @controllers.Notifications.getNotifications
 GET         /api/getAlerts                    @controllers.Notifications.getAlerts
 GET         /api/getOffers                    @controllers.Notifications.getOffers
+
+GET         /contacts/new                     @controllers.ContactController.create
+POST        /contacts                         @controllers.ContactController.contactForm
+GET         /contacts/:id                     @controllers.ContactController.edit(id:Long)
+POST        /contacts/:id                     @controllers.ContactController.update(id:Long)
+POST        /contacts/:id/delete              @controllers.ContactController.delete(id:Long)
+GET         /api/getContacts                  @controllers.ContactController.getContacts
+
+GET         /questions/new                    @controllers.QuestionController.create
+POST        /questions                        @controllers.QuestionController.questionsForm
+GET         /questions/:id                    @controllers.QuestionController.edit(id:Long)
+POST        /questions/:id                    @controllers.QuestionController.update(id:Long)
+POST        /questions/:id/delete             @controllers.QuestionController.delete(id:Long)
+GET         /api/getQuestions                 @controllers.QuestionController.getQuestions
+
+GET         /tariffs/new                      @controllers.TariffController.create
+POST        /tariffs                          @controllers.TariffController.tariffForm
+GET         /tariffs/:id                      @controllers.TariffController.edit(id:Long)
+POST        /tariffs/:id                      @controllers.TariffController.update(id:Long)
+POST        /tariffs/:id/delete               @controllers.TariffController.delete(id:Long)
+GET         /api/getTariffs                   @controllers.TariffController.getTariffs
+
+GET         /assigners/new                    @controllers.AssignersController.create
+POST        /assigners                        @controllers.AssignersController.assignerForm
+GET         /assigners/:id                    @controllers.AssignersController.edit(id:Long)
+POST        /assigners/:id                    @controllers.AssignersController.update(id:Long)
+POST        /assigners/:id/delete             @controllers.AssignersController.delete(id:Long)
+GET         /api/getAssigners                 @controllers.AssignersController.getAssigners
+
+GET         /tariffOptions/new                @controllers.TariffOptionsController.create
+POST        /tariffOptions                    @controllers.TariffOptionsController.tariffOptionsForm
+GET         /tariffOptions/:id                @controllers.TariffOptionsController.edit(id:Long)
+POST        /tariffOptions/:id                @controllers.TariffOptionsController.update(id:Long)
+POST        /tariffOptions/:id/delete         @controllers.TariffOptionsController.delete(id:Long)
+GET         /api/getTariffOptions             @controllers.TariffOptionsController.getTariffOptions
+
+GET         /recommendations/new              @controllers.RecommendationsController.create
+POST        /recommendations                  @controllers.RecommendationsController.recForm
+GET         /recommendations/:id              @controllers.RecommendationsController.edit(id:Long)
+POST        /recommendations/:id              @controllers.RecommendationsController.update(id:Long)
+POST        /recommendations/:id/delete       @controllers.RecommendationsController.delete(id:Long)
+GET         /api/getRecommendations           @controllers.RecommendationsController.getRecommendations
+GET         /api/getLawRecommendations        @controllers.RecommendationsController.getLawyerRecommendations
+GET         /api/getDocRecommendations        @controllers.RecommendationsController.getDocRecommendations
 
 # Api (json)
 

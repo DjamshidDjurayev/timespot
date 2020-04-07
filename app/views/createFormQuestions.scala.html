@@ -1,0 +1,25 @@
+@(qForm: Form[Question])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Добавить вопрос</h1>
+
+    @helper.form(action = routes.QuestionController.questionsForm(), 'enctype -> "multipart/form-data") {
+        <fieldset>
+            @inputText(qForm("question"), '_label -> "Вопрос", '_help -> "")
+            @textarea(qForm("answer"), '_label -> "Ответ", '_help -> "")
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Добавить вопрос" class="btn success"> или
+            <a href="@routes.QuestionController.questionList()" class="btn">Отмена</a>
+        </div>
+    }
+    </div>
+
+}

@@ -16,7 +16,13 @@ object Db extends Instance(
     Entity[Device](),
     Entity[Alert](),
     Entity[Review](),
-    Entity[Call]()
+    Entity[Call](),
+    Entity[Contacts](),
+    Entity[Question](),
+    Entity[Tariff](),
+    Entity[Assigner](),
+    Entity[TariffOption](),
+    Entity[Recommendation]()
   ),
   url = constants.DB_URL,
   user = constants.DB_USER,

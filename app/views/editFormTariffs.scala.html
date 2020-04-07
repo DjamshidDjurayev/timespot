@@ -1,0 +1,36 @@
+@(id: Long, qForm: Form[Tariff])(implicit messages: Messages)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Редактировать тариф</h1>
+
+    <div id="remove_button">
+    @form(routes.TariffController.delete(id), 'class -> "topRight") {
+        <input type="submit" value="Удалить тариф" class="btn danger">
+    }
+    </div>
+
+    @form(routes.TariffController.update(id)) {
+
+        <fieldset>
+            @inputText(qForm("title"), '_label -> "Название", '_help -> "")
+            @inputText(qForm("city"), '_label -> "Город", '_help -> "")
+            @inputText(qForm("price"), '_label -> "Цена", '_help -> "")
+            @inputText(qForm("description"), '_label -> "Описание", '_help -> "")
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="Сохранить тариф" class="btn success"> или
+            <a href="@routes.TariffController.tariffList()" class="btn">Отмена</a>
+        </div>
+
+    }
+
+    </div>
+
+}

@@ -1,0 +1,25 @@
+@(qForm: Form[TariffOption])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Добавить опцию</h1>
+
+    @helper.form(action = routes.TariffOptionsController.tariffOptionsForm(), 'enctype -> "multipart/form-data") {
+        <fieldset>
+            @inputText(qForm("keyword"), '_label -> "Главное слово", '_help -> "")
+            @inputText(qForm("title"), '_label -> "Название", '_help -> "")
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Добавить опцию" class="btn success"> или
+            <a href="@routes.TariffOptionsController.tariffOptionsList()" class="btn">Отмена</a>
+        </div>
+    }
+    </div>
+
+}

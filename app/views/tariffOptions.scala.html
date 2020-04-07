@@ -1,4 +1,4 @@
-@(currentPage: Page3[Admin], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
+@(currentPage: TariffOptionPage[TariffOption], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
 
 <!DOCTYPE html>
 
@@ -21,13 +21,13 @@
                         <ul>
                             <li><a href="@routes.Staff.list()">Сотрудники</a></li>
                             <li><a href="@routes.News.list2()">Новости</a></li>
-                            <li class="active"><a href="@routes.Administrator.list3()">Администраторы</a></li>
+                            <li><a href="@routes.Administrator.list3()">Администраторы</a></li>
                             <li><a href="@routes.Notifications.list4()">Уведомления</a></li>
                             <li><a href="@routes.ContactController.contactsList()">Контакты</a></li>
                             <li><a href="@routes.QuestionController.questionList()">Вопросы</a></li>
                             <li><a href="@routes.TariffController.tariffList()">Тарифы</a></li>
                             <li><a href="@routes.AssignersController.assignerList()">Эссайнеры</a></li>
-                            <li><a href="@routes.TariffOptionsController.tariffOptionsList()">Опции тарифов</a></li>
+                            <li class="active"><a href="@routes.TariffOptionsController.tariffOptionsList()">Опции тарифов</a></li>
                             <li><a href="@routes.RecommendationsController.recommendationsList()">Рекомендации</a></li>
                         </ul>
                     </div>
@@ -38,7 +38,7 @@
 
         <header class="topbar">
             <h1 class="fill">
-                <a>Новости</a>
+                <a>Опции тарифов</a>
             </h1>
         </header>
 
@@ -53,12 +53,12 @@
         </section>
 
         <div id="actions">
-            <a class="btn success" id="add" href="@routes.Administrator.create()">Добавить админа</a>
+            <a class="btn success" id="add" href="@routes.TariffOptionsController.create()">Добавить опцию</a>
         </div>
 
 
         @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
-            routes.Administrator.list3(newPage, newOrderBy.map { orderBy =>
+            routes.TariffOptionsController.tariffOptionsList(newPage, newOrderBy.map { orderBy =>
                 if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
             }.getOrElse(currentOrderBy), currentFilter)
 
@@ -70,23 +70,22 @@
             </th>
         }
 
-        <h1 id="title_message">@Messages("admins.list.title", currentPage.total)</h1>
+        <h1 id="title_message">@Messages("tariffs.list.title", currentPage.total)</h1>
 
-
-        @Option(currentPage.items).filterNot(_.isEmpty).map { admins =>
+        @Option(currentPage.items).filterNot(_.isEmpty).map { tariffOptions =>
 
         <table class="computers zebra-striped">
             <thead>
                 <tr>
-                    @header(1, "Новости")
+                    @header(1, "Вопросы")
                 </tr>
             </thead>
             <tbody>
 
-            @admins.map {
-                case (admin) => {
+            @tariffOptions.map {
+                case (option) => {
                     <tr>
-                        <td><h5><a href="@routes.Administrator.edit(admin.id)">@admin.name</a></h5></td>
+                        <td><h5><a href="@routes.TariffOptionsController.edit(option.id)">@option.keyword</a></h5></td>
                     </tr>
                 }
             }
@@ -106,7 +105,7 @@
                     </li>
                 }
             <li class="current">
-                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + admins.size) из @currentPage.total</a>
+                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + tariffOptions.size) из @currentPage.total</a>
             </li>
                 @currentPage.next.map { page =>
                 <li class="next">
@@ -127,7 +126,6 @@
             </div>
 
         }
-
 
     </body>
 </html>

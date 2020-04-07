@@ -1,0 +1,45 @@
+@(qForm: Form[Recommendation])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Добавить рекомендацию</h1>
+
+    @helper.form(action = routes.RecommendationsController.recForm(), 'enctype -> "multipart/form-data") {
+        <fieldset>
+            @inputText(qForm("title"), '_label -> "Название", '_help -> "")
+            @inputDate(qForm("startDate"), '_label -> "Начальная дата", '_help -> "")
+            @inputDate(qForm("endDate"), '_label -> "Конечная дата", '_help -> "")
+            @select(
+                qForm("status"),
+                Seq(
+                    "todo" -> "todo",
+                    "progress" -> "progress",
+                    "done" -> "done"
+                ),
+                '_label -> "Статус", '_default -> "-- Choose status --",
+                '_showConstraints -> false
+            )
+            @select(
+                qForm("profType"),
+                Seq(
+                    "lawyer" -> "lawyer",
+                    "doctor" -> "doctor"
+                ),
+                '_label -> "Тип", '_default -> "-- Choose type --",
+                '_showConstraints -> false
+            )
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Добавить рекомендацию" class="btn success"> или
+            <a href="@routes.RecommendationsController.recommendationsList()" class="btn">Отмена</a>
+        </div>
+    }
+    </div>
+
+}

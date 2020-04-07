@@ -1,0 +1,35 @@
+@(id: Long, contactsForm: Form[Contacts])(implicit messages: Messages)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Редактировать контакт</h1>
+
+    <div id="remove_button">
+    @form(routes.ContactController.delete(id), 'class -> "topRight") {
+        <input type="submit" value="Удалить контакт" class="btn danger">
+    }
+    </div>
+
+    @form(routes.ContactController.update(id)) {
+
+        <fieldset>
+            @inputText(contactsForm("city"), '_label -> "Город", '_help -> "")
+            @inputText(contactsForm("phone"), '_label -> "Телефон", '_help -> "")
+            @inputText(contactsForm("address"), '_label -> "Адрес", '_help -> "")
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="Сохранить контакт" class="btn success"> или
+            <a href="@routes.ContactController.contactsList()" class="btn">Отмена</a>
+        </div>
+
+    }
+
+    </div>
+
+}

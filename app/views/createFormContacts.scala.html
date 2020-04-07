@@ -1,0 +1,26 @@
+@(newsForm: Form[Contacts])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Добавить контакт</h1>
+
+    @helper.form(action = routes.ContactController.contactForm(), 'enctype -> "multipart/form-data") {
+        <fieldset>
+            @inputText(newsForm("city"), '_label -> "Город", '_help -> "")
+            @inputText(newsForm("phone"), '_label -> "Телефон", '_help -> "")
+            @inputText(newsForm("address"), '_label -> "Адрес", '_help -> "")
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Добавить контакт" class="btn success"> или
+            <a href="@routes.ContactController.contactsList()" class="btn">Отмена</a>
+        </div>
+    }
+    </div>
+
+}

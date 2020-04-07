@@ -1,0 +1,54 @@
+@(id: Long, qForm: Form[Recommendation])(implicit messages: Messages)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Редактировать рекомендацию</h1>
+
+    <div id="remove_button">
+    @form(routes.RecommendationsController.delete(id), 'class -> "topRight") {
+        <input type="submit" value="Удалить рекомендацию" class="btn danger">
+    }
+    </div>
+
+    @form(routes.RecommendationsController.update(id)) {
+
+        <fieldset>
+            @inputText(qForm("title"), '_label -> "Название", '_help -> "")
+            @inputDate(qForm("startDate"), '_label -> "Начальная дата", '_help -> "")
+            @inputDate(qForm("endDate"), '_label -> "Конечная дата", '_help -> "")
+            @select(
+                qForm("status"),
+                Seq(
+                    "todo" -> "todo",
+                    "progress" -> "progress",
+                    "done" -> "done"
+                ),
+                '_label -> "Статус", '_default -> "-- Choose status --",
+                '_showConstraints -> false
+            )
+            @select(
+                qForm("profType"),
+                Seq(
+                    "lawyer" -> "lawyer",
+                    "doctor" -> "doctor"
+                ),
+                '_label -> "Тип", '_default -> "-- Choose type --",
+                '_showConstraints -> false
+            )
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="Сохранить рекомендацию" class="btn success"> или
+            <a href="@routes.RecommendationsController.recommendationsList()" class="btn">Отмена</a>
+        </div>
+
+    }
+
+    </div>
+
+}

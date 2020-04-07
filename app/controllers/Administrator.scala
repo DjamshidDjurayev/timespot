@@ -195,7 +195,7 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
           ))
         }
       }.getOrElse {
-        NotFound(Json.obj("status" -> "fail", "message" -> "User not found"))
+        Unauthorized(Json.obj("status" -> 401, "message" -> "not authorized"))
       }
     }
     }.getOrElse {

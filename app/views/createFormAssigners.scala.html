@@ -1,0 +1,30 @@
+@(qForm: Form[Assigner])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Добавить эссайнера</h1>
+
+    @helper.form(action = routes.AssignersController.assignerForm(), 'enctype -> "multipart/form-data") {
+        <fieldset>
+            @inputText(qForm("name"), '_label -> "Имя", '_help -> "")
+            @inputText(qForm("surname"), '_label -> "Фамилия", '_help -> "")
+            @inputText(qForm("middleName"), '_label -> "Отчество", '_help -> "")
+            @inputText(qForm("phone"), '_label -> "Телефон", '_help -> "")
+            @inputText(qForm("avatar"), '_label -> "Фото", '_help -> "")
+            @inputText(qForm("speciality"), '_label -> "Специальность", '_help -> "")
+            @inputText(qForm("city"), '_label -> "Город", '_help -> "")
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Добавить эссайнера" class="btn success"> или
+            <a href="@routes.AssignersController.assignerList()" class="btn">Отмена</a>
+        </div>
+    }
+    </div>
+
+}

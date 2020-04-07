@@ -1,7 +1,7 @@
 package controllers
 
 import com.google.inject.Inject
-import models.{Admin, Call, Review}
+import models.{Call, Review}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
