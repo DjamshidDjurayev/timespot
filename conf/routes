@@ -16,6 +16,7 @@ GET         /tariffs/                         @controllers.TariffController.tari
 GET         /assigners/                       @controllers.AssignersController.assignerList(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /tariffOptions/                   @controllers.TariffOptionsController.tariffOptionsList(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /recommendations/                 @controllers.RecommendationsController.recommendationsList(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /medHistory/                      @controllers.MedHistoryController.medHistoryList(p:Int ?= 0, s:Int ?= 2, f ?= "")
 
 GET         /news/new                         @controllers.News.create
 POST        /news                             @controllers.News.addNews
@@ -82,6 +83,15 @@ POST        /recommendations/:id/delete       @controllers.RecommendationsContro
 GET         /api/getRecommendations           @controllers.RecommendationsController.getRecommendations
 GET         /api/getLawRecommendations        @controllers.RecommendationsController.getLawyerRecommendations
 GET         /api/getDocRecommendations        @controllers.RecommendationsController.getDocRecommendations
+
+GET         /medHistory/new                   @controllers.MedHistoryController.create
+POST        /medHistory                       @controllers.MedHistoryController.historyForm
+GET         /medHistory/:id                   @controllers.MedHistoryController.edit(id:Long)
+POST        /medHistory/:id                   @controllers.MedHistoryController.update(id:Long)
+POST        /medHistory/:id/delete            @controllers.MedHistoryController.delete(id:Long)
+GET         /api/getMedHistory                @controllers.MedHistoryController.getMedHistory
+GET         /api/getConclusions               @controllers.MedHistoryController.getConclusions
+GET         /api/getDirections                @controllers.MedHistoryController.getDirections
 
 # Api (json)
 

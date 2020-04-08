@@ -161,19 +161,23 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
       val phone = (json \ "phone").as[String]
       val passport = (json \ "passport").as[String]
 
-      Admin.findById(id).map {
-        v => {
-          val updatedAdmin = Admin.updateAdmin(v, name, surname, login, middleName, phone, passport)
-          Ok(Json.toJson(
-            Json.obj(
-              "status" -> "success",
-              "code" -> 200,
-              "token" -> updatedAdmin.token
-            )
-          ))
+      if (Option(login).getOrElse("").isEmpty) {
+        BadRequest(Json.obj("status" -> "fail", "message" -> "Login cannot be empty"))
+      } else {
+        Admin.findById(id).map {
+          v => {
+            val updatedAdmin = Admin.updateAdmin(v, name, surname, login, middleName, phone, passport)
+            Ok(Json.toJson(
+              Json.obj(
+                "status" -> "success",
+                "code" -> 200,
+                "token" -> updatedAdmin.token
+              )
+            ))
+          }
+        }.getOrElse {
+          NotFound(Json.obj("status" -> "fail", "message" -> "User not found"))
         }
-      }.getOrElse {
-        NotFound(Json.obj("status" -> "fail", "message" -> "User not found"))
       }
     }
     }.getOrElse {

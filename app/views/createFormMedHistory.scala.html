@@ -1,0 +1,37 @@
+@(qForm: Form[MedHistory])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Добавить историю</h1>
+
+    @helper.form(action = routes.MedHistoryController.historyForm(), 'enctype -> "multipart/form-data") {
+        <fieldset>
+            @inputText(qForm("title"), '_label -> "Название", '_help -> "")
+            @textarea(qForm("description"), '_label -> "Описание", '_help -> "")
+            @inputDate(qForm("date"), '_label -> "Дата", '_help -> "")
+            @inputText(qForm("fileName"), '_label -> "Название файла", '_help -> "")
+            @inputText(qForm("fileFormat"), '_label -> "Формат файла", '_help -> "")
+            @select(
+                qForm("historyType"),
+                Seq(
+                    "conclusion" -> "conclusion",
+                    "direction" -> "direction"
+                ),
+                '_label -> "Тип", '_default -> "-- Choose status --",
+                '_showConstraints -> false
+            )
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Добавить историю" class="btn success"> или
+            <a href="@routes.MedHistoryController.medHistoryList()" class="btn">Отмена</a>
+        </div>
+    }
+    </div>
+
+}

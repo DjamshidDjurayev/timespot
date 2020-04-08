@@ -1,4 +1,4 @@
-@(currentPage: ContactPage[Contacts], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
+@(currentPage: MedHistoryPage[MedHistory], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
 
 <!DOCTYPE html>
 
@@ -23,13 +23,12 @@
                             <li><a href="@routes.News.list2()">Новости</a></li>
                             <li><a href="@routes.Administrator.list3()">Администраторы</a></li>
                             <li><a href="@routes.Notifications.list4()">Уведомления</a></li>
-                            <li class="active"><a href="@routes.ContactController.contactsList()">Контакты</a></li>
+                            <li><a href="@routes.ContactController.contactsList()">Контакты</a></li>
                             <li><a href="@routes.QuestionController.questionList()">Вопросы</a></li>
                             <li><a href="@routes.TariffController.tariffList()">Тарифы</a></li>
                             <li><a href="@routes.AssignersController.assignerList()">Эссайнеры</a></li>
-                            <li><a href="@routes.TariffOptionsController.tariffOptionsList()">Опции тарифов</a></li>
                             <li><a href="@routes.RecommendationsController.recommendationsList()">Рекомендации</a></li>
-                            <li><a href="@routes.MedHistoryController.medHistoryList()">История болезни</a></li>
+                            <li class="active"><a href="@routes.MedHistoryController.medHistoryList()">История болезни</a></li>
                         </ul>
                     </div>
                 </div>
@@ -39,7 +38,7 @@
 
         <header class="topbar">
             <h1 class="fill">
-                <a>Контакты</a>
+                <a>История болезни</a>
             </h1>
         </header>
 
@@ -54,12 +53,12 @@
         </section>
 
         <div id="actions">
-            <a class="btn success" id="add" href="@routes.ContactController.create()">Добавить контакт</a>
+            <a class="btn success" id="add" href="@routes.MedHistoryController.create()">Добавить историю</a>
         </div>
 
 
         @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
-            routes.ContactController.contactsList(newPage, newOrderBy.map { orderBy =>
+            routes.MedHistoryController.medHistoryList(newPage, newOrderBy.map { orderBy =>
                 if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
             }.getOrElse(currentOrderBy), currentFilter)
 
@@ -71,22 +70,22 @@
             </th>
         }
 
-        <h1 id="title_message">@Messages("contacts.list.title", currentPage.total)</h1>
+        <h1 id="title_message">@Messages("medHistory.list.title", currentPage.total)</h1>
 
-        @Option(currentPage.items).filterNot(_.isEmpty).map { contacts =>
+        @Option(currentPage.items).filterNot(_.isEmpty).map { medHistory =>
 
         <table class="computers zebra-striped">
             <thead>
                 <tr>
-                    @header(1, "Контакты")
+                    @header(1, "Рекомендации")
                 </tr>
             </thead>
             <tbody>
 
-            @contacts.map {
-                case (contact) => {
+            @medHistory.map {
+                case (item) => {
                     <tr>
-                        <td><h5><a href="@routes.ContactController.edit(contact.id)">@contact.city</a></h5></td>
+                        <td><h5><a href="@routes.MedHistoryController.edit(item.id)">@item.title</a></h5></td>
                     </tr>
                 }
             }
@@ -106,7 +105,7 @@
                     </li>
                 }
             <li class="current">
-                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + contacts.size) из @currentPage.total</a>
+                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + medHistory.size) из @currentPage.total</a>
             </li>
                 @currentPage.next.map { page =>
                 <li class="next">
