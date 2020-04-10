@@ -132,4 +132,22 @@ class MedHistoryController @Inject()(implicit context: ExecutionContext, compone
     }
     Ok(Json.toJson(directionList))
   }
+
+  def getActs: Action[AnyContent] = Action {
+    val acts = MedHistory.getMedHistoryByType("act")
+
+    val actsList = acts.map {
+      history => {
+        Json.obj(
+          "id" -> history.id,
+          "title" -> history.title,
+          "description" -> history.description,
+          "date" -> history.date,
+          "fileName" -> history.fileName,
+          "fileFormat" -> history.fileFormat
+        )
+      }
+    }
+    Ok(Json.toJson(actsList))
+  }
 }

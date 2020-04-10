@@ -17,6 +17,7 @@ GET         /assigners/                       @controllers.AssignersController.a
 GET         /tariffOptions/                   @controllers.TariffOptionsController.tariffOptionsList(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /recommendations/                 @controllers.RecommendationsController.recommendationsList(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /medHistory/                      @controllers.MedHistoryController.medHistoryList(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /payments/                        @controllers.PaymentsController.paymentsList(p:Int ?= 0, s:Int ?= 2, f ?= "")
 
 GET         /news/new                         @controllers.News.create
 POST        /news                             @controllers.News.addNews
@@ -73,25 +74,24 @@ POST        /tariffOptions                    @controllers.TariffOptionsControll
 GET         /tariffOptions/:id                @controllers.TariffOptionsController.edit(id:Long)
 POST        /tariffOptions/:id                @controllers.TariffOptionsController.update(id:Long)
 POST        /tariffOptions/:id/delete         @controllers.TariffOptionsController.delete(id:Long)
-GET         /api/getTariffOptions             @controllers.TariffOptionsController.getTariffOptions
 
 GET         /recommendations/new              @controllers.RecommendationsController.create
 POST        /recommendations                  @controllers.RecommendationsController.recForm
 GET         /recommendations/:id              @controllers.RecommendationsController.edit(id:Long)
 POST        /recommendations/:id              @controllers.RecommendationsController.update(id:Long)
 POST        /recommendations/:id/delete       @controllers.RecommendationsController.delete(id:Long)
-GET         /api/getRecommendations           @controllers.RecommendationsController.getRecommendations
-GET         /api/getLawRecommendations        @controllers.RecommendationsController.getLawyerRecommendations
-GET         /api/getDocRecommendations        @controllers.RecommendationsController.getDocRecommendations
 
 GET         /medHistory/new                   @controllers.MedHistoryController.create
 POST        /medHistory                       @controllers.MedHistoryController.historyForm
 GET         /medHistory/:id                   @controllers.MedHistoryController.edit(id:Long)
 POST        /medHistory/:id                   @controllers.MedHistoryController.update(id:Long)
 POST        /medHistory/:id/delete            @controllers.MedHistoryController.delete(id:Long)
-GET         /api/getMedHistory                @controllers.MedHistoryController.getMedHistory
-GET         /api/getConclusions               @controllers.MedHistoryController.getConclusions
-GET         /api/getDirections                @controllers.MedHistoryController.getDirections
+
+GET         /payments/new                     @controllers.PaymentsController.create
+POST        /payments                         @controllers.PaymentsController.paymentsForm
+GET         /payments/:id                     @controllers.PaymentsController.edit(id:Long)
+POST        /payments/:id                     @controllers.PaymentsController.update(id:Long)
+POST        /payments/:id/delete              @controllers.PaymentsController.delete(id:Long)
 
 # Api (json)
 
@@ -129,6 +129,15 @@ POST        /api/addReview                    @controllers.Reviews.addReview
 POST        /api/callOrder                    @controllers.Reviews.callOrder
 GET         /api/getReviews                   @controllers.Reviews.getReviews
 GET         /api/getCalls                     @controllers.Reviews.getCalls
+GET         /api/getMedHistory                @controllers.MedHistoryController.getMedHistory
+GET         /api/getConclusions               @controllers.MedHistoryController.getConclusions
+GET         /api/getDirections                @controllers.MedHistoryController.getDirections
+GET         /api/getRecommendations           @controllers.RecommendationsController.getRecommendations
+GET         /api/getLawRecommendations        @controllers.RecommendationsController.getLawyerRecommendations
+GET         /api/getDocRecommendations        @controllers.RecommendationsController.getDocRecommendations
+GET         /api/getTariffOptions             @controllers.TariffOptionsController.getTariffOptions
+GET         /api/getActs                      @controllers.MedHistoryController.getActs
+GET         /api/getPayments                  @controllers.PaymentsController.getPayments
 
 GET         /api/device/registerDevice        @controllers.DeviceController.registerDevice(deviceId: String, tokenId: String)
 POST        /api/device/registerDevicePost    @controllers.DeviceController.registerDevicePost

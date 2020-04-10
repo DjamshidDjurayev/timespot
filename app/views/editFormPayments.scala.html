@@ -1,0 +1,48 @@
+@(id: Long, qForm: Form[Payment])(implicit messages: Messages)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Редактировать платеж</h1>
+
+    <div id="remove_button">
+    @form(routes.PaymentsController.delete(id), 'class -> "topRight") {
+        <input type="submit" value="Удалить платеж" class="btn danger">
+    }
+    </div>
+
+    @form(routes.PaymentsController.update(id)) {
+        <fieldset>
+            @inputDate(qForm("date"), '_label -> "Дата", '_help -> "")
+            @select(
+                qForm("paymentMethod"),
+                Seq(
+                    "VISA" -> "VISA",
+                    "PAYPAL" -> "PAYPAL"
+                ),
+                '_label -> "Тип", '_default -> "-- Choose payment method --",
+                '_showConstraints -> false
+            )
+            @inputText(qForm("amount"), '_label -> "Сумма", '_help -> "")
+            @select(
+                qForm("currency"),
+                Seq(
+                    "USD" -> "USD",
+                    "RU" -> "RU"
+                ),
+                '_label -> "Тип", '_default -> "-- Choose currency --",
+                '_showConstraints -> false
+            )
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="Сохранить платеж" class="btn success"> или
+            <a href="@routes.PaymentsController.paymentsList()" class="btn">Отмена</a>
+        </div>
+    }
+    </div>
+}

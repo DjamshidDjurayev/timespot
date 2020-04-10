@@ -199,11 +199,11 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
           ))
         }
       }.getOrElse {
-        Unauthorized(Json.obj("status" -> 401, "message" -> "not authorized"))
+        Unauthorized(Json.obj("status" -> 401, "message" -> "Not authorized"))
       }
     }
     }.getOrElse {
-      BadRequest(Json.obj("status" -> "fail", "message" -> "Expecting application/json request body"))
+      Unauthorized(Json.obj("status" -> 401, "message" -> "Not authorized"))
     }
   }
 

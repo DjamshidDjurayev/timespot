@@ -1,4 +1,4 @@
-@(currentPage: TariffPage[Tariff], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
+@(currentPage: PaymentPage[Payment], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
 
 <!DOCTYPE html>
 
@@ -25,11 +25,11 @@
                             <li><a href="@routes.Notifications.list4()">Уведомления</a></li>
                             <li><a href="@routes.ContactController.contactsList()">Контакты</a></li>
                             <li><a href="@routes.QuestionController.questionList()">Вопросы</a></li>
-                            <li class="active"><a href="@routes.TariffController.tariffList()">Тарифы</a></li>
+                            <li><a href="@routes.TariffController.tariffList()">Тарифы</a></li>
                             <li><a href="@routes.AssignersController.assignerList()">Эссайнеры</a></li>
                             <li><a href="@routes.RecommendationsController.recommendationsList()">Рекомендации</a></li>
                             <li><a href="@routes.MedHistoryController.medHistoryList()">История болезни</a></li>
-                            <li><a href="@routes.PaymentsController.paymentsList()">Платежи</a></li>
+                            <li class="active"><a href="@routes.PaymentsController.paymentsList()">Платежи</a></li>
                         </ul>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
 
         <header class="topbar">
             <h1 class="fill">
-                <a>Тарифы</a>
+                <a>Платежи</a>
             </h1>
         </header>
 
@@ -54,12 +54,12 @@
         </section>
 
         <div id="actions">
-            <a class="btn success" id="add" href="@routes.TariffController.create()">Добавить тариф</a>
+            <a class="btn success" id="add" href="@routes.PaymentsController.create()">Добавить платеж</a>
         </div>
 
 
         @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
-            routes.TariffController.tariffList(newPage, newOrderBy.map { orderBy =>
+            routes.PaymentsController.paymentsList(newPage, newOrderBy.map { orderBy =>
                 if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
             }.getOrElse(currentOrderBy), currentFilter)
 
@@ -71,22 +71,22 @@
             </th>
         }
 
-        <h1 id="title_message">@Messages("tariffs.list.title", currentPage.total)</h1>
+        <h1 id="title_message">@Messages("payments.list.title", currentPage.total)</h1>
 
-        @Option(currentPage.items).filterNot(_.isEmpty).map { tariffs =>
+        @Option(currentPage.items).filterNot(_.isEmpty).map { payments =>
 
         <table class="computers zebra-striped">
             <thead>
                 <tr>
-                    @header(1, "Тарифы")
+                    @header(1, "Платежи")
                 </tr>
             </thead>
             <tbody>
 
-            @tariffs.map {
-                case (tariff) => {
+            @payments.map {
+                case (item) => {
                     <tr>
-                        <td><h5><a href="@routes.TariffController.edit(tariff.id)">@tariff.title</a></h5></td>
+                        <td><h5><a href="@routes.PaymentsController.edit(item.id)">@item.paymentMethod</a></h5></td>
                     </tr>
                 }
             }
@@ -106,7 +106,7 @@
                     </li>
                 }
             <li class="current">
-                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + tariffs.size) из @currentPage.total</a>
+                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + payments.size) из @currentPage.total</a>
             </li>
                 @currentPage.next.map { page =>
                 <li class="next">

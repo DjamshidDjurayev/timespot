@@ -11,3 +11,4 @@ assigners.list.title={0,choice,0#No Assigner|1#One assigner|1<{0,number,integer}
 tariffOptions.list.title={0,choice,0#No Options|1#One option|1<{0,number,integer} options} found
 recommendations.list.title={0,choice,0#No Recommendations|1#One recommendation|1<{0,number,integer} recommendations} found
 medHistory.list.title={0,choice,0#No History|1#One History|1<{0,number,integer} histories} found
+payments.list.title={0,choice,0#No Payments|1#One Payment|1<{0,number,integer} payments} found

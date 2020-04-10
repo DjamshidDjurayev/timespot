@@ -23,7 +23,8 @@ object Db extends Instance(
     Entity[Assigner](),
     Entity[TariffOption](),
     Entity[Recommendation](),
-    Entity[MedHistory]()
+    Entity[MedHistory](),
+    Entity[Payment]()
   ),
   url = constants.DB_URL,
   user = constants.DB_USER,
