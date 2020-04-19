@@ -8,6 +8,7 @@ package object constants {
 //  val DB_USER: String = ""
 //  val DB_PASSWORD: String = ""
   val BROKER_URL: String = "tcp://soldier.cloudmqtt.com:14969"
+//  val BROKER_URL: String = "mqtt://soldier.cloudmqtt.com:34969"
   val CLOUDINARY_API_SECRET = "gx5pxezG25hPdqvNEEk8GWdeTcQ"
   val CLOUDINARY_API_KEY = "566579673111817"
   val CLOUDINARY_CLOUD_NAME = "ds5cpnnkl"

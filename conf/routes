@@ -146,6 +146,12 @@ GET         /api/device/updateDevice          @controllers.DeviceController.upda
 GET         /api/device/getAllDevices         @controllers.DeviceController.getAllDevices
 DELETE      /api/device/removeAllDevices      @controllers.DeviceController.removeAllDevices
 
+POST        /api/chat/createChat              @controllers.ChatController.createChat
+GET         /api/chat/getChatRooms            @controllers.ChatController.getChatRooms
+GET         /api/chat/getAllChatRooms         @controllers.ChatController.getAllChatRooms
+GET         /api/chat/getChatMessages         @controllers.ChatController.getChatMessages(roomId: Long, messageId: Long, limit: Int)
+POST        /api/chat/createMessage           @controllers.ChatController.createMessage
+
 GET         /api/getStatistics                @controllers.Administrator.getStatistics(login: String, password: String)
 GET         /api/getAllHistory                @controllers.Staff.getAllHistory(login: String, password: String)
 GET         /api/addHistory                   @controllers.Staff.addHistory(userId: String)

@@ -1,12 +1,11 @@
 package controllers
 
 import common.fcm.FcmProvider
+import common.mqtt.MqttServiceProvider
 import javax.inject.Inject
 import models._
 import org.joda.time.DateTime
 import play.api.Logger
-import play.api.data.Form
-import play.api.data.Forms._
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc._
@@ -15,6 +14,7 @@ import scala.concurrent.ExecutionContext
 
 class Staff @Inject()(implicit context: ExecutionContext,
                       fcmProvider: FcmProvider,
+                      mqttServiceProvider: MqttServiceProvider,
                       components: ControllerComponents) extends AbstractController(components) with I18nSupport {
   val Home: Result = Redirect(routes.Staff.list(0, 2, ""))
 
@@ -32,6 +32,13 @@ class Staff @Inject()(implicit context: ExecutionContext,
   }
 
   def list(page: Int, orderBy: Int, filter: String): Action[AnyContent] = Action { implicit request =>
+    val rooms = Room.getAllRooms()
+    rooms.foreach(room => {
+      // subscribe to rooms
+      mqttServiceProvider.subscribeToTopic(s"/pm/publish/${room.id}")
+      mqttServiceProvider.subscribeToTopic(s"/pm/seen/${room.id}")
+    })
+
     Ok(views.html.staff(
       Staffer.list(page = page, orderBy = orderBy, filter = ("%"+filter+"%")),
       orderBy, filter

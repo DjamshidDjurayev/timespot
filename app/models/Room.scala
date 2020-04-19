@@ -1,7 +1,7 @@
 package models
 
 import play.api.libs.json.{Format, Json}
-import sorm.Persisted
+import sorm.{Persisted, Querier}
 
 case class Room(
                  timestamp: Long,
@@ -11,7 +11,8 @@ case class Room(
                  chatType: String,
                  name: String,
                  newMessagesCount: Int,
-                 userId: Long
+                 creatorUserId: Long,
+                 recipientUserId: Long
                )
 
 object Room {
@@ -21,8 +22,26 @@ object Room {
     Db.save[Room](room)
   }
 
-  def getRooms(): Stream[Room with Persisted] = {
+  def getAllRooms(): Stream[Room with Persisted] = {
     Db.query[Room].order("timestamp", reverse = true).fetch()
+  }
+
+  def getRooms(id: Long): Stream[Room with Persisted] = {
+    Db.query[Room].whereEqual("id", id).order("timestamp", reverse = true).fetch()
+  }
+
+  def isOwner(id: Long): Stream[Room with Persisted] = {
+    Db.query[Room].whereEqual("creatorUserId", id).order("timestamp", reverse = true).fetch()
+  }
+
+  def getRoomsByRecipientId(id: Long): Stream[Room with Persisted] = {
+    Db.query[Room].where(Querier.Or(Querier.Equal("creatorUserId", id), Querier.Equal("recipientUserId", id))).order("timestamp", reverse = true).fetch()
+  }
+
+  def getRoomByRecipientId(ownerId: Long, recipientId: Long): Option[Room with Persisted] = {
+    Db.query[Room]
+      .where(Querier.And(Querier.Equal("creatorUserId", ownerId),
+      Querier.Equal("recipientUserId", recipientId))).order("timestamp", reverse = true).fetchOne()
   }
 
   def findById(id: Long): Option[Room with Persisted] = {

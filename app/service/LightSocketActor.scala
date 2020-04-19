@@ -1,7 +1,7 @@
 package controllers.socket
 
 import akka.actor.{Actor, ActorRef, Props}
-import service.model.Message
+import service.model.PublishMessage
 import service.PublishService
 
 import scala.collection.mutable.ListBuffer
@@ -13,7 +13,7 @@ class LightSocketActor(out: ActorRef) extends Actor {
   val topic: String = service.topic
 
   override def receive: Receive = {
-    case message: Message =>
+    case message: PublishMessage =>
       play.Logger.debug(s"Message: ${message.information}")
       PublishService.publish(message.information)
     // out ! message
@@ -27,7 +27,7 @@ object LightSocketActor {
     Props(new LightSocketActor(out))
   }
 
-  def sendMessage(message: Message): Unit = {
+  def sendMessage(message: PublishMessage): Unit = {
     list.foreach(_ ! message)
   }
 }

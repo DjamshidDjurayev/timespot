@@ -7,7 +7,7 @@ import common.mqtt.MqttServiceProvider
 import controllers.socket.LightSocketActor
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-import service.model.Message
+import service.model.PublishMessage
 
 @Singleton
 class Application @Inject()(implicit system: ActorSystem,
@@ -16,7 +16,7 @@ class Application @Inject()(implicit system: ActorSystem,
                             components: ControllerComponents) extends AbstractController(components) {
   mqttServiceProvider.subscribeToTopic(constants.topic)
 
-  def socket: WebSocket = WebSocket.accept[Message, Message] { _ =>
+  def socket: WebSocket = WebSocket.accept[PublishMessage, PublishMessage] { _ =>
     ActorFlow.actorRef(out => LightSocketActor.props(out))
   }
 
