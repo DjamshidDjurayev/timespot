@@ -41,6 +41,13 @@ object Message {
     Db.query[Message].whereEqual("roomId", id).whereNotEqual("ownerId", userId).order("timestamp", reverse = true).fetch()
   }
 
+  def updateUnreadCount(id: Long, userId: Long): Unit = {
+    val messages = getMessagesByRoomIdWithUserId(id, userId)
+    messages.foreach((message: Message with Persisted) => {
+      updateFields(message, read = true, STATUS_SEEN)
+    })
+  }
+
   def getMessagesByRoomIdAndMessageId(id: Long, messageId: Long, limit: Int): Stream[Message with Persisted] = {
     if (messageId == 0) {
       Db.query[Message].whereEqual("roomId", id).order("timestamp", reverse = true).offset(messageId.toInt).limit(limit).fetch()
@@ -63,14 +70,8 @@ object Message {
 
   def updateFields(message: Message, read: Boolean, status: Int): Message with Persisted = {
     Db.save[Message](message.copy(
-      timestamp = message.timestamp,
-      chatType = message.chatType,
-      content = message.content,
       read = read,
-      status = status,
-      ownerId = message.ownerId,
-      recipientId = message.recipientId,
-      roomId = message.roomId
+      status = status
     ))
   }
 

@@ -122,9 +122,6 @@ class ChatController @Inject()(implicit context: ExecutionContext,
               mqttServiceProvider.publishToTopic(s"/room/${ownerId}", jsonResponse.toString())
               mqttServiceProvider.publishToTopic(s"/room/${recipientId}", jsonResponse2.toString())
 
-              mqttServiceProvider.subscribeToTopic(s"/pm/publish/${saved.id}")
-              mqttServiceProvider.subscribeToTopic(s"/pm/seen/${saved.id}")
-
               Ok(Json.toJson(Json.obj(
                 "status" -> "Chat created",
                 "code" -> 200
@@ -339,8 +336,6 @@ class ChatController @Inject()(implicit context: ExecutionContext,
                     "roomId" -> savedMessage.roomId
                   )
                 )
-
-                mqttServiceProvider.publishToTopic(s"/message/${roomId}", jsonResponse.toString())
 
                 Ok(Json.toJson(
                   Json.obj(

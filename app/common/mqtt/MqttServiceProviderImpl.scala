@@ -5,8 +5,7 @@ import com.google.inject.{Inject, Singleton}
 import controllers.socket.LightSocketActor
 import models.{Admin, Message, Room}
 import org.eclipse.paho.client.mqttv3.{IMqttActionListener, IMqttDeliveryToken, IMqttToken, MqttCallback, MqttClient, MqttConnectOptions, MqttMessage}
-import play.api.libs.json.{JsDefined, JsNull, JsUndefined, Json}
-import service.error.CommonErrorThrowable
+import play.api.libs.json.{JsDefined, JsUndefined, Json}
 import service.model.PublishMessage
 
 import scala.util.{Failure, Success, Try}
@@ -58,6 +57,7 @@ class MqttServiceProviderImpl @Inject()(provider: MqttClientProvider) extends Mq
           if (room.isEmpty) return
 
           val result = Json.parse(payload)
+          Logger.debug(s"A message parsed: ${result}")
 
           var responseType: String = "";
           var oldId: Long = -1L;
@@ -67,39 +67,62 @@ class MqttServiceProviderImpl @Inject()(provider: MqttClientProvider) extends Mq
           var ownerId = -1L;
           var recipientId = -1L;
 
+          Logger.debug("started obtaining fields")
+
           (result \ "type") match {
             case JsDefined(value) => responseType = value.as[String]
-            case _: JsUndefined => return
+            case _: JsUndefined => {
+              Logger.debug("type error returned")
+              return
+            }
           }
 
           (result \ "response" \ "id") match {
             case JsDefined(value) => oldId = value.as[Long]
-            case _: JsUndefined => return
+            case _: JsUndefined => {
+              Logger.debug("response error returned")
+              return
+            }
           }
 
           (result \ "response" \ "timestamp") match {
             case JsDefined(value) => timestamp = value.as[Long]
-            case _: JsUndefined => return
+            case _: JsUndefined => {
+              Logger.debug("timestamp error returned")
+              return
+            }
           }
 
           (result \ "response" \ "chatType") match {
             case JsDefined(value) => chatType = value.as[String]
-            case _: JsUndefined => return
+            case _: JsUndefined => {
+              Logger.debug("chatType error returned")
+              return
+            }
           }
 
           (result \ "response" \ "content") match {
             case JsDefined(value) => content = value.as[String]
-            case _: JsUndefined => return
+            case _: JsUndefined => {
+              Logger.debug("content error returned")
+              return
+            }
           }
 
           (result \ "response" \ "ownerId") match {
             case JsDefined(value) => ownerId = value.as[Long]
-            case _: JsUndefined => return
+            case _: JsUndefined => {
+              Logger.debug("ownerId error returned")
+              return
+            }
           }
 
           (result \ "response" \ "recipientId") match {
             case JsDefined(value) => recipientId = value.as[Long]
-            case _: JsUndefined => return
+            case _: JsUndefined => {
+              Logger.debug("recipientId error returned")
+              return
+            }
           }
 
           val newMessage = Message(
@@ -136,8 +159,6 @@ class MqttServiceProviderImpl @Inject()(provider: MqttClientProvider) extends Mq
 
           val owner = Admin.findById(ownerId).get
           val recip = Admin.findById(recipientId).get
-
-          val isOwner = if (ownerId == room.get.creatorUserId) true else false
 
           val ownerNewMessagesCount = Message.getUnreadMessagesCount(roomId.toLong, ownerId)
 
@@ -227,6 +248,9 @@ class MqttServiceProviderImpl @Inject()(provider: MqttClientProvider) extends Mq
               case _: JsUndefined => return
             }
 
+            val savedMessage = Message.findById(messageId)
+            Message.updateFields(savedMessage.get, seen, Message.STATUS_SEEN)
+
             val jsonResponse = Json.obj(
               "type" -> "seen",
               "response" -> Json.obj(
@@ -255,9 +279,7 @@ class MqttServiceProviderImpl @Inject()(provider: MqttClientProvider) extends Mq
               case _: JsUndefined => return
             }
 
-            Message.getMessagesByRoomIdWithUserId(roomId.toLong, userId).foreach(message => {
-              Message.updateFields(message, read = true, Message.STATUS_SEEN)
-            })
+            Message.updateUnreadCount(roomId.toLong, userId)
             
             val jsonResponse = Json.obj(
               "type" -> "allseen",
