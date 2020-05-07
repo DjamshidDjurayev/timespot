@@ -11,7 +11,8 @@ case class Message(
                  status: Int,
                  ownerId: Long,
                  recipientId: Long,
-                 roomId: Long
+                 roomId: Long,
+                 edited: Boolean
                )
 
 object Message {
@@ -72,6 +73,13 @@ object Message {
     Db.save[Message](message.copy(
       read = read,
       status = status
+    ))
+  }
+
+  def updateContent(message: Message, content: String): Message with Persisted = {
+    Db.save[Message](message.copy(
+      content = content,
+      edited = true
     ))
   }
 

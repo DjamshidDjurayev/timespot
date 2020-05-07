@@ -66,6 +66,7 @@ class MqttServiceProviderImpl @Inject()(provider: MqttClientProvider) extends Mq
           var content = "";
           var ownerId = -1L;
           var recipientId = -1L;
+          var edited = false;
 
           Logger.debug("started obtaining fields")
 
@@ -125,6 +126,14 @@ class MqttServiceProviderImpl @Inject()(provider: MqttClientProvider) extends Mq
             }
           }
 
+          (result \ "response" \ "edited") match {
+            case JsDefined(value) => edited = value.as[Boolean]
+            case _: JsUndefined => {
+              Logger.debug("edited error returned")
+              return
+            }
+          }
+
           val newMessage = Message(
             timestamp,
             chatType,
@@ -133,7 +142,8 @@ class MqttServiceProviderImpl @Inject()(provider: MqttClientProvider) extends Mq
             Message.STATUS_DELIVERED,
             ownerId,
             recipientId,
-            roomId.toLong
+            roomId.toLong,
+            edited
           )
 
           val savedMessage = Message.save(newMessage)
@@ -150,7 +160,8 @@ class MqttServiceProviderImpl @Inject()(provider: MqttClientProvider) extends Mq
               "status" -> savedMessage.status,
               "ownerId" -> savedMessage.ownerId,
               "recipientId" -> savedMessage.recipientId,
-              "roomId" -> savedMessage.roomId
+              "roomId" -> savedMessage.roomId,
+              "edited" -> savedMessage.edited
             )
           )
 
@@ -185,7 +196,8 @@ class MqttServiceProviderImpl @Inject()(provider: MqttClientProvider) extends Mq
                 "status" -> savedMessage.status,
                 "ownerId" -> savedMessage.ownerId,
                 "recipientId" -> savedMessage.recipientId,
-                "roomId" -> savedMessage.roomId
+                "roomId" -> savedMessage.roomId,
+                "edited" -> savedMessage.edited
               )
             )
           )
@@ -215,7 +227,8 @@ class MqttServiceProviderImpl @Inject()(provider: MqttClientProvider) extends Mq
                 "status" -> savedMessage.status,
                 "ownerId" -> savedMessage.ownerId,
                 "recipientId" -> savedMessage.recipientId,
-                "roomId" -> savedMessage.roomId
+                "roomId" -> savedMessage.roomId,
+                "edited" -> savedMessage.edited
               )
             )
           )

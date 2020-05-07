@@ -18,6 +18,7 @@ GET         /tariffOptions/                   @controllers.TariffOptionsControll
 GET         /recommendations/                 @controllers.RecommendationsController.recommendationsList(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /medHistory/                      @controllers.MedHistoryController.medHistoryList(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /payments/                        @controllers.PaymentsController.paymentsList(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /appointments/                    @controllers.AppointmentsController.appointmentsList(p:Int ?= 0, s:Int ?= 2, f ?= "")
 
 GET         /news/new                         @controllers.News.create
 POST        /news                             @controllers.News.addNews
@@ -93,6 +94,12 @@ GET         /payments/:id                     @controllers.PaymentsController.ed
 POST        /payments/:id                     @controllers.PaymentsController.update(id:Long)
 POST        /payments/:id/delete              @controllers.PaymentsController.delete(id:Long)
 
+GET         /appointments/new                 @controllers.AppointmentsController.create
+POST        /appointments                     @controllers.AppointmentsController.appForm
+GET         /appointments/:id                 @controllers.AppointmentsController.edit(id:Long)
+POST        /appointments/:id                 @controllers.AppointmentsController.update(id:Long)
+POST        /appointments/:id/delete          @controllers.AppointmentsController.delete(id:Long)
+
 # Api (json)
 
 POST        /api/addStaff                     @controllers.Staff.addNewStaff
@@ -138,6 +145,7 @@ GET         /api/getDocRecommendations        @controllers.RecommendationsContro
 GET         /api/getTariffOptions             @controllers.TariffOptionsController.getTariffOptions
 GET         /api/getActs                      @controllers.MedHistoryController.getActs
 GET         /api/getPayments                  @controllers.PaymentsController.getPayments
+GET         /api/getAppointments              @controllers.AppointmentsController.getAppointments(date: Long)
 
 GET         /api/device/registerDevice        @controllers.DeviceController.registerDevice(deviceId: String, tokenId: String)
 POST        /api/device/registerDevicePost    @controllers.DeviceController.registerDevicePost
@@ -151,6 +159,7 @@ GET         /api/chat/getChatRooms            @controllers.ChatController.getCha
 GET         /api/chat/getAllChatRooms         @controllers.ChatController.getAllChatRooms
 GET         /api/chat/getChatMessages         @controllers.ChatController.getChatMessages(roomId: Long, messageId: Long, limit: Int)
 POST        /api/chat/createMessage           @controllers.ChatController.createMessage
+POST        /api/chat/editMessage             @controllers.ChatController.editMessage
 
 GET         /api/getStatistics                @controllers.Administrator.getStatistics(login: String, password: String)
 GET         /api/getAllHistory                @controllers.Staff.getAllHistory(login: String, password: String)

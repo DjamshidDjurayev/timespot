@@ -111,7 +111,14 @@ class MedHistoryController @Inject()(implicit context: ExecutionContext, compone
         )
       }
     }
-    Ok(Json.toJson(conclusionList))
+
+    val conclusionsResponse = Json.obj(
+      "code" -> 200,
+      "status" -> "message",
+      "data" -> conclusionList
+    )
+
+    Ok(Json.toJson(conclusionsResponse))
   }
 
   def getDirections: Action[AnyContent] = Action {
@@ -130,7 +137,14 @@ class MedHistoryController @Inject()(implicit context: ExecutionContext, compone
         )
       }
     }
-    Ok(Json.toJson(directionList))
+
+    val directionsResponse = Json.obj(
+      "code" -> 200,
+      "status" -> "message",
+      "data" -> directionList
+    )
+
+    Ok(Json.toJson(directionsResponse))
   }
 
   def getActs: Action[AnyContent] = Action {
@@ -148,6 +162,13 @@ class MedHistoryController @Inject()(implicit context: ExecutionContext, compone
         )
       }
     }
-    Ok(Json.toJson(actsList))
+
+    val actsResponse = Json.obj(
+      "code" -> 200,
+      "status" -> "message",
+      "data" -> actsList
+    )
+
+    Ok(Json.toJson(actsResponse))
   }
 }

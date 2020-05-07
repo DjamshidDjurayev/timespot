@@ -113,6 +113,13 @@ class TariffController @Inject()(implicit context: ExecutionContext, components:
         )
       }
     }
-    Ok(Json.toJson(tariffList))
+
+    val tariffResponse = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> tariffList
+    )
+
+    Ok(Json.toJson(tariffResponse))
   }
 }

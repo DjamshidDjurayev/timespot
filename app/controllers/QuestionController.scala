@@ -82,6 +82,13 @@ class QuestionController @Inject()(implicit context: ExecutionContext, component
         )
       }
     }
-    Ok(Json.toJson(questionList))
+
+    val response = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> questionList
+    )
+
+    Ok(Json.toJson(response))
   }
 }

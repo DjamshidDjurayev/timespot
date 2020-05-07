@@ -83,6 +83,13 @@ class ContactController @Inject()(implicit context: ExecutionContext, components
         )
       }
     }
-    Ok(Json.toJson(contactsList))
+
+    val contactsResponse = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> contactsList
+    )
+
+    Ok(Json.toJson(contactsResponse))
   }
 }

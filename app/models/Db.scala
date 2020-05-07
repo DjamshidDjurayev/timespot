@@ -26,7 +26,8 @@ object Db extends Instance(
     Entity[MedHistory](),
     Entity[Payment](),
     Entity[Room](),
-    Entity[Message]()
+    Entity[Message](),
+    Entity[Appointment]()
   ),
   url = constants.DB_URL,
   user = constants.DB_USER,

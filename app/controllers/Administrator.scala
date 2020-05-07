@@ -102,7 +102,14 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
         )
       }
     }
-    Ok(Json.toJson(list))
+
+    val adminResponse = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> list
+    )
+
+    Ok(Json.toJson(adminResponse))
   }
 
   def login(): Action[AnyContent] = Action { implicit request =>
@@ -119,18 +126,20 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
             admin => {
               Ok(Json.toJson(
                 Json.obj(
-                  "status" -> "success",
                   "code" -> 200,
-                  "token" -> admin.token,
-                  "account" -> Json.obj(
-                    "id" -> admin.id,
-                    "name" -> admin.name,
-                    "surname" -> admin.surname,
-                    "login" -> admin.login,
-                    "password" -> admin.password,
-                    "middleName" -> admin.middleName,
-                    "phone" -> admin.phone,
-                    "passport" -> admin.passport
+                  "status" -> "success",
+                  "data" -> Json.obj(
+                    "token" -> admin.token,
+                    "account" -> Json.obj(
+                      "id" -> admin.id,
+                      "name" -> admin.name,
+                      "surname" -> admin.surname,
+                      "login" -> admin.login,
+                      "password" -> admin.password,
+                      "middleName" -> admin.middleName,
+                      "phone" -> admin.phone,
+                      "passport" -> admin.passport
+                    )
                   )
                 )
               ))
@@ -169,9 +178,11 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
             val updatedAdmin = Admin.updateAdmin(v, name, surname, login, middleName, phone, passport)
             Ok(Json.toJson(
               Json.obj(
-                "status" -> "success",
                 "code" -> 200,
-                "token" -> updatedAdmin.token
+                "status" -> "success",
+                "data" -> Json.obj(
+                  "token" -> updatedAdmin.token
+                )
               )
             ))
           }
@@ -193,8 +204,8 @@ class Administrator @Inject()(implicit context: ExecutionContext, components: Co
         _ => {
           Ok(Json.toJson(
             Json.obj(
-              "status" -> "success",
-              "code" -> 200
+              "code" -> 200,
+              "status" -> "success"
             )
           ))
         }

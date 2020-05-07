@@ -123,8 +123,8 @@ class ChatController @Inject()(implicit context: ExecutionContext,
               mqttServiceProvider.publishToTopic(s"/room/${recipientId}", jsonResponse2.toString())
 
               Ok(Json.toJson(Json.obj(
-                "status" -> "Chat created",
-                "code" -> 200
+                "code" -> 200,
+              "status" -> "Chat created"
               )))
             }
             }.getOrElse {
@@ -163,7 +163,14 @@ class ChatController @Inject()(implicit context: ExecutionContext,
         )
       }
     }
-    Ok(Json.toJson(chatRoomsList))
+
+    val roomsResponse = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> chatRoomsList
+    )
+
+    Ok(Json.toJson(roomsResponse))
   }
 
   def getChatRooms: Action[AnyContent] = Action { implicit request =>
@@ -204,7 +211,14 @@ class ChatController @Inject()(implicit context: ExecutionContext,
                   )
                 }
               }
-              Ok(Json.toJson(chatRoomsList))
+
+              val roomsResponse = Json.obj(
+                "code" -> 200,
+                "status" -> "success",
+                "data" -> chatRoomsList
+              )
+
+              Ok(Json.toJson(roomsResponse))
             }
           }.getOrElse {
             Unauthorized(Json.obj("status" -> 401, "message" -> "Not authorized"))
@@ -316,31 +330,112 @@ class ChatController @Inject()(implicit context: ExecutionContext,
                 status,
                 ownerId,
                 recipientId,
-                roomId
+                roomId,
+                false
               )
 
               val savedMessage = Message.save(message)
               if (Option(savedMessage).isDefined) {
+                Ok(Json.toJson(
+                  Json.obj(
+                    "code" -> 200,
+                "status" -> "Message created"
+                  )
+                ))
+              } else {
+                throw CommonErrorThrowable("Something went wrong")
+              }
+            }
+            }.getOrElse {
+              BadRequest(Json.obj("status" -> "fail", "message" -> "Expecting application/json request body"))
+            }
+          }
+        }.getOrElse {
+          Unauthorized(Json.obj("status" -> 401, "message" -> "Not authorized"))
+        }
+      }
+      }.getOrElse {
+        Unauthorized(Json.obj("status" -> 401, "message" -> "Not authorized"))
+      }
+    } catch {
+      case throwable: CommonErrorThrowable => BadRequest(Json.obj("status" -> "fail", "message" -> throwable.getMessage))
+      case notAuthorizedThrowable: NotAuthorizedThrowable => Unauthorized(Json.obj("status" -> 401, "message" -> notAuthorizedThrowable.getMessage))
+      case error: Throwable => BadRequest(Json.obj("status" -> "fail", "message" -> "Internal error"))
+    }
+  }
 
+  def editMessage: Action[AnyContent] = Action { implicit request =>
+    try {
+      val token = request.headers.get("jwt_token")
+
+      token.map { token => {
+        Admin.findAdminByToken(token).map {
+          _ => {
+            val body: AnyContent = request.body
+            val jsonBody: Option[JsValue] = body.asJson
+
+            jsonBody.map { json => {
+              var ownerId: Long = -1L;
+              var messageId: Long = -1L;
+              var roomId: Long = -1L;
+              var content: String = "";
+
+              (json \ "ownerId") match {
+                case JsDefined(value) => ownerId = value.as[Long]
+                case _: JsUndefined => throw CommonErrorThrowable("Missing property")
+              }
+
+              (json \ "messageId") match {
+                case JsDefined(value) => messageId = value.as[Long]
+                case _: JsUndefined => throw CommonErrorThrowable("Missing property")
+              }
+
+              (json \ "roomId") match {
+                case JsDefined(value) => roomId = value.as[Long]
+                case _: JsUndefined => throw CommonErrorThrowable("Missing property")
+              }
+
+              (json \ "message") match {
+                case JsDefined(value) => content = value.as[String]
+                case _: JsUndefined => throw CommonErrorThrowable("Missing property")
+              }
+
+              val room = Room.findById(roomId)
+
+              if (room.isEmpty) {
+                throw CommonErrorThrowable("Room not found")
+              }
+
+              val owner = Admin.findById(ownerId)
+
+              if (owner.isEmpty) {
+                throw NotAuthorizedThrowable("Not authorized")
+              }
+
+              val editedMessage = Message.findById(messageId)
+
+              if (editedMessage.isEmpty) {
+                throw CommonErrorThrowable("Message not found")
+              }
+
+              val savedMessage = Message.updateContent(editedMessage.get, content)
+
+              if (Option(savedMessage).isDefined) {
                 val jsonResponse = Json.obj(
-                  "type" -> "add",
+                  "type" -> "edit",
                   "response" -> Json.obj(
-                    "id" -> savedMessage.id,
-                    "timestamp" -> savedMessage.timestamp,
-                    "chatType" -> savedMessage.chatType,
-                    "content" -> savedMessage.content,
-                    "read" -> savedMessage.read,
-                    "status" -> savedMessage.status,
-                    "ownerId" -> savedMessage.ownerId,
-                    "recipientId" -> savedMessage.recipientId,
-                    "roomId" -> savedMessage.roomId
+                    "ownerId" -> ownerId,
+                    "messageId" -> messageId,
+                    "updatedMessage" -> content
                   )
                 )
 
+                mqttServiceProvider.publishToTopic(s"/pm/${roomId}", jsonResponse.toString())
+
                 Ok(Json.toJson(
                   Json.obj(
-                    "status" -> "Message created",
-                    "code" -> 200
+                    "code" -> 200,
+                "status" -> "Message edited"
                   )
                 ))
               } else {
@@ -404,11 +499,19 @@ class ChatController @Inject()(implicit context: ExecutionContext,
                     "status" -> message.status,
                     "ownerId" -> message.ownerId,
                     "recipientId" -> message.recipientId,
-                    "roomId" -> message.roomId
+                    "roomId" -> message.roomId,
+                    "edited" -> message.edited
                   )
                 }
               }
-              Ok(Json.toJson(messagesList))
+
+              val messagesResponse = Json.obj(
+                "code" -> 200,
+                "status" -> "success",
+                "data" -> messagesList
+              )
+
+              Ok(Json.toJson(messagesResponse))
             }
           }.getOrElse {
             Unauthorized(Json.obj("status" -> 401, "message" -> "Not authorized"))

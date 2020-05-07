@@ -92,7 +92,14 @@ class RecommendationsController @Inject()(implicit context: ExecutionContext, co
         )
       }
     }
-    Ok(Json.toJson(recommendationsList))
+
+    val response = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> recommendationsList
+    )
+
+    Ok(Json.toJson(response))
   }
 
   def getDocRecommendations: Action[AnyContent] = Action {
@@ -111,7 +118,14 @@ class RecommendationsController @Inject()(implicit context: ExecutionContext, co
         )
       }
     }
-    Ok(Json.toJson(docList))
+
+    val response = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> docList
+    )
+
+    Ok(Json.toJson(response))
   }
 
   def getLawyerRecommendations: Action[AnyContent] = Action {
@@ -130,6 +144,13 @@ class RecommendationsController @Inject()(implicit context: ExecutionContext, co
         )
       }
     }
-    Ok(Json.toJson(lawList))
+
+    val response = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> lawList
+    )
+
+    Ok(Json.toJson(response))
   }
 }

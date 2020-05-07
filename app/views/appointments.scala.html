@@ -1,11 +1,10 @@
-@(currentPage: TariffOptionPage[TariffOption], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
+@(currentPage: AppointmentPage[Appointment], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
 
 <!DOCTYPE html>
 
 @import helper._
 
 @implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
-
 
 <html lang="en">
     <head>
@@ -27,11 +26,11 @@
                             <li><a href="@routes.QuestionController.questionList()">Вопросы</a></li>
                             <li><a href="@routes.TariffController.tariffList()">Тарифы</a></li>
                             <li><a href="@routes.AssignersController.assignerList()">Эссайнеры</a></li>
-                            <li class="active"><a href="@routes.TariffOptionsController.tariffOptionsList()">Опции тарифов</a></li>
+                            <li><a href="@routes.TariffOptionsController.tariffOptionsList()">Опции тарифов</a></li>
                             <li><a href="@routes.RecommendationsController.recommendationsList()">Рекомендации</a></li>
                             <li><a href="@routes.MedHistoryController.medHistoryList()">История болезни</a></li>
                             <li><a href="@routes.PaymentsController.paymentsList()">Платежи</a></li>
-                            <li><a href="@routes.AppointmentsController.appointmentsList()">Консультации</a></li>
+                            <li class="active"><a href="@routes.AppointmentsController.appointmentsList()">Консультации</a></li>
                         </ul>
                     </div>
                 </div>
@@ -41,7 +40,7 @@
 
         <header class="topbar">
             <h1 class="fill">
-                <a>Опции тарифов</a>
+                <a>Консультации</a>
             </h1>
         </header>
 
@@ -56,12 +55,12 @@
         </section>
 
         <div id="actions">
-            <a class="btn success" id="add" href="@routes.TariffOptionsController.create()">Добавить опцию</a>
+            <a class="btn success" id="add" href="@routes.AppointmentsController.create()">Создать консультацию</a>
         </div>
 
 
         @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
-            routes.TariffOptionsController.tariffOptionsList(newPage, newOrderBy.map { orderBy =>
+            routes.AppointmentsController.appointmentsList(newPage, newOrderBy.map { orderBy =>
                 if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
             }.getOrElse(currentOrderBy), currentFilter)
 
@@ -75,24 +74,23 @@
 
         <h1 id="title_message">@Messages("tariffs.list.title", currentPage.total)</h1>
 
-        @Option(currentPage.items).filterNot(_.isEmpty).map { tariffOptions =>
+        @Option(currentPage.items).filterNot(_.isEmpty).map { appointments =>
 
         <table class="computers zebra-striped">
             <thead>
                 <tr>
-                    @header(1, "Вопросы")
+                    @header(1, "Консультации")
                 </tr>
             </thead>
             <tbody>
 
-            @tariffOptions.map {
+            @appointments.map {
                 case (option) => {
                     <tr>
-                        <td><h5><a href="@routes.TariffOptionsController.edit(option.id)">@option.keyword</a></h5></td>
+                        <td><h5><a href="@routes.AppointmentsController.edit(option.id)">@option.endTime</a></h5></td>
                     </tr>
                 }
             }
-
             </tbody>
         </table>
 
@@ -108,7 +106,7 @@
                     </li>
                 }
             <li class="current">
-                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + tariffOptions.size) из @currentPage.total</a>
+                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + appointments.size) из @currentPage.total</a>
             </li>
                 @currentPage.next.map { page =>
                 <li class="next">
@@ -123,13 +121,10 @@
         </div>
 
         }.getOrElse {
-
             <div class="well">
                 <em>Пусто</em>
             </div>
-
         }
-
     </body>
 </html>
 

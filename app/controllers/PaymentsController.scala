@@ -93,7 +93,14 @@ class PaymentsController @Inject()(implicit context: ExecutionContext, component
               )
             }
           }
-          Ok(Json.toJson(paymentsList))
+
+          val response = Json.obj(
+            "code" -> 200,
+            "status" -> "success",
+            "data" -> paymentsList
+          )
+
+          Ok(Json.toJson(response))
         }
       }.getOrElse {
         Unauthorized(Json.obj("status" -> 401, "message" -> "Not authorized"))

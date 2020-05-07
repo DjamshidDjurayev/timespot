@@ -29,8 +29,8 @@ class Reviews @Inject()(implicit context: ExecutionContext, components: Controll
       if (savedReview != null) {
         Ok(Json.toJson(
           Json.obj(
-            "status" -> "success",
-            "code" -> 200
+            "code" -> 200,
+            "status" -> "success"
           )
         ))
       } else {
@@ -57,8 +57,8 @@ class Reviews @Inject()(implicit context: ExecutionContext, components: Controll
       if (savedCall != null) {
         Ok(Json.toJson(
           Json.obj(
-            "status" -> "success",
-            "code" -> 200
+            "code" -> 200,
+        "status" -> "success"
           )
         ))
       } else {
@@ -87,7 +87,14 @@ class Reviews @Inject()(implicit context: ExecutionContext, components: Controll
         )
       }
     }
-    Ok(Json.toJson(list))
+
+    val response = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> list
+    )
+
+    Ok(Json.toJson(response))
   }
 
   def getCalls: Action[AnyContent] = Action {
@@ -103,6 +110,13 @@ class Reviews @Inject()(implicit context: ExecutionContext, components: Controll
         )
       }
     }
-    Ok(Json.toJson(list))
+
+    val response = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> list
+    )
+
+    Ok(Json.toJson(response))
   }
 }

@@ -90,6 +90,13 @@ class AssignersController @Inject()(implicit context: ExecutionContext, componen
         )
       }
     }
-    Ok(Json.toJson(assignersList))
+
+    val assignerResponse = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> assigners
+    )
+
+    Ok(Json.toJson(assignerResponse))
   }
 }

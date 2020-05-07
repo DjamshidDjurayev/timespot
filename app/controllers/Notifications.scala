@@ -86,7 +86,14 @@ class Notifications @Inject()(implicit context: ExecutionContext, components: Co
         )
       }
     }
-    Ok(Json.toJson(notificationList))
+
+    val response = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> notificationList
+    )
+
+    Ok(Json.toJson(response))
   }
 
   def getAlerts: Action[AnyContent] = Action {
@@ -104,7 +111,14 @@ class Notifications @Inject()(implicit context: ExecutionContext, components: Co
         )
       }
     }
-    Ok(Json.toJson(alertList))
+
+    val response = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> alertList
+    )
+
+    Ok(Json.toJson(response))
   }
 
   def getOffers: Action[AnyContent] = Action {
@@ -122,6 +136,13 @@ class Notifications @Inject()(implicit context: ExecutionContext, components: Co
         )
       }
     }
-    Ok(Json.toJson(offerList))
+
+    val response = Json.obj(
+      "code" -> 200,
+      "status" -> "success",
+      "data" -> offerList
+    )
+
+    Ok(Json.toJson(response))
   }
 }
