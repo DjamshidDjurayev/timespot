@@ -1,0 +1,43 @@
+@(qForm: Form[PaymentSchedule])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Добавить график</h1>
+
+    @helper.form(action = routes.PaymentScheduleController.schedulesForm(), 'enctype -> "multipart/form-data") {
+        <fieldset>
+            @inputText(qForm("title"), '_label -> "Сумма", '_help -> "")
+            @inputDate(qForm("date"), '_label -> "Дата", '_help -> "")
+            @inputText(qForm("amount"), '_label -> "Сумма", '_help -> "")
+            @select(
+                qForm("currency"),
+                Seq(
+                    "USD" -> "USD",
+                    "RU" -> "RU"
+                ),
+                '_label -> "Тип", '_default -> "-- Choose currency --",
+                '_showConstraints -> false
+            )
+            @select(
+                qForm("action"),
+                Seq(
+                    "payment" -> "payment"
+                ),
+                '_label -> "Action", '_default -> "-- Choose an action --",
+                '_showConstraints -> false
+            )
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Добавить город" class="btn success"> или
+            <a href="@routes.PaymentScheduleController.schedulesList()" class="btn">Отмена</a>
+        </div>
+    }
+    </div>
+
+}

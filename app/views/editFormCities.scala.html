@@ -1,0 +1,34 @@
+@(id: Long, qForm: Form[City])(implicit messages: Messages)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    <div id="edit_main">
+
+    <h1>Редактировать город</h1>
+
+    <div id="remove_button">
+    @form(routes.CityController.delete(id), 'class -> "topRight") {
+        <input type="submit" value="Удалить город" class="btn danger">
+    }
+    </div>
+
+    @form(routes.CityController.update(id)) {
+
+        <fieldset>
+            @inputText(qForm("title"), '_label -> "Город", '_help -> "")
+            @inputDate(qForm("creationDate"), '_label -> "Дата", '_help -> "")
+        </fieldset>
+
+        <div class="actions">
+            <input type="submit" value="Сохранить город" class="btn success"> или
+            <a href="@routes.CityController.cityList()" class="btn">Отмена</a>
+        </div>
+
+    }
+
+    </div>
+
+}

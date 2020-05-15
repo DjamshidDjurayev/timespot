@@ -19,6 +19,8 @@ GET         /recommendations/                 @controllers.RecommendationsContro
 GET         /medHistory/                      @controllers.MedHistoryController.medHistoryList(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /payments/                        @controllers.PaymentsController.paymentsList(p:Int ?= 0, s:Int ?= 2, f ?= "")
 GET         /appointments/                    @controllers.AppointmentsController.appointmentsList(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /cities/                          @controllers.CityController.cityList(p:Int ?= 0, s:Int ?= 2, f ?= "")
+GET         /schedules/                       @controllers.PaymentScheduleController.schedulesList(p:Int ?= 0, s:Int ?= 2, f ?= "")
 
 GET         /news/new                         @controllers.News.create
 POST        /news                             @controllers.News.addNews
@@ -100,6 +102,18 @@ GET         /appointments/:id                 @controllers.AppointmentsControlle
 POST        /appointments/:id                 @controllers.AppointmentsController.update(id:Long)
 POST        /appointments/:id/delete          @controllers.AppointmentsController.delete(id:Long)
 
+GET         /city/new                         @controllers.CityController.create
+POST        /city                             @controllers.CityController.cityForm
+GET         /city/:id                         @controllers.CityController.edit(id:Long)
+POST        /city/:id                         @controllers.CityController.update(id:Long)
+POST        /city/:id/delete                  @controllers.CityController.delete(id:Long)
+
+GET         /schedules/new                    @controllers.PaymentScheduleController.create
+POST        /cischedulesty                    @controllers.PaymentScheduleController.schedulesForm
+GET         /schedules/:id                    @controllers.PaymentScheduleController.edit(id:Long)
+POST        /schedules/:id                    @controllers.PaymentScheduleController.update(id:Long)
+POST        /schedules/:id/delete             @controllers.PaymentScheduleController.delete(id:Long)
+
 # Api (json)
 
 POST        /api/addStaff                     @controllers.Staff.addNewStaff
@@ -146,6 +160,8 @@ GET         /api/getTariffOptions             @controllers.TariffOptionsControll
 GET         /api/getActs                      @controllers.MedHistoryController.getActs
 GET         /api/getPayments                  @controllers.PaymentsController.getPayments
 GET         /api/getAppointments              @controllers.AppointmentsController.getAppointments(date: Long)
+GET         /api/getCities                    @controllers.CityController.getCities()
+GET         /api/getPaymentSchedules          @controllers.PaymentScheduleController.getPaymentSchedules()
 
 GET         /api/device/registerDevice        @controllers.DeviceController.registerDevice(deviceId: String, tokenId: String)
 POST        /api/device/registerDevicePost    @controllers.DeviceController.registerDevicePost

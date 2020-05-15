@@ -476,49 +476,76 @@ class ChatController @Inject()(implicit context: ExecutionContext,
         throw CommonErrorThrowable("Limit is required")
       }
 
-      token.map {
-        token => {
-          Admin.findAdminByToken(token).map {
-            _ => {
-
-              val room = Room.findById(roomId)
-
-              if (room.isEmpty) {
-                throw CommonErrorThrowable("Room not found")
-              }
-
-              val messages = Message.getMessagesByRoomIdAndMessageId(roomId, messageId, limit)
-              val messagesList = messages.map {
-                message => {
-                  Json.obj(
-                    "id" -> message.id,
-                    "timestamp" -> message.timestamp,
-                    "chatType" -> message.chatType,
-                    "content" -> message.content,
-                    "read" -> message.read,
-                    "status" -> message.status,
-                    "ownerId" -> message.ownerId,
-                    "recipientId" -> message.recipientId,
-                    "roomId" -> message.roomId,
-                    "edited" -> message.edited
-                  )
-                }
-              }
-
-              val messagesResponse = Json.obj(
-                "code" -> 200,
-                "status" -> "success",
-                "data" -> messagesList
-              )
-
-              Ok(Json.toJson(messagesResponse))
-            }
-          }.getOrElse {
-            Unauthorized(Json.obj("status" -> 401, "message" -> "Not authorized"))
+      if (roomId < 0) {
+        val messages = Message.getMessagesByRoomIdAndMessageId(roomId, messageId, limit)
+        val messagesList = messages.map {
+          message => {
+            Json.obj(
+              "id" -> message.id,
+              "timestamp" -> message.timestamp,
+              "chatType" -> message.chatType,
+              "content" -> message.content,
+              "read" -> message.read,
+              "status" -> message.status,
+              "ownerId" -> message.ownerId,
+              "recipientId" -> message.recipientId,
+              "roomId" -> message.roomId,
+              "edited" -> message.edited
+            )
           }
         }
-      }.getOrElse {
-        Unauthorized(Json.obj("status" -> 401, "message" -> "Not authorized"))
+
+        val messagesResponse = Json.obj(
+          "code" -> 200,
+          "status" -> "success",
+          "data" -> messagesList
+        )
+        Ok(Json.toJson(messagesResponse))
+      } else {
+        token.map {
+          token => {
+            Admin.findAdminByToken(token).map {
+              _ => {
+
+                val room = Room.findById(roomId)
+
+                if (room.isEmpty) {
+                  throw CommonErrorThrowable("Room not found")
+                }
+
+                val messages = Message.getMessagesByRoomIdAndMessageId(roomId, messageId, limit)
+                val messagesList = messages.map {
+                  message => {
+                    Json.obj(
+                      "id" -> message.id,
+                      "timestamp" -> message.timestamp,
+                      "chatType" -> message.chatType,
+                      "content" -> message.content,
+                      "read" -> message.read,
+                      "status" -> message.status,
+                      "ownerId" -> message.ownerId,
+                      "recipientId" -> message.recipientId,
+                      "roomId" -> message.roomId,
+                      "edited" -> message.edited
+                    )
+                  }
+                }
+
+                val messagesResponse = Json.obj(
+                  "code" -> 200,
+                  "status" -> "success",
+                  "data" -> messagesList
+                )
+
+                Ok(Json.toJson(messagesResponse))
+              }
+            }.getOrElse {
+              Unauthorized(Json.obj("status" -> 401, "message" -> "Not authorized"))
+            }
+          }
+        }.getOrElse {
+          Unauthorized(Json.obj("status" -> 401, "message" -> "Not authorized"))
+        }
       }
     } catch {
       case throwable: CommonErrorThrowable => BadRequest(Json.obj("status" -> "fail", "message" -> throwable.getMessage))

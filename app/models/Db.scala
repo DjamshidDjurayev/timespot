@@ -27,7 +27,9 @@ object Db extends Instance(
     Entity[Payment](),
     Entity[Room](),
     Entity[Message](),
-    Entity[Appointment]()
+    Entity[Appointment](),
+    Entity[City](),
+    Entity[PaymentSchedule]()
   ),
   url = constants.DB_URL,
   user = constants.DB_USER,

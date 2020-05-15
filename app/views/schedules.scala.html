@@ -1,4 +1,4 @@
-@(currentPage: PaymentPage[Payment], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
+@(currentPage: PaymentSchedulePage[PaymentSchedule], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
 
 <!DOCTYPE html>
 
@@ -27,12 +27,13 @@
                             <li><a href="@routes.QuestionController.questionList()">Вопросы</a></li>
                             <li><a href="@routes.TariffController.tariffList()">Тарифы</a></li>
                             <li><a href="@routes.AssignersController.assignerList()">Эссайнеры</a></li>
+                            <li><a href="@routes.TariffOptionsController.tariffOptionsList()">Опции тарифов</a></li>
                             <li><a href="@routes.RecommendationsController.recommendationsList()">Рекомендации</a></li>
                             <li><a href="@routes.MedHistoryController.medHistoryList()">История болезни</a></li>
-                            <li class="active"><a href="@routes.PaymentsController.paymentsList()">Платежи</a></li>
+                            <li><a href="@routes.PaymentsController.paymentsList()">Платежи</a></li>
                             <li><a href="@routes.AppointmentsController.appointmentsList()">Консультации</a></li>
                             <li><a href="@routes.CityController.cityList()">Города</a></li>
-                            <li><a href="@routes.PaymentScheduleController.schedulesList()">Графики платежей</a></li>
+                            <li class="active"><a href="@routes.PaymentScheduleController.schedulesList()">Графики платежей</a></li>
                         </ul>
                     </div>
                 </div>
@@ -42,7 +43,7 @@
 
         <header class="topbar">
             <h1 class="fill">
-                <a>Платежи</a>
+                <a>Графики платежей</a>
             </h1>
         </header>
 
@@ -57,12 +58,12 @@
         </section>
 
         <div id="actions">
-            <a class="btn success" id="add" href="@routes.PaymentsController.create()">Добавить платеж</a>
+            <a class="btn success" id="add" href="@routes.PaymentScheduleController.create()">Добавить график</a>
         </div>
 
 
         @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
-            routes.PaymentsController.paymentsList(newPage, newOrderBy.map { orderBy =>
+            routes.PaymentScheduleController.schedulesList(newPage, newOrderBy.map { orderBy =>
                 if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
             }.getOrElse(currentOrderBy), currentFilter)
 
@@ -74,22 +75,22 @@
             </th>
         }
 
-        <h1 id="title_message">@Messages("payments.list.title", currentPage.total)</h1>
+        <h1 id="title_message">@Messages("questions.list.title", currentPage.total)</h1>
 
-        @Option(currentPage.items).filterNot(_.isEmpty).map { payments =>
+        @Option(currentPage.items).filterNot(_.isEmpty).map { schedules =>
 
         <table class="computers zebra-striped">
             <thead>
                 <tr>
-                    @header(1, "Платежи")
+                    @header(1, "Графики")
                 </tr>
             </thead>
             <tbody>
 
-            @payments.map {
-                case (item) => {
+            @schedules.map {
+                case (schedule) => {
                     <tr>
-                        <td><h5><a href="@routes.PaymentsController.edit(item.id)">@item.paymentMethod</a></h5></td>
+                        <td><h5><a href="@routes.PaymentScheduleController.edit(schedule.id)">@schedule.title</a></h5></td>
                     </tr>
                 }
             }
@@ -109,7 +110,7 @@
                     </li>
                 }
             <li class="current">
-                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + payments.size) из @currentPage.total</a>
+                <a>Страница @(currentPage.offset + 1) по @(currentPage.offset + schedules.size) из @currentPage.total</a>
             </li>
                 @currentPage.next.map { page =>
                 <li class="next">
